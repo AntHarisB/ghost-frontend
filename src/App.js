@@ -1,10 +1,18 @@
-import './App.css';
+import LogIn from './LogIn';
+import AntLogo from './AntLogo';
 
-function App() {
+
+export default function App() {
   return (
-    <div className="App">
+    <div className="flex">
+    <div className="w-1/2 h-screen " >
+      <AntLogo/>
     </div>
+    <div className="w-1/2 h-screen">
+     <LogIn/>
+    </div>
+  </div>
   );
 }
 
-export default App;
+
