@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import axios from "axios";
 import bgImage from './image/background.png';
 import logo from './image/antcolony-logo.png';
+import './index.css';
+import './App.css';
+
 
 
 export default function Login(){
@@ -37,9 +40,9 @@ export default function Login(){
   
 
   return(
-    <div className="flex min-h-screen">
+    <div className="flex flex-col lg:flex-row min-h-screen ">
     <div
-      className="w-1/2 bg-cover bg-right flex items-center justify-center"
+      className="w-full lg:w-1/2 bg-cover bg-right flex items-center justify-center"
       style={{ backgroundImage: `url(${bgImage})` }}>
       <div className="flex justify-center items-center h-screen ">
           <img src={logo} alt="Logo" className="w-auto sm:h-8" />
@@ -47,31 +50,31 @@ export default function Login(){
     </div>
   
   
-    <div className="w-1/2 flex flex-col items-center justify-center">
-    <h2 className="text-3xl text-primary font-semibold  text-center  mb-6">Log in</h2>
-<form className="flex justify-center  items-center bg-white px-8 pt-6 pb-8 mb-4" style={{ width: "450px"}} onChange={handleSubmit}>
+    <div className="w-full lg:w-1/2 py-20 flex flex-col items-center justify-center">
+    <h2 className="text-3xl font-face-gsb font-semibold text-primary  text-center  mb-6">Log in</h2>
+<form className="flex justify-center items-center bg-white px-8 pt-6 pb-8 mb-4 w-full"  onChange={handleSubmit}>
   <div >
     <div className="mb-4">
-      <label className="block text-primary text-16px font-medium mb-2" htmlFor="email">
+      <label className="block text-primary font-face-m font-medium text-16px  mb-2" htmlFor="email">
         Username
       </label>
       <input
-        className="appearance-none  border border-tertiary border-1 rounded border-opacity-100 py-2 px-3 text-secondary placeholder-secondary-500 leading-tight focus:outline-none focus:shadow-outline"
+        className="appearance-none sm:w-450  font-face-r font-normal w-full border border-tertiary border-1 rounded border-opacity-100 py-2 px-3 text-secondary placeholder-secondary-500 leading-tight focus:outline-none focus:shadow-outline"
         id="email"
-        style={{ width: "450px", height:"48" }}
+        style={{  height:"48" }}
         type=""
         placeholder="Enter your username"
         onChange={(e)=>setUsername(e.target.value)}
       />
     </div>
     <div className="mb-7">
-      <label className="block text-primary  font-medium text-16px mb-2" htmlFor="password">
+      <label className="block text-primary font-face-m font-medium text-16px mb-2" htmlFor="password">
         Password
       </label>
       <input
-        className="appearance-none  border border-tertiary border-1 border-opacity-100 rounded py-2 px-3 text-secondary placeholder-secondary-500 leading-tight focus:outline-none focus:shadow-outline"
+        className="appearance-none sm:w-450 font-face-r w-full font-normal border border-tertiary border-1 border-opacity-100 rounded py-2 px-3 text-secondary placeholder-secondary-500 leading-tight focus:outline-none focus:shadow-outline"
         id="password"
-        style={{ width: "450px", height: "48" }}
+        style={{  height: "48" }}
         type="password"
         placeholder="Enter your password"
         onChange={(e)=>setPassword(e.target.value)}
@@ -79,21 +82,22 @@ export default function Login(){
     </div>
 
     <button
-      className="bg-customColor  text-white font-semibold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+      className="bg-customColor sm:w-450 font-face-gsb w-full font-semibold text-white  py-2 px-4 rounded focus:outline-none focus:shadow-outline"
       type="button"
-      style={{ width: "450px", height: "48" }} onClick={getMethod}>
+      style={{  height: "48"}}
+      onClick={getMethod}>
       Log in
     </button>
 
-    <div className="flex justify-between w-full mt-3 ">
-      <div>
-        <label className="inline-flex items-center">
-          <input type="checkbox" className="form-checkbox" name="remember" />
-          <span className="ml-2 mb-1 text-16px  font-medium text-primary">Remember password</span>
+    <div className="flex space-x-5 justify-between w-full mt-3 ">
+      <div >
+        <label className="inline-flex items-center ">
+          <input type="checkbox" className="form-checkbox bg-customColor h-4 w-4 mb-1" name="remember" />
+          <span className="ml-2 mb-1 text-16px font-face-m font-medium text-primary">Remember password</span>
         </label>
       </div>
-      <div >
-        <a  href="#" className="text-customColor  text-16px underline font-medium">
+      <div className="text-right" >
+        <a  href="#" className="text-customColor text-right font-face-m font-medium text-16px underline ">
           Forgot password?
         </a>
       </div>
