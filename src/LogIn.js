@@ -59,9 +59,9 @@ export default function Login(){
         Username
       </label>
       <input
-        className="appearance-none sm:w-450  font-face-r font-normal w-full border border-tertiary border-1 rounded border-opacity-100 py-2 px-3 text-secondary placeholder-secondary-500 leading-tight focus:outline-none focus:shadow-outline"
+        className="appearance-none sm:w-450  font-face-r font-normal w-full h-12 border border-tertiary border-1 rounded border-opacity-100 py-2 px-3 text-secondary placeholder-secondary-500 leading-tight focus:outline-none focus:shadow-outline"
         id="email"
-        style={{  height:"48" }}
+        
         type=""
         placeholder="Enter your username"
         onChange={(e)=>setUsername(e.target.value)}
@@ -72,9 +72,8 @@ export default function Login(){
         Password
       </label>
       <input
-        className="appearance-none sm:w-450 font-face-r w-full font-normal border border-tertiary border-1 border-opacity-100 rounded py-2 px-3 text-secondary placeholder-secondary-500 leading-tight focus:outline-none focus:shadow-outline"
+        className="appearance-none sm:w-450 font-face-r w-full h-12 font-normal border border-tertiary border-1 border-opacity-100 rounded py-2 px-3 text-secondary placeholder-secondary-500 leading-tight focus:outline-none focus:shadow-outline"
         id="password"
-        style={{  height: "48" }}
         type="password"
         placeholder="Enter your password"
         onChange={(e)=>setPassword(e.target.value)}
@@ -82,9 +81,8 @@ export default function Login(){
     </div>
 
     <button
-      className="bg-customColor sm:w-450 font-face-gsb w-full font-semibold text-white  py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+      className="bg-customColor sm:w-450 font-face-gsb w-full h-12 font-semibold text-white  py-2 px-4 rounded focus:outline-none focus:shadow-outline"
       type="button"
-      style={{  height: "48"}}
       onClick={getMethod}>
       Log in
     </button>
