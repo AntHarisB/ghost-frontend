@@ -11,13 +11,14 @@ const data = [
 
 export default function HoursOverview() {
   return (
-   <div className='border w-510 h-342 mt-10 flex justify-center  rounded-md'>
-   <div  className='flex-col space-y-7'>
-     <div className=' w-470 h-68 border-b flex items-center'>
-       <span className='text-lg font-face-gsb font-semibold'>Project Scope</span>
-     </div>
+    <ResponsiveContainer width="100%" height="100%">
+    <div className='border w-510 h-342 mt-10 flex justify-center  rounded-md'>
+    <div  className='flex-col space-y-7'>
+      <div className=' w-470 h-68 border-b flex items-center'>
+        <span className='text-lg font-face-gsb font-semibold text-color10'>Project scope</span>
+      </div>
      <div className=' w-422 h-200 flex items-center '> 
-     <ResponsiveContainer width="100%" height="100%">
+
      <BarChart
               layout='vertical'
               width={500}
@@ -38,11 +39,11 @@ export default function HoursOverview() {
               <Bar dataKey='Grand_Total_Hours_Available' fill='#7BB99F' />
               <Bar dataKey='Grand_Total_Hours_Billed' fill='#DFE3E1' />
             </BarChart>
-				</ResponsiveContainer>
+				
      </div> 
    </div>
  </div>
-
+ </ResponsiveContainer>
   
   )
 }

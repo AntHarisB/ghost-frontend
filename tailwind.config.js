@@ -14,7 +14,12 @@ module.exports = {
         color6:'#57585F',
         color7:'#E9F3F2',
         color8:"#7BB99F",
-
+        color9:"#232F2D",
+        color10:"#0C221F",
+        color11:"#B3DFC9",
+        color12:"#788489",
+        color13:"#43A57C",
+        color14:"#F5FFFA",
       },
       width:{
         450:"450px",
@@ -61,7 +66,11 @@ module.exports = {
         22:"22px", 
         15:"15px",
         280:"280.56px", 
+        26:"26px",
       },
+      backgroundImage: {
+        'sidebar-gradient': 'linear-gradient(179.32deg, #FCFDFC 8.04%, #E6F2ED 99.41%)',
+      }
     },
   },
   plugins: [],

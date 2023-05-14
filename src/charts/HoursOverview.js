@@ -39,8 +39,8 @@ export default function HoursOverview() {
       <div className='border w-1050 h-392 mt-10 flex justify-center rounded-md'>
       <div  className='flex-col space-y-7'>
         <div className=' w-1010 h-68 border-b flex items-center'>
-          <span className='text-lg font-face-gsb font-semibold mr-4'>Hours overview</span>
-          <span className='text-base font-face-m font-medium underline text-color8'>See details</span>
+          <span className='text-lg font-face-gsb font-semibold mr-4 text-color10'>Hours overview</span>
+          <span className='text-base font-link font-medium underline text-color8 '>See details</span>
         </div>
           <div className='w-988 h-280 flex id="chart"'>
 				<ResponsiveContainer width="100%" height="100%">
