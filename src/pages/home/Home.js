@@ -1,9 +1,9 @@
 import React from 'react'
-import Sidebar from './Sidebar'
+import Sidebar from '../../components/Sidebar'
 import {  MdOutlineHome } from 'react-icons/md';
-import SalesChannel from './charts/SalesChannels';
-import ProjectScope from './charts/ProjectScope';
-import HoursOverview from './charts/HoursOverview'
+import SalesChannel from '../../charts/SalesChannels';
+import ProjectScope from '../../charts/ProjectScope';
+import HoursOverview from '../../charts/HoursOverview'
 
 
 

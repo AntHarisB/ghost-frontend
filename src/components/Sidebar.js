@@ -1,7 +1,7 @@
 import React from 'react'
-import sidebar from './image/sidebar.jpg';
-import logo from './image/antcolony-logo.png';
-import image from './image/image.jpg';
+import sidebar from '../image/sidebar.jpg';
+import logo from '../image/antcolony-logo.png';
+import image from '../image/image.jpg';
 import {  MdOutlineHome } from 'react-icons/md';
 
 export default function Dashboard() {
