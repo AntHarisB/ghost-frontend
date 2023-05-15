@@ -25,7 +25,7 @@ export default function Dashboard() {
          <img src={logo} alt="Logo" className="w-40 h-18 mr-14 mb-6" />
       </div> 
 
-      <button id="dropdownDefaultButton" data-dropdown-toggle="dropdown" class=" justify-between font-medium  text-sm px-4  text-center  flex flex-row border rounded-md w-64 h-74  items-center" type="button">
+      <button id="dropdownDefaultButton" data-dropdown-toggle="dropdown" className=" justify-between font-medium  text-sm px-4  text-center  flex flex-row border rounded-md w-64 h-74  items-center" type="button">
           <img src={image} alt="img" className="w-54 h-54" /> 
             <div>
               <div className='mr-5'>
@@ -36,8 +36,8 @@ export default function Dashboard() {
                 <span className='font-normal text-sm text-color6 font-link'>Admin</span>
               </div>
             </div>
-            <svg class="w-4 h-4 ml-2" aria-hidden="true" fill="none" stroke="black" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            <svg className="w-4 h-4 ml-2" aria-hidden="true" fill="none" stroke="black" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
             </svg>
       </button>
  

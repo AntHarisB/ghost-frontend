@@ -13,6 +13,15 @@ import { useEffect } from 'react';
 export default function Home () {
 
   const [totalProjects, setTotalProjects] = useState(0);
+  const [projectHours, setProjectHours]=useState({
+    "date_start": "",
+    "month": "",
+    "hours_available": 0,
+    "hours_billed": 0,
+    "project_name": "",
+    "type_of_project": "",
+    "id": 0
+  });
   const [data, setData] = useState({
     "total_projects": 0,
     "total_value": 0,
@@ -28,9 +37,10 @@ export default function Home () {
     axios.get('http://127.0.0.1:8000/project-statistics/2020/')
       .then(response => setData(response.data))
       .catch(error => console.error(error));
+      axios.get('http://127.0.0.1:8000/project-hours/2020/')
+        .then(response => setProjectHours(response.data))
+        .catch(error => console.error(error));
   }, []);
-
-
 
 
   const [selected, setSelected] = useState(null); // Hook za praćenje kliknutog elementa
@@ -49,7 +59,6 @@ export default function Home () {
       <div className='basis-[12%] h-full'>
         <Sidebar />
       </div>
-      
       <div className='basis-[88%] py-8 px-12'>
         <h1 className='text-3xl mb-10 text-color10 font-bold font-face-b'>Home</h1>
           <div className='flex flex-row justify-between items-center'>
@@ -90,21 +99,8 @@ export default function Home () {
                   <span className='text-[22px] font-bold font-face-b mr-2 text-color10'>Year:</span>
               </div>
                 
-              <button id="dropdownDefaultButton" data-dropdown-toggle="dropdown" class="text-22 font-face-b font-bold px-4 text-center text-color9 flex items-center border h-10 w-99 rounded-md" type="button"><ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
-      <li>
-        <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">2023</a>
-      </li>
-      <li>
-        <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">2022</a>
-      </li>
-      <li>
-        <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">2021</a>
-      </li>
-      <li>
-        <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">2020</a>
-      </li>
-    </ul>
-                <svg class="w-4 h-4 ml-4" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              <button id="dropdownDefaultButton" data-dropdown-toggle="dropdown" className="text-22 font-face-b font-bold px-4 text-center text-color9 flex items-center border h-10 w-99 rounded-md" type="button">2023
+                <svg className="w-4 h-4 ml-4" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
                 </svg>
               </button>
             </div>
@@ -219,9 +215,9 @@ export default function Home () {
             <div className='flex-col'>
               <div className='flex space-x-8'> 
                   <SalesChannel/>
-                  <ProjectScope/>
+                  <ProjectScope projectHours={projectHours}/>
               </div>
-                  <HoursOverview/> 
+                  <HoursOverview projectHours={projectHours}/> 
             </div>
           </div>
     </div>
