@@ -1,19 +1,18 @@
-import LogIn from './LogIn';
-import AntLogo from './AntLogo';
+import Login from './pages/login/Login';
+import Home from './pages/home/Home';
+import { Route, Routes, useNavigate } from "react-router-dom";
 
 
 export default function App() {
 
   return (
-    <div className="flex">
-    <div className="w-1/2 h-screen " >
-      <AntLogo/>
-    </div>
-    <div className="w-1/2 h-screen">
-     <LogIn/>
-    </div>
-  </div>
+    <>
+    <Routes>
+        <Route path="/login" element={<Login/>} />
+        <Route path="/home" element={<Home/>} />
+        <Route path='/*' component={<h1>404</h1>}/>
+    </Routes>
+    </>
   );
 }
-
 
