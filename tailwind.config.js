@@ -20,6 +20,8 @@ module.exports = {
         color12:"#788489",
         color13:"#43A57C",
         color14:"#F5FFFA",
+        color15:"#FF9F5A",
+        color16:"#1D2129",
       },
       width:{
         450:"450px",
@@ -44,9 +46,8 @@ module.exports = {
         15:"15px" , 
         1010:"1010px",
         988:"988.8px",
-        422:"422.15px"
-       
-      
+        422:"422.15px",
+        396:"396px",
       },
 
       height:{
