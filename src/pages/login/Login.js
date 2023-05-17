@@ -59,7 +59,7 @@ export default function Login(){
                     id="email"
                     type=""
                     placeholder="Enter your username"
-                    onChange={(e)=>setUsername(e.target.value)}
+                    onChange={changeUserLoginData}
                   />
             </div>
 
@@ -72,14 +72,14 @@ export default function Login(){
                     id="password"
                     type="password"
                     placeholder="Enter your password"
-                    onChange={(e)=>setPassword(e.target.value)}
+                    onChange={changeUserLoginData}
                   />
             </div>
 
             <button
               className="bg-customColor sm:w-450 font-face-gsb w-full h-12 font-semibold text-white  py-2 px-4 rounded focus:outline-none focus:shadow-outline"
               type="button"
-              onClick={getMethod}>
+              >
               Log in
             </button>
 
