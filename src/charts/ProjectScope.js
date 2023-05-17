@@ -1,14 +1,34 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 
 
 export default function HoursOverview({projectHours}) {
+
+  const [totalHours,setTotalHours]=useState({
+    hours_a:0,
+    hours_b:0
+  })
+
+  const totalHoursSum = () => {
+    let availableHoursSum = 0;
+    let billedHoursSum = 0;
+    projectHours.forEach(item => {
+      availableHoursSum += item.hours_available;
+      billedHoursSum += item.hours_billed;
+    });
+    setTotalHours(prev => ({
+      hours_a: availableHoursSum,
+      hours_b: billedHoursSum
+    }));
+  };
+  useEffect(()=>{
+    totalHoursSum()
+  },[projectHours])
   
   const data = [
     {
-      
-      Grand_Total_Hours_Billed: projectHours[0]?.hours_billed,
-      Grand_Total_Hours_Available: projectHours[0]?.hours_available
+      Grand_Total_Hours_Billed: totalHours.hours_b,
+      Grand_Total_Hours_Available: totalHours.hours_a
     }
   ];
   return (
@@ -19,7 +39,7 @@ export default function HoursOverview({projectHours}) {
         <span className='text-lg font-face-gsb font-semibold text-color10'>Project scope</span>
       </div>
      <div className=' w-422 h-200 flex items-center '> 
-
+      {console.log(totalHours.hours_a)}
      <BarChart
               layout='vertical'
               width={500}
@@ -33,7 +53,7 @@ export default function HoursOverview({projectHours}) {
               }}
             >
               <CartesianGrid strokeDasharray='3 3 3 0' horizontal={false} />
-              <XAxis type='number' ticks={[0, (projectHours[0]?.hours_available*0.25), (projectHours[0]?.hours_available*0.50), (projectHours[0]?.hours_available*0.75), projectHours[0]?.hours_available]}/>
+              <XAxis type='number' ticks={[0, (totalHours.hours_a*0.25), (totalHours.hours_a*0.50), (totalHours.hours_a*0.75), totalHours.hours_a]}/>
               <YAxis  type='category'  />
               <Tooltip />
               
