@@ -1,57 +1,54 @@
 import React, { useState } from "react";
-import axios from "axios";
-import bgImage from './image/background.png';
-import logo from './image/antcolony-logo.png';
-import './index.css';
-import './App.css';
+import '../../App.css';
+import LoginBgImg from "./components/LoginBgImg";
+import AxiosInstance from '../../AxiosInstance.js';
+import AxiosApiInstance from '../../AxiosApiInstance.js';
 
 
 
 export default function Login(){
+  const [userLoginData, setUserLoginData]=useState({
+    username:'',
+    password:''
+  });
 
-  const [username, setUsername]=useState('');
-  const [password, setPassword]=useState('');
-
-  const handleSubmit=(e)=>{
+  const handleSubmit=async(e)=>{
     e.preventDefault();
-  }
-
-  const getMethod = () => {
-    axios.post('http://127.0.0.1:8000/api/token/', {username: username, password: password})
-      .then(res => {
-        localStorage.setItem('access_token', res.data.access);
-        localStorage.setItem('refresh_token', res.data.refresh);
-        axios.get('http://127.0.0.1:8000/user/', {
-          headers: {
-            'Authorization': `Bearer ${res.data.access}`
-          }
-        })
-          .then(res => {
-            window.location.href = 'http://localhost:3000/home';
+    AxiosInstance.post('/api/token/', {username: userLoginData.username, password: userLoginData.password})
+        .then(res => {
+          localStorage.setItem('access_token', res.data.access);
+          localStorage.setItem('refresh_token', res.data.refresh);
+          AxiosInstance.get('/user/', {
+            headers: {
+              'Authorization': `Bearer ${res.data.access}`
+            }
           })
-          .catch(err => {
-            console.log(err);
-          });
-      })
-      .catch(err => {
-        console.log(err);
-      });
-  }
+            .then(res => {
+              window.location.href = 'http://localhost:3000/home';
+            })
+            .catch(err => {
+              console.log(err);
+            });
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    }
+
+    const changeUserLoginData=(e)=>{
+      setUserLoginData({...userLoginData, [e.target.name]:e.target.value})
+    }
+
   
 
   return(
  <div className="flex flex-col lg:flex-row min-h-screen ">
-    <div className="w-full lg:w-1/2 bg-cover bg-right flex items-center justify-center"
-      style={{ backgroundImage: `url(${bgImage})` }}>
-        <div className="flex justify-center items-center h-screen ">
-          <img src={logo} alt="Logo" className="w-auto sm:h-8" />
-        </div>
-    </div>
-  
-  
+
+  <LoginBgImg/>
     <div className="w-full lg:w-1/2 py-20 flex flex-col items-center justify-center">
       <h2 className="text-3xl font-face-gsb font-semibold text-primary  text-center  mb-6">Log in</h2>
         <form className="flex justify-center items-center bg-white px-8 pt-6 pb-8 mb-4 w-full"  onChange={handleSubmit}>
+
           <div >
             <div className="mb-4">
                 <label className="block text-primary font-face-m font-medium text-16px  mb-2" htmlFor="email">
