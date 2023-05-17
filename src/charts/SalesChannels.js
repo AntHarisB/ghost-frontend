@@ -1,33 +1,44 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend } from 'recharts'
+import axios from 'axios'
 
+export default function SalesChannel({selectedYear}){
 
-const data = [
-	{ name: 'Sales channel #1', value: 30 },
-	{ name: 'Sales channel #2', value: 10 },
-	{ name: 'Sales channel #3', value: 10 },
-  { name: 'Sales channel #4', value: 20 },
-  { name: 'Sales channel #5', value: 30 },
-]
+  const [salesChannelData, setSalesChannelData]=useState([])
 
-const RADIAN = Math.PI / 180
-const COLORS = ['#3973F8', '#3491FA','#9D5FF3','#FF9F5A', '#7BB99F']
+  const [salesChannels, setSalesChannels]=useState({
+    total_projects: 0,
+    num_of_recommendation_projects: 0,
+    num_of_partnership_projects: 0,
+    num_of_sales_projects: 0
+  });
+  
+  const RADIAN = Math.PI / 180
+  const COLORS = ['#3973F8', '#3491FA','#9D5FF3','#FF9F5A', '#7BB99F']
+  
+  const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent }) => {
+    const radius = innerRadius + (outerRadius - innerRadius) * 0.5
+    const x = cx + radius * Math.cos(-midAngle * RADIAN)
+    const y = cy + radius * Math.sin(-midAngle * RADIAN)
+  
+    return (
+      <text x={x} y={y} fill="white" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central" >
+        {`${(percent * 100).toFixed(0)}%`}
+      </text>
+    )
+  }
+  useEffect(()=>{
+    axios.get(`http://127.0.0.1:8000/projectcreation-count/${selectedYear}/`)
+    .then(response => setSalesChannels(response.data))
+    .catch(error => console.error(error));
+  },[selectedYear])
 
-const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent }) => {
-	const radius = innerRadius + (outerRadius - innerRadius) * 0.5
-	const x = cx + radius * Math.cos(-midAngle * RADIAN)
-	const y = cy + radius * Math.sin(-midAngle * RADIAN)
-
-	return (
-		<text x={x} y={y} fill="white" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central" >
-			{`${(percent * 100).toFixed(0)}%`}
-		</text>
-	)
-}
-
-
-
-export default function SalesChannel(){
+  const data = [
+    { name: 'Recommedation projects', value: salesChannels[0]?.num_of_recommendation_projects },
+    { name: 'Patnership projects', value: salesChannels[0]?.num_of_partnership_projects },
+    { name: 'Sales projects', value: salesChannels[0]?.num_of_sales_projects },
+  ].filter(entry => entry.value > 0)
+  
    return(
     <ResponsiveContainer>
       <div className='border w-510 h-342 mt-10 flex justify-center  rounded-md'>
