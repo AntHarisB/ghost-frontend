@@ -26,8 +26,6 @@ export default function HoursOverview({ projectHours, selectedYear }) {
           <span className='text-lg font-face-gsb font-semibold mr-4 text-color10'>Hours overview</span>
           <span className='text-base font-link font-medium underline text-color8'>See details</span>
         </div>
-        {console.log("1", hoursOverview)}
-        {console.log("2", projectHours)}
         {hoursOverview.length > 0 && (
           <div className='w-988 h-280 flex id="chart"'>
             <ResponsiveContainer width='100%' height='100%'>
