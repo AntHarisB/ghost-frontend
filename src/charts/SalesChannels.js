@@ -26,46 +26,47 @@ const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, per
   );
 };
 
-
-
-
 export default function SalesChannel(){
-   return(
+  return(
     <ResponsiveContainer width="50%" height="50%">
       <div className='border w-510 h-342 mt-10 flex justify-center  rounded-md'>
-      <div  className='flex-col space-y-7'>
-        <div className=' w-470 h-68 border-b flex items-center'>
-          <span className='text-lg font-face-gsb font-semibold text-color10'>Sales channels</span>
-        </div>
-        <div className=' flex items-center '> 
-            <PieChart width={210} height={210}>
-              <Pie
-                data={data}
-                cx="50%"
-                cy="50%"
-                labelLine={false}
-                label={renderCustomizedLabel}
-                outerRadius={105}
-                fill="#8884d8"
-                dataKey="value"
-              >
-                {data.map((_, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-            </PieChart>
-          
-                <div className="flex-1 ml-12 mt-4">
+        <div  className='flex-col space-y-7'>
+          <div className=' w-470 h-68 border-b flex items-center'>
+            <span className='text-lg font-face-gsb font-semibold text-color10'>
+              Sales channels
+            </span>
+          </div>
+          <div className=' flex items-center '> 
+              <PieChart width={210} height={210}>
+                <Pie
+                  data={data}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={false}
+                  label={renderCustomizedLabel}
+                  outerRadius={105}
+                  fill="#8884d8"
+                  dataKey="value"
+                  stroke="transparent"
+                  >
+                  {data.map((_, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
+              </PieChart> 
+              <div className="flex-1 ml-12 mt-4">
                 {data.map((entry, index) => (
                   <div key={`legend-${index}`} className="flex items-center mb-4 font-semibold font-face-gsb text-base text-color10">
-                    <div className="w-15 h-15 rounded-full mr-2" style={{ backgroundColor: COLORS[index % COLORS.length] }}></div>
-                    <div>{entry.name}</div>
+                    <div className="w-15 h-15 rounded-full mr-2" style={{ backgroundColor: COLORS[index % COLORS.length] }}>
+                    </div>
+                    <div>{entry.name}
+                    </div>
                   </div>
                 ))}
               </div>            
-        </div> 
+          </div> 
+        </div>
       </div>
-    </div>
-  </ResponsiveContainer>
+    </ResponsiveContainer>
   )
 }
