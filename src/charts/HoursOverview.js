@@ -38,9 +38,35 @@ const data = [
 		Grand_Total_Hours_Available: 5250,
 	}
 ];
+
 const ticks = [0, 1500, 3000, 4500, 6000];
 
-export default function HoursOverview() {
+const chartTextStyle = {
+	fontFamily: 'GilroyM',
+	fontSize: 12,
+	fill: '#232F2D',
+	fontWeight: 500,
+ };
+
+ const secchartTextStyle = {
+	fontFamily: 'GilroyM',
+	fontSize: 14, 
+	fill: '#232F2D',
+	fontWeight: 500, 
+ };
+
+ const axisLineStyle = {
+	stroke: '#E5E5EF',
+	strokeWidth: 2,
+ };
+
+ const gridLineStyle = {
+	stroke: '#E5E5EF', 
+	strokeDasharray: '3 3 3 0',
+ };
+
+ 
+export default function HoursOverview() {	 
 	return (
       <div className='border w-1050 h-392 mt-10 flex justify-center rounded-md'>
       <div  className='flex-col space-y-7'>	
@@ -67,27 +93,17 @@ export default function HoursOverview() {
 							height={250}
 							data={data}	
 						>
-							<CartesianGrid strokeDasharray='3 3 3 0' vertical={false} />
+							<CartesianGrid strokeDasharray='3 3 3 0' vertical={false} stroke={gridLineStyle.stroke}/>
 							<XAxis dataKey='name' 
-							tick={{
-									fontFamily: 'GilroyM',
-									fontSize: 12, 
-									fill: '#232F2D',
-									fontWeight: 500, 
-									
-									}}
-									axisLine={{
-										stroke: '#E5E5EF', 
-										strokeWidth:2,
-									 }}/>
-							<YAxis axisLine={false} dx={-8} dy={-3}
-							 ticks={ticks} 
-							tick={{
-									fontFamily: 'GilroyM',
-									fontSize: 14, 
-									fill: '#232F2D',
-									fontWeight: 500, 
-									}} />
+							   tick={chartTextStyle}
+								axisLine={axisLineStyle}/>
+							<YAxis 
+							   axisLine={false} 
+								tickLine={{ display: 'none' }}
+								dx={-8} 
+								dy={-3}
+							   ticks={ticks} 
+							   tick={secchartTextStyle} />
 							<Tooltip />
 							<Bar dataKey='Grand_Total_Hours_Available' fill='#FF9F5A' barSize={20} radius={[5, 5, 0, 0]}/>
 							<Bar dataKey='Grand_Total_Hours_Billed' fill='#7BB99F' barSize={20} radius={[5, 5, 0, 0]}/>
