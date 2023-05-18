@@ -71,7 +71,7 @@ export default function Home () {
       .then(response => setData(response.data))
       .catch(error => console.error(error));
     axios.get(`http://127.0.0.1:8000/project-hours/${selectedYear}/`)
-      .then(response => setProjectHours(response.data))
+      .then(response => {setProjectHours([]);setProjectHours(response.data)})
       .catch(error => console.error(error));
   }, [selectedYear]);
 
@@ -314,7 +314,7 @@ export default function Home () {
                   <SalesChannel selectedYear={selectedYear}/>
                   <ProjectScope projectHours={projectHours}/>
               </div>
-                  <HoursOverview projectHours={projectHours}/> 
+                  <HoursOverview projectHours={projectHours} selectedYear={selectedYear}/> 
             </div>
           </div>
     </div>
