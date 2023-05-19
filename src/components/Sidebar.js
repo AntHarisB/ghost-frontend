@@ -1,6 +1,8 @@
+
 import React, { useState } from 'react'
 import logo from '../image/antcolony-logo.png';
 import image from '../image/image.jpg';
+
 
 
 
@@ -16,6 +18,7 @@ export default function Dashboard() {
   };
 
   return (
+
     <div  className='w-284 md:w-auto lg:w-284   lg:h-full  md:h-screen z-50 lg:bg-sidebar-gradient  md:bg-sidebar-gradient absolute md:relative lg:relative'>
       <div className='sm:hidden px-2 py-2'>
         <button

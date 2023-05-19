@@ -1,13 +1,14 @@
-import React, { useState } from 'react'
+import React from 'react'
+import  { useState } from 'react';
 import Sidebar from '../../components/Sidebar'
+import {  MdOutlineHome } from 'react-icons/md';
 import SalesChannel from '../../charts/SalesChannels';
 import ProjectScope from '../../charts/ProjectScope';
 import HoursOverview from '../../charts/HoursOverview'
 
 
-
 export default function Home () {
-  const [selected, setSelected] = useState(null);
+  const [selected, setSelected] = useState(null); // Hook za praćenje kliknutog elementa
 
   const handleItemClick = (item) => {
     if (selected === item) {
@@ -17,26 +18,13 @@ export default function Home () {
     }
   };
 
-  const [selectedYear, setSelectedYear] = useState('2023');
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false); 
-
-  const years = ['2021', '2022', '2023', '2024', '2025'];
-
-  const handleYearChange = (year) => {
-    setSelectedYear(year);
-    setIsDropdownOpen(false); 
-  };
-
-  const toggleDropdown = () => {
-    setIsDropdownOpen((prevState) => !prevState);
-  };
   return (
     <div className='flex  h-1224'>
       <div className='basis-[12%] h-full '>
         <Sidebar />
       </div>
       
-      <div className='basis-[88%] pb-5 pt-14 px-3 lg:py-8 lg:px-11 lg:overflow-x-hidden md:overflow-x-scroll '>
+      <div className='basis-[88%] py-8 px-12'>
         <h1 className='text-3xl mb-10 text-color10 font-bold font-face-b'>Home</h1>
           
           <div className='block space-y-10 lg:space-y-0 lg:flex lg:flex-row lg:justify-between lg:items-center'>
@@ -74,7 +62,7 @@ export default function Home () {
             </div>
 
             <div className='flex'>
-                <div className='flex  items-center justify-center '>
+              <div className='flex items-center justify-center '>
                   <span className='text-[22px] font-bold font-face-b mr-2 text-color10'>Year:</span>
                 </div>
 
@@ -143,7 +131,7 @@ export default function Home () {
               <div className='h-70 lg:w-60  justify-between border flex items-center rounded-md'>
                   <div className='flex flex-col w-122 h-50 ml-4'>
                     <span className='text-sm font-face-r font-normal h-22 text-color9'>Number of projects</span>
-                    <span className='text-lg font-face-b font-bold h-26 text-color10'>9</span>                    
+                    <span className='text-lg font-face-b font-bold h-26 text-color10'>{data.total_projects}</span>                    
                   </div>
                    
                   <div className='pr-4'>
@@ -158,7 +146,7 @@ export default function Home () {
               <div className='h-70 lg:w-60  lg:w-auto justify-between border flex items-center rounded-md'>
                   <div className='flex flex-col w-136 h-50 ml-4'>
                       <span className='text-sm font-face-r font-normal h-22 text-color9'>Total project value</span>
-                      <span className='text-lg font-face-b font-bold h-26 text-color10'>1,605,003.00 KM</span>
+                      <span className='text-lg font-face-b font-bold h-26 text-color10'>{(((data.total_value.toFixed(2))*100)/100)} KM</span>
                   </div>
 
                   <div className='pr-4'>
@@ -180,7 +168,7 @@ export default function Home () {
               <div className='h-70 lg:w-60   lg:w-auto justify-between border flex items-center rounded-md'>
                   <div className='flex flex-col w-117 h-50 ml-4'>
                       <span className='text-sm font-face-r font-normal h-22 text-color9'>Avg. project value</span>
-                      <span className='text-lg font-face-b font-bold h-26 text-color10'>178,434,89 KM</span>
+                      <span className='text-lg font-face-b font-bold h-26 text-color10'>{((data.avg_value.toFixed(2))*100)/100}KM</span>
                   </div>
 
                   <div className='pr-4'>
@@ -196,7 +184,7 @@ export default function Home () {
                   <div className='flex flex-col w-129 h-50 ml-4'>
                       <span className='text-sm font-face-r font-normal h-22 text-color9'>Avg. lead closing (d)</span>
                       <span className='text-lg font-face-b font-bold h-26 text-color10'>12</span>
-                  </div>
+                    </div>
 
                   <div className='pr-4'>
                     <div className='rounded-full h-42 w-42 flex items-center justify-center bg-color7'>
@@ -211,7 +199,7 @@ export default function Home () {
                   <div className='flex flex-col w-92 h-50 ml-4'>
                       <span className='text-sm font-face-r font-normal h-22 text-color9'>Avg. team size</span>
                       <span className='text-lg font-face-b font-bold h-26 text-color10'>2.2</span>
-                  </div>
+                    </div>
 
                   <div className='pr-4'>
                     <div className='rounded-full h-42 w-42 flex items-center justify-center ml-3 bg-color7'>
@@ -226,7 +214,7 @@ export default function Home () {
                   <div className='flex flex-col w-81 h-50 ml-4'>
                       <span className='text-sm font-face-r font-normal h-22 text-color9'>Avg.velocity</span>
                       <span className='text-lg font-face-b font-bold h-26 text-color10'>64</span>
-                  </div>
+                    </div>
 
                   <div className='pr-4'>
                     <div className='rounded-full h-42 w-42 flex items-center justify-center bg-color7 '>
@@ -241,7 +229,7 @@ export default function Home () {
                   <div className='flex flex-col w-134 h-50 ml-4'>
                       <span className='text-sm font-face-r font-normal h-22 text-color9'>Weeks over deadline</span>
                       <span className='text-lg font-face-b font-bold h-26 text-color10'>7</span>
-                  </div>
+                    </div>
 
                   <div className='pr-4'>
                     <div className='rounded-full h-42 w-42 flex items-center justify-center bg-color7'>
@@ -257,7 +245,7 @@ export default function Home () {
                   <div className='flex flex-col w-106 h-50 ml-4'>
                       <span className='text-sm font-face-r font-normal h-22 text-color9'>Avg. hourly price</span>
                       <span className='text-lg font-face-b font-bold h-26 text-color10'>$35</span>
-                  </div>
+                    </div>
 
                   <div className='pr-4'>
                     <div className='rounded-full h-42 w-42 flex items-center justify-center bg-color7'>
@@ -277,20 +265,14 @@ export default function Home () {
               </div>
           </div>
 
-          <div className='flex-col'>
-            <div className='lg:flex lg:space-x-8'> 
-              <div className='w-screen overflow-x-auto md:overflow-x-auto lg:overflow-x-hidden lg:w-auto'>
-                <SalesChannel/>
+            <div className='flex-col'>
+              <div className='flex space-x-8'> 
+                  <SalesChannel/>
+                  <ProjectScope/>
               </div>
-              <div className='w-screen overflow-x-auto md:overflow-x-auto lg:overflow-x-hidden lg:w-auto'>
-                <ProjectScope/>
-              </div>
+                  <HoursOverview/> 
             </div>
-              <div className='w-screen overflow-x-auto md:overflow-x-auto lg:overflow-x-hidden lg:w-auto'>
-                <HoursOverview/> 
-              </div>
           </div>
-      </div>
     </div>
   )
 }

@@ -1,44 +1,42 @@
 import React, { useState } from "react";
-import '../../App.css';
-import LoginBgImg from "./components/LoginBgImg";
-import AxiosInstance from '../../AxiosInstance.js';
-import AxiosApiInstance from '../../AxiosApiInstance.js';
+import axios from "axios";
+import bgImage from './image/background.png';
+import logo from './image/antcolony-logo.png';
+import './index.css';
+import './App.css';
 
 
 
 export default function Login(){
-  const [userLoginData, setUserLoginData]=useState({
-    username:'',
-    password:''
-  });
 
-  const handleSubmit=async(e)=>{
+  const [username, setUsername]=useState('');
+  const [password, setPassword]=useState('');
+
+  const handleSubmit=(e)=>{
     e.preventDefault();
-    AxiosInstance.post('/api/token/', {username: userLoginData.username, password: userLoginData.password})
-        .then(res => {
-          localStorage.setItem('access_token', res.data.access);
-          localStorage.setItem('refresh_token', res.data.refresh);
-          AxiosInstance.get('/user/', {
-            headers: {
-              'Authorization': `Bearer ${res.data.access}`
-            }
-          })
-            .then(res => {
-              window.location.href = 'http://localhost:3000/home';
-            })
-            .catch(err => {
-              console.log(err);
-            });
+  }
+
+  const getMethod = () => {
+    axios.post('http://127.0.0.1:8000/api/token/', {username: username, password: password})
+      .then(res => {
+        localStorage.setItem('access_token', res.data.access);
+        localStorage.setItem('refresh_token', res.data.refresh);
+        axios.get('http://127.0.0.1:8000/user/', {
+          headers: {
+            'Authorization': `Bearer ${res.data.access}`
+          }
         })
-        .catch(err => {
-          console.log(err);
-        });
-    }
-
-    const changeUserLoginData=(e)=>{
-      setUserLoginData({...userLoginData, [e.target.name]:e.target.value})
-    }
-
+          .then(res => {
+            window.location.href = 'http://localhost:3000/home';
+          })
+          .catch(err => {
+            console.log(err);
+          });
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }
   
 
   return(
@@ -96,10 +94,11 @@ export default function Login(){
                   Forgot password?
                 </a>
               </div>
-            </div>
-          </div>
-        </form>
-    </div>
-  </div>  
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+  
 );
 }
