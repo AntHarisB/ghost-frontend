@@ -59,12 +59,15 @@ export default function HoursOverview({projectHours}) {
               
               <Bar dataKey='Grand_Total_Hours_Available' fill='#7BB99F' />
               <Bar dataKey='Grand_Total_Hours_Billed' fill='#DFE3E1' />
+
             </BarChart>
-				
-     </div> 
-   </div>
- </div>
- </ResponsiveContainer>
-  
-  )
+            </div>
+      </div>
+    </div>
+          </ResponsiveContainer>
+
+  );
 }
+
+
+
