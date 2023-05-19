@@ -1,13 +1,9 @@
 import React from 'react'
-import Sidebar from './Sidebar'
-import  { useState } from 'react';
+import Sidebar from '../../components/Sidebar'
 import {  MdOutlineHome } from 'react-icons/md';
-import SalesChannel from './charts/SalesChannels';
-import ProjectScope from './charts/ProjectScope';
-import HoursOverview from './charts/HoursOverview'
-import axios from 'axios';
-import { useEffect } from 'react';
-
+import SalesChannel from '../../charts/SalesChannels';
+import ProjectScope from '../../charts/ProjectScope';
+import HoursOverview from '../../charts/HoursOverview'
 
 
 export default function Home () {
