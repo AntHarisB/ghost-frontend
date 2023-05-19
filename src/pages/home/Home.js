@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import Sidebar from '../../components/Sidebar'
-import {  MdOutlineHome } from 'react-icons/md';
 import SalesChannel from '../../charts/SalesChannels';
 import ProjectScope from '../../charts/ProjectScope';
 import HoursOverview from '../../charts/HoursOverview'
@@ -32,7 +31,7 @@ export default function Home () {
     setIsDropdownOpen((prevState) => !prevState);
   };
   return (
-    <div className='flex'>
+    <div className='flex  h-1224'>
       <div className='basis-[12%] h-full '>
         <Sidebar />
       </div>

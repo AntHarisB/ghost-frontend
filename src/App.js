@@ -1,5 +1,6 @@
 import Login from './pages/login/Login';
 import Home from './pages/home/Home';
+import HomeDRC from './pages/home/HomeDRC';
 import { Route, Routes, useNavigate } from "react-router-dom";
 
 

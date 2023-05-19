@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import logo from '../image/antcolony-logo.png';
 import image from '../image/image.jpg';
-import {  MdOutlineHome } from 'react-icons/md';
+
 
 
 export default function Dashboard() {
@@ -16,7 +16,7 @@ export default function Dashboard() {
   };
 
   return (
-    <div  className='w-284 md:w-auto lg:w-284  h-1224 lg:h-1224  md:h-screen z-50 lg:bg-sidebar-gradient  md:bg-sidebar-gradient absolute md:relative lg:relative'>
+    <div  className='w-284 md:w-auto lg:w-284   lg:h-full  md:h-screen z-50 lg:bg-sidebar-gradient  md:bg-sidebar-gradient absolute md:relative lg:relative'>
       <div className='sm:hidden px-2 py-2'>
         <button
           className="block px-3 py-2 text-sm font-medium text-center border rounded-md"

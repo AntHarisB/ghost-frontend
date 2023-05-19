@@ -36,6 +36,7 @@ module.exports = {
         122:"122px",
         134:"134px",
         136:"136px",
+        139:"139px",
         117:"117px",
         129:"129px",
         81:"81px",
@@ -48,6 +49,12 @@ module.exports = {
         988:"988.8px",
         422:"422.15px",
         396:"396px",
+        127:"127px",
+        330:"330px",
+        103:"103px",
+        121:"121px",
+        212:"212px",
+        150:"150px",
       },
 
       height:{
@@ -68,6 +75,9 @@ module.exports = {
         15:"15px",
         280:"280.56px", 
         26:"26px",
+        1440:"1440px",
+        76:"76px",
+        695:"695px",
       },
       backgroundImage: {
         'sidebar-gradient': 'linear-gradient(179.32deg, #FCFDFC 8.04%, #E6F2ED 99.41%)',
