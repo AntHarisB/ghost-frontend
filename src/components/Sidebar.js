@@ -56,7 +56,7 @@ export default function Dashboard() {
                   </div> 
                 
                   <div className='text-start '>
-                    <span className='font-normal text-sm text-color6 font-link'>Admin</span>
+                    <span className='font-normal text-sm text-color6 font-link'>Adminnn</span>
                   </div>
                 </div>
                 <svg class="w-4 h-4 ml-2 md:hidden lg:block" aria-hidden="true" fill="none" stroke="black" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
