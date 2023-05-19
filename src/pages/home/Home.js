@@ -4,6 +4,8 @@ import {  MdOutlineHome } from 'react-icons/md';
 import SalesChannel from '../../charts/SalesChannels';
 import ProjectScope from '../../charts/ProjectScope';
 import HoursOverview from '../../charts/HoursOverview'
+import { useState,useEffect } from 'react';
+import axios from 'axios';
 
 
 export default function Home () {

@@ -3,7 +3,7 @@ import sidebar from '../image/sidebar.jpg';
 import logo from '../image/antcolony-logo.png';
 import image from '../image/image.jpg';
 import {  MdOutlineHome } from 'react-icons/md';
-import './index.css';
+import { useState } from 'react';
 
 export default function Dashboard() {
   const [selected, setSelected] = useState(null); //praćenje kliknutog elementa

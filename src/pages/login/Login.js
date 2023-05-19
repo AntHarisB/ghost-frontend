@@ -1,9 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
-import bgImage from './image/background.png';
-import logo from './image/antcolony-logo.png';
-import './index.css';
-import './App.css';
+import bgImage from '../../image/background.png';
+import logo from '../../image/antcolony-logo.png';
 
 
 
