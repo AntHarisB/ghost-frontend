@@ -1,5 +1,4 @@
 import React from 'react'
-import  { useState } from 'react';
 import Sidebar from '../../components/Sidebar'
 import {  MdOutlineHome } from 'react-icons/md';
 import SalesChannel from '../../charts/SalesChannels';
@@ -10,6 +9,41 @@ import axios from 'axios';
 
 
 export default function Home () {
+  const [selectedYear, setSelectedYear] = useState('2023');
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false); 
+
+  const years = ['2019','2020','2021', '2022', '2023'];
+  const [totalProjects, setTotalProjects] = useState(0);
+  const [projectHours, setProjectHours]=useState([]);
+  const [data, setData] = useState({
+    total_projects: 0,
+    total_value: 0,
+    avg_value: 0,
+    avg_lead_closing: 0,
+    avg_team_size: 0,
+    avg_velocity: 0,
+    weeks_over_ddl: 0,
+    avg_hourly_price: 0
+  });
+
+  useEffect(() => {
+    axios.get(`http://127.0.0.1:8000/project-statistics/${selectedYear}/`)
+      .then(response => setData(response.data))
+      .catch(error => console.error(error));
+    axios.get(`http://127.0.0.1:8000/project-hours/${selectedYear}/`)
+      .then(response => {setProjectHours([]);setProjectHours(response.data)})
+      .catch(error => console.error(error));
+  }, [selectedYear]);
+
+  const handleYearChange = (year) => {
+    setSelectedYear(year);
+    setIsDropdownOpen(false); 
+  };
+
+  const toggleDropdown = () => {
+    setIsDropdownOpen((prevState) => !prevState);
+  };
+
   const [selected, setSelected] = useState(null); // Hook za praćenje kliknutog elementa
 
   const handleItemClick = (item) => {
@@ -154,7 +188,7 @@ export default function Home () {
                   <div className='pr-4'>
                     <div className='rounded-full h-42 w-42 flex items-center justify-center bg-color7'>
                       <svg width="24" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <g clip-path="url(#clip0_171_382)">
+                        <g clipPath="url(#clip0_171_382)">
                         <path d="M5 2.25V21.75H17V20.25H6.5V3.75H14V8.25H18.5V9.75H20V7.19971L19.7744 6.97559L15.2744 2.47559L15.0503 2.25H5ZM15.5 4.80029L17.4497 6.75H15.5V4.80029ZM8 9.75V11.25H17V9.75H8ZM20.75 11.25V12.75C19.475 12.975 18.5 14.025 18.5 15.375C18.5 16.875 19.625 18 21.125 18H21.875C22.475 18 23 18.525 23 19.125C23 19.725 22.475 20.25 21.875 20.25H19.25V21.75H20.75V23.25H22.25V21.75C23.525 21.525 24.5 20.475 24.5 19.125C24.5 17.625 23.375 16.5 21.875 16.5H21.125C20.525 16.5 20 15.975 20 15.375C20 14.775 20.525 14.25 21.125 14.25H23.75V12.75H22.25V11.25H20.75ZM8 13.5V15H13.25V13.5H8ZM14.75 13.5V15H17V13.5H14.75ZM8 16.5V18H13.25V16.5H8ZM14.75 16.5V18H17V16.5H14.75Z" fill="#1A3835"/>
                         </g>
                         <defs>
@@ -185,7 +219,7 @@ export default function Home () {
               <div className='h-70 lg:w-60   lg:w-auto justify-between border flex items-center rounded-md'>
                   <div className='flex flex-col w-129 h-50 ml-4'>
                       <span className='text-sm font-face-r font-normal h-22 text-color9'>Avg. lead closing (d)</span>
-                      <span className='text-lg font-face-b font-bold h-26 text-color10'>12</span>
+                      <span className='text-lg font-face-b font-bold h-26 text-color10'>{(((data.avg_lead_closing.toFixed(2))*100)/100).toFixed(2)}</span>
                     </div>
 
                   <div className='pr-4'>
@@ -200,7 +234,7 @@ export default function Home () {
               <div className='h-70 lg:w-60  lg:w-auto justify-between border flex items-center rounded-md'>
                   <div className='flex flex-col w-92 h-50 ml-4'>
                       <span className='text-sm font-face-r font-normal h-22 text-color9'>Avg. team size</span>
-                      <span className='text-lg font-face-b font-bold h-26 text-color10'>2.2</span>
+                      <span className='text-lg font-face-b font-bold h-26 text-color10'>{(((data.avg_team_size.toFixed(2))*100)/100)}</span>
                     </div>
 
                   <div className='pr-4'>
@@ -215,7 +249,7 @@ export default function Home () {
               <div className='h-70 lg:w-60   lg:w-auto justify-between border flex items-center rounded-md'>
                   <div className='flex flex-col w-81 h-50 ml-4'>
                       <span className='text-sm font-face-r font-normal h-22 text-color9'>Avg.velocity</span>
-                      <span className='text-lg font-face-b font-bold h-26 text-color10'>64</span>
+                      <span className='text-lg font-face-b font-bold h-26 text-color10'>{((data.avg_velocity.toFixed(2))*100)/100}</span>
                     </div>
 
                   <div className='pr-4'>
@@ -230,13 +264,13 @@ export default function Home () {
               <div className='h-70 lg:w-60   lg:w-auto justify-between border flex items-center rounded-md'>
                   <div className='flex flex-col w-134 h-50 ml-4'>
                       <span className='text-sm font-face-r font-normal h-22 text-color9'>Weeks over deadline</span>
-                      <span className='text-lg font-face-b font-bold h-26 text-color10'>7</span>
+                      <span className='text-lg font-face-b font-bold h-26 text-color10'>{((data.weeks_over_ddl.toFixed(2))*100)/100}</span>
                     </div>
 
                   <div className='pr-4'>
                     <div className='rounded-full h-42 w-42 flex items-center justify-center bg-color7'>
                       <svg width="24" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path fill-rule="evenodd" clip-rule="evenodd" d="M7.25 3.75V3H8.75V3.75H16.25V3H17.75V3.75H20.75V11.9556C20.2895 11.6583 19.7856 11.4223 19.25 11.2592V8.25H5.75V18.75H11.7592C11.9223 19.2856 12.1583 19.7895 12.4556 20.25H4.25V3.75H7.25ZM11.6304 15.75C11.545 16.1532 11.5 16.5713 11.5 17C11.5 17.0837 11.5017 17.1671 11.5051 17.25H10.25V15.75H11.6304ZM13.2647 12.75C13.2598 12.7549 13.2549 12.7598 13.25 12.7647V12.75H13.2647ZM17.75 11.0051C17.6671 11.0017 17.5837 11 17.5 11C17.0713 11 16.6532 11.045 16.25 11.1304V9.75H17.75V11.0051ZM7.25 5.25H5.75V6.75H19.25V5.25H17.75V6H16.25V5.25H8.75V6H7.25V5.25ZM10.25 11.25V9.75H11.75V11.25H10.25ZM13.25 11.25V9.75H14.75V11.25H13.25ZM7.25 14.25V12.75H8.75V14.25H7.25ZM10.25 14.25V12.75H11.75V14.25H10.25ZM7.25 17.25V15.75H8.75V17.25H7.25Z" fill="#1A3835"/>
+                        <path fillRule="evenodd" clipRule="evenodd" d="M7.25 3.75V3H8.75V3.75H16.25V3H17.75V3.75H20.75V11.9556C20.2895 11.6583 19.7856 11.4223 19.25 11.2592V8.25H5.75V18.75H11.7592C11.9223 19.2856 12.1583 19.7895 12.4556 20.25H4.25V3.75H7.25ZM11.6304 15.75C11.545 16.1532 11.5 16.5713 11.5 17C11.5 17.0837 11.5017 17.1671 11.5051 17.25H10.25V15.75H11.6304ZM13.2647 12.75C13.2598 12.7549 13.2549 12.7598 13.25 12.7647V12.75H13.2647ZM17.75 11.0051C17.6671 11.0017 17.5837 11 17.5 11C17.0713 11 16.6532 11.045 16.25 11.1304V9.75H17.75V11.0051ZM7.25 5.25H5.75V6.75H19.25V5.25H17.75V6H16.25V5.25H8.75V6H7.25V5.25ZM10.25 11.25V9.75H11.75V11.25H10.25ZM13.25 11.25V9.75H14.75V11.25H13.25ZM7.25 14.25V12.75H8.75V14.25H7.25ZM10.25 14.25V12.75H11.75V14.25H10.25ZM7.25 17.25V15.75H8.75V17.25H7.25Z" fill="#1A3835"/>
                         <path d="M17.5 12C14.7438 12 12.5 14.2438 12.5 17C12.5 19.7562 14.7438 22 17.5 22C20.2562 22 22.5 19.7562 22.5 17C22.5 14.2438 20.2562 12 17.5 12ZM17.5 13.25C19.575 13.25 21.25 14.925 21.25 17C21.25 19.075 19.575 20.75 17.5 20.75C15.425 20.75 13.75 19.075 13.75 17C13.75 14.925 15.425 13.25 17.5 13.25ZM16.875 13.875V17.625H20V16.375H18.125V13.875H16.875Z" fill="#1A3835"/>
                       </svg>
                     </div>   
@@ -246,14 +280,14 @@ export default function Home () {
               <div className='h-70 lg:w-60  lg:w-auto justify-between border flex items-center rounded-md'>
                   <div className='flex flex-col w-106 h-50 ml-4'>
                       <span className='text-sm font-face-r font-normal h-22 text-color9'>Avg. hourly price</span>
-                      <span className='text-lg font-face-b font-bold h-26 text-color10'>$35</span>
+                      <span className='text-lg font-face-b font-bold h-26 text-color10'>${((data.avg_hourly_price.toFixed(2))*100)/100}</span>
                     </div>
 
                   <div className='pr-4'>
                     <div className='rounded-full h-42 w-42 flex items-center justify-center bg-color7'>
                       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <g clip-path="url(#clip0_171_422)">
-                        <path fill-rule="evenodd" clip-rule="evenodd" d="M3 12C3 7.03711 7.03711 3 12 3C16.6506 3 20.4882 6.54499 20.9528 11.0748H19.4439C18.9899 7.36223 15.838 4.5 12 4.5C7.84863 4.5 4.5 7.84863 4.5 12C4.5 16.1514 7.84863 19.5 12 19.5C12.7578 19.5 13.4889 19.3884 14.1777 19.1807V20.7337C13.4802 20.9076 12.7507 21 12 21C7.03711 21 3 16.9629 3 12ZM14.1777 11.25V12.75H11.25V6H12.75V11.25H14.1777Z" fill="#1A3835"/>
+                        <g clipPath="url(#clip0_171_422)">
+                        <path fillRule="evenodd" clipRule="evenodd" d="M3 12C3 7.03711 7.03711 3 12 3C16.6506 3 20.4882 6.54499 20.9528 11.0748H19.4439C18.9899 7.36223 15.838 4.5 12 4.5C7.84863 4.5 4.5 7.84863 4.5 12C4.5 16.1514 7.84863 19.5 12 19.5C12.7578 19.5 13.4889 19.3884 14.1777 19.1807V20.7337C13.4802 20.9076 12.7507 21 12 21C7.03711 21 3 16.9629 3 12ZM14.1777 11.25V12.75H11.25V6H12.75V11.25H14.1777Z" fill="#1A3835"/>
                         <path d="M17.5479 12V13.5C16.2729 13.725 15.2979 14.775 15.2979 16.125C15.2979 17.625 16.4229 18.75 17.9229 18.75H18.6729C19.2729 18.75 19.7979 19.275 19.7979 19.875C19.7979 20.475 19.2729 21 18.6729 21H16.0479V22.5H17.5479V24H19.0479V22.5C20.3229 22.275 21.2979 21.225 21.2979 19.875C21.2979 18.375 20.1729 17.25 18.6729 17.25H17.9229C17.3229 17.25 16.7979 16.725 16.7979 16.125C16.7979 15.525 17.3229 15 17.9229 15H20.5479V13.5H19.0479V12H17.5479Z" fill="#1A3835"/>
                         </g>
                         <defs>
@@ -269,10 +303,10 @@ export default function Home () {
 
             <div className='flex-col'>
               <div className='flex space-x-8'> 
-                  <SalesChannel/>
-                  <ProjectScope/>
+                  <SalesChannel selectedYear={selectedYear}/>
+                  <ProjectScope projectHours={projectHours}/>
               </div>
-                  <HoursOverview/> 
+                  <HoursOverview projectHours={projectHours}/> 
             </div>
           </div>
     </div>
