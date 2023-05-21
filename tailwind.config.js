@@ -81,7 +81,10 @@ module.exports = {
       },
       backgroundImage: {
         'sidebar-gradient': 'linear-gradient(179.32deg, #FCFDFC 8.04%, #E6F2ED 99.41%)',
-      }
+      },
+      fontSize: {
+       32:['32px'],
+      },
     },
   },
   plugins: [],

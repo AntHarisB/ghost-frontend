@@ -2,20 +2,14 @@ import React, { useEffect, useState } from 'react'
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend } from 'recharts'
 import axios from 'axios'
 
-export default function SalesChannel({selectedYear}){
 
-  const [salesChannelData, setSalesChannelData]=useState([])
-
+export default function SalesChannel(selectedYear){
   const [salesChannels, setSalesChannels]=useState({
     total_projects: 0,
     num_of_recommendation_projects: 0,
     num_of_partnership_projects: 0,
     num_of_sales_projects: 0
   });
-  
-  const RADIAN = Math.PI / 180
-  const COLORS = ['#3973F8', '#3491FA','#9D5FF3','#FF9F5A', '#7BB99F']
-  
 
   useEffect(()=>{
     axios.get(`http://127.0.0.1:8000/projectcreation-count/${selectedYear}/`)
@@ -23,29 +17,30 @@ export default function SalesChannel({selectedYear}){
     .catch(error => console.error(error));
   },[selectedYear])
 
-
-const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, index }) => {
-  const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
-  const x = cx + (radius + 10) * Math.cos(-midAngle * RADIAN);
-  const y = cy + (radius + 10) * Math.sin(-midAngle * RADIAN);
-  const textColor = index === 4 || index === 3? 'black' : 'white';
-
-  return (
-    <text x={x} y={y} fill={textColor} textAnchor="middle" dominantBaseline="middle" className="text-sm font-medium font-helvetica text-color16">
-      {`${(percent * 100).toFixed(0)}%`}
-    </text>
-  );
-};
-
   const data = [
     { name: 'Recommedation projects', value: salesChannels[0]?.num_of_recommendation_projects },
     { name: 'Patnership projects', value: salesChannels[0]?.num_of_partnership_projects },
     { name: 'Sales projects', value: salesChannels[0]?.num_of_sales_projects },
   ].filter(entry => entry.value > 0)
   
-   return(
-    <ResponsiveContainer>
-
+  
+  const RADIAN = Math.PI / 180
+  const COLORS = ['#3973F8', '#3491FA','#9D5FF3','#FF9F5A', '#7BB99F']
+  
+  const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, index }) => {
+    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+    const x = cx + (radius + 10) * Math.cos(-midAngle * RADIAN);
+    const y = cy + (radius + 10) * Math.sin(-midAngle * RADIAN);
+    const textColor = index === 4 || index === 3? 'black' : 'white';
+  
+    return (
+      <text x={x} y={y} fill={textColor} textAnchor="middle" dominantBaseline="middle" className="text-sm font-medium font-helvetica text-color16">
+        {`${(percent * 100).toFixed(0)}%`}
+      </text>
+    );
+  };
+  return(
+    <ResponsiveContainer width="50%" height="50%">
       <div className='border w-510 h-342 mt-10 flex justify-center  rounded-md'>
         <div  className='flex-col space-y-7'>
           <div className=' w-470 h-68 border-b flex items-center'>
