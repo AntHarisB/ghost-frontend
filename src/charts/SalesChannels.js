@@ -12,7 +12,7 @@ export default function SalesChannel(selectedYear){
   });
 
   useEffect(()=>{
-    axios.get(`http://127.0.0.1:8000/projectcreation-count/${selectedYear}/`)
+    axios.get(`http://127.0.0.1:8000/projectcreation-count/${selectedYear.selectedYear}/`)
     .then(response => setSalesChannels(response.data))
     .catch(error => console.error(error));
   },[selectedYear])
