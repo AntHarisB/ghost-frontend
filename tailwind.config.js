@@ -55,6 +55,10 @@ module.exports = {
         121:"121px",
         212:"212px",
         150:"150px",
+        262:"262px",
+        312:"312px",
+        150:"150px",
+        86:"86px",
       },
 
       height:{
@@ -78,6 +82,10 @@ module.exports = {
         1440:"1440px",
         76:"76px",
         695:"695px",
+        444:"444px",
+        695:"695px",
+        100:"100px",
+        60:"60px",
       },
       backgroundImage: {
         'sidebar-gradient': 'linear-gradient(179.32deg, #FCFDFC 8.04%, #E6F2ED 99.41%)',
