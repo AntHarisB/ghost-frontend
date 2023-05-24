@@ -5,48 +5,7 @@ import ProjectScope from '../../charts/ProjectScope';
 import HoursOverview from '../../charts/HoursOverview'
 
 import axios from 'axios';
-
-
-export const datah = [
-	{
-		name: 'January:1/1/2023',
-		Grand_Total_Hours_Billed: 2900,
-		Grand_Total_Hours_Available: 750,
-		
-	},
-	{
-		name: 'March:1/3/2023',
-		Grand_Total_Hours_Billed: 5500,
-		Grand_Total_Hours_Available: 2000,
-		
-	},
-	{
-		name: 'May:1/5/2023',
-		Grand_Total_Hours_Billed: 1600,
-		Grand_Total_Hours_Available: 2100,
-		
-	},
-	{
-		name: 'July:1/7/2023',
-		Grand_Total_Hours_Billed: 500,
-		Grand_Total_Hours_Available: 300,
-		
-	},
-	{
-		name: 'September:1/9/2023',
-		Grand_Total_Hours_Billed: 3200,
-		Grand_Total_Hours_Available: 4700,
-		
-	},
-	{
-		name: 'November:1/11/2023',
-		Grand_Total_Hours_Billed: 3750,
-		Grand_Total_Hours_Available: 5250,
-	}
-];
-
-export const ticks = [0, 1500, 3000, 4500, 6000];
-
+import axiosApiInstance from '../../AxiosApiInstance';
 
 
 export default function Home () {
@@ -171,7 +130,7 @@ export default function Home () {
 
                   {isDropdownOpen && (
                     <ul className="absolute left-0 mt-2 w-24 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
-                      {years.map((year) => (
+                      {years?.map((year) => (
                         <li
                           key={year}
                           className={`${
@@ -353,7 +312,7 @@ export default function Home () {
             </div>
               <div className='w-screen overflow-x-auto md:overflow-x-auto lg:overflow-x-hidden lg:w-auto'>
 
-                <HoursOverview name={"Hours overview"} data={datah} ticks={ticks} projectHours={projectHours}/> 
+                <HoursOverview projectHours={projectHours}/> 
 
               </div>
           </div>

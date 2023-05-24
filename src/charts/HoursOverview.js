@@ -1,33 +1,33 @@
 import React, { useState, useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 
-const chartTextStyle = {
-	fontFamily: 'GilroyM',
-	fontSize: 12,
-	fill: '#232F2D',
-	fontWeight: 500,
-	dy: 10,
- };
 
- const secchartTextStyle = {
-	fontFamily: 'GilroyM',
-	fontSize: 14, 
-	fill: '#232F2D',
-	fontWeight: 500, 
- };
 
- const axisLineStyle = {
-	stroke: '#E5E5EF',
-	strokeWidth: 2,
- };
-
- const gridLineStyle = {
-	stroke: '#E5E5EF', 
-	strokeDasharray: '3 3 3 0',
- };
-
- 
-export default function HoursOverview({name, data, ticks, projectHours}) {	 
+export default function HoursOverview({projectHours}) {	 
+	const chartTextStyle = {
+		fontFamily: 'GilroyM',
+		fontSize: 12,
+		fill: '#232F2D',
+		fontWeight: 500,
+		dy: 10,
+	 };
+	
+	 const secchartTextStyle = {
+		fontFamily: 'GilroyM',
+		fontSize: 14, 
+		fill: '#232F2D',
+		fontWeight: 500, 
+	 };
+	
+	 const axisLineStyle = {
+		stroke: '#E5E5EF',
+		strokeWidth: 2,
+	 };
+	
+	 const gridLineStyle = {
+		stroke: '#E5E5EF', 
+		strokeDasharray: '3 3 3 0',
+	 };
 
   const [hoursOverview, setHoursOverview] = useState([]);
   const [highestHours, setHighestHours] = useState(0);
@@ -51,7 +51,7 @@ export default function HoursOverview({name, data, ticks, projectHours}) {
       <div  className='flex-col space-y-7 '>	
         <div className=' w-1010 h-68  border-b flex items-center justify-between'>
 		   <div>
-          <span className='text-lg font-face-gsb font-semibold mr-4 text-color10'>{name}</span>
+          <span className='text-lg font-face-gsb font-semibold mr-4 text-color10'>Hours Overview</span>
           <span className='text-base font-link font-medium underline text-color8 '>See details</span>
 			 </div>
 			 <div className='w-396  h-4 flex justify-between items-center'>
@@ -65,6 +65,7 @@ export default function HoursOverview({name, data, ticks, projectHours}) {
 					</div>
 				</div>
         </div>
+		{console.log(projectHours)}
           <div className='w-988  h-280 flex id="chart"'>
 			 <ResponsiveContainer width='100%' height='100%'>
 						<BarChart 

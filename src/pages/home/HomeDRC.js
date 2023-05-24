@@ -188,7 +188,7 @@ export default function Home (name) {
 
           <div className='flex-col'>
               <div className='w-screen overflow-x-auto md:overflow-x-auto lg:overflow-x-hidden lg:w-auto'>
-                <HoursOverview name={"Revenues & costs (per project)-actual"} data={homeDRCdata} ticks={ticksh}/> 
+                <HoursOverview /> 
               </div>             
               <div className='w-screen overflow-x-auto md:overflow-x-auto lg:overflow-x-hidden lg:w-auto'>
                 <RevenuesCosts/> 
