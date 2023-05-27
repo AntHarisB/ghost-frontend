@@ -1,8 +1,9 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Sidebar from '../../components/Sidebar'
 import HoursOverview from '../../charts/HoursOverview'
 import RevenuesCosts from '../../charts/RevenuesCosts' 
-
+import axios from 'axios'
+import { prototype } from 'apexcharts'
 
 
 
@@ -61,6 +62,30 @@ export const ticksh = [0, 150000, 300000, 450000, 600000];
 
 export default function Home (name) {
   const [selected, setSelected] = useState(null);
+  const [data, setData] = useState({
+    project_name: "",
+    project_value: 0,
+    costs_actual:0
+  });
+  const [planedCost, setPlanedCost] = useState({
+    costs_actual: 0,
+    costs_planned: 0,
+    project_value: 0,
+    project_value_planned: 0,
+    revenue_gap: 0,
+    month: 0,
+    month_name: "",
+    date_project: ""
+  });
+  const [revenue, setRevenue]=useState({
+    actual_revenue: 0,
+    planned_revenue: 0,
+    planned_direct_cost: 0,
+    actual_direct_cost: 0,
+    margin: 0,
+    actual_gross_profit: 0,
+    actual_avg_margin: 0
+  })
 
   const handleItemClick = (item) => {
     if (selected === item) {
@@ -70,13 +95,27 @@ export default function Home (name) {
     }
   };
 
+  useEffect(() => {
+    axios.get(`http://127.0.0.1:8000/api/actual_costs_revenue/2020/`)
+      .then(response => {
+        const responseData = response.data;
+        const totalProjectValue = responseData.reduce((sum, item) => sum + item.project_value, 0);
+        setData({ ...data, project_value: totalProjectValue });
+      })
+      .catch(error => console.error(error));
+      axios.get(`http://127.0.0.1:8000/api/actual_planned_costs_revenue/2020/`)
+      .then(response => setPlanedCost(response.data[0]))
+      .catch(error => console.error(error));
+      axios.get(`http://127.0.0.1:8000/api/stats_revenue_costs/2020/`)
+      .then(response => setRevenue(response.data[0]))
+      .catch(error => console.error(error));
+  }, []);
 
   return (
     <div className='flex h-1440'>
       <div className='basis-[12%] h-full '>
         <Sidebar />
       </div>
-      
       <div className='basis-[88%] pb-5 pt-14 px-3 lg:py-8 lg:px-9 lg:overflow-x-hidden md:overflow-x-scroll '>
         <h1 className='text-3xl mb-10 text-color10 font-bold font-face-b'>Home</h1>
           
@@ -113,13 +152,12 @@ export default function Home (name) {
                       </span>
               </div>
             </div>
-          </div>
-
+          </div>       
           <div className='block space-y-5 lg:space-y-0  mt-10 lg:mt-10 lg:h-170 lg:w-1050 lg:grid lg:gap-x-8 lg:gap-y-7 lg:grid-cols-3 lg:my-0 my-10 md:grid-cols-2'> 
               <div className='h-70 lg:w-330  justify-between border flex items-center rounded-md'>
                   <div className='flex flex-col w-127 h-50 ml-4'>
                     <span className='text-sm font-face-r font-normal h-22 text-color9'>Actual revenue</span>
-                    <span className='text-lg font-face-b font-bold h-26 text-color10'>1,615,341.00 KM</span>                    
+                    <span className='text-lg font-face-b font-bold h-26 text-color10'>{(((revenue.actual_revenue.toFixed(2))*100)/100)} KM</span>                    
                   </div>
                    
                   <div className='pr-4'>
@@ -134,7 +172,7 @@ export default function Home (name) {
               <div className='h-70 lg:w-330   lg:w-auto justify-between border flex items-center rounded-md'>
                   <div className='flex flex-col w-139 h-50 ml-4'>
                       <span className='text-sm font-face-r font-normal h-22 text-color9'>Planned direct costs</span>
-                      <span className='text-lg font-face-b font-bold h-26 text-color10'>1,890,000.00 KM</span>
+                      <span className='text-lg font-face-b font-bold h-26 text-color10'>{(((revenue.planned_direct_cost.toFixed(2))*100)/100)} KM</span>
                   </div>
 
                   <div className='pr-4'>
@@ -150,14 +188,14 @@ export default function Home (name) {
               <div className='h-170 lg:w-330 row-span-2 justify-center bg-color7 flex items-center rounded-md'>
                   <div className='flex flex-col w-212 h-76 justify-center items-center'>
                       <span className='text-lg font-face-m font-medium h-7 w-150 text-center text-color9'>Actual gross profit</span>
-                      <span className='text-3xl font-face-gsb font-semibold h-10 w-212 text-center text-color10'>-284,086.00KM</span>
+                      <span className='text-3xl font-face-gsb font-semibold h-10 w-212 text-center text-color10'>{(((revenue.actual_gross_profit.toFixed(2))*100)/100)}KM</span>
                   </div>                    
               </div>
 
               <div className='h-70 lg:w-330 justify-between border flex items-center rounded-md'>
                   <div className='flex flex-col w-103 h-50 ml-4'>
                       <span className='text-sm font-face-r font-normal h-22 text-color9'>Actual margin %</span>
-                      <span className='text-lg font-face-b font-bold h-26 text-color10'>40%</span>
+                      <span className='text-lg font-face-b font-bold h-26 text-color10'>{(((revenue.margin.toFixed(2))*100)/100)}%</span>
                   </div>
 
                   <div className='pr-4'>
@@ -188,7 +226,7 @@ export default function Home (name) {
 
           <div className='flex-col'>
               <div className='w-screen overflow-x-auto md:overflow-x-auto lg:overflow-x-hidden lg:w-auto'>
-                <HoursOverview /> 
+                {/* <HoursOverview/>  */}
               </div>             
               <div className='w-screen overflow-x-auto md:overflow-x-auto lg:overflow-x-hidden lg:w-auto'>
                 <RevenuesCosts/> 

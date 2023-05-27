@@ -65,7 +65,6 @@ export default function HoursOverview({projectHours}) {
 					</div>
 				</div>
         </div>
-		{console.log(projectHours)}
           <div className='w-988  h-280 flex id="chart"'>
 			 <ResponsiveContainer width='100%' height='100%'>
 						<BarChart 

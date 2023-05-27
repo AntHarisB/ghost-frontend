@@ -59,6 +59,8 @@ const gridLineStyle = {
 };
 
 export default function RevenuesCosts() {
+
+  
   return (
     <div className='border w-1050 h-695 mt-10 flex justify-center rounded-md'>
       <div className='flex-col space-y-7'>

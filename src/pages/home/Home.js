@@ -3,9 +3,9 @@ import Sidebar from '../../components/Sidebar'
 import SalesChannel from '../../charts/SalesChannels';
 import ProjectScope from '../../charts/ProjectScope';
 import HoursOverview from '../../charts/HoursOverview'
+import api from '../../Api';
+import { getAccessToken,clearTokens } from '../../Api';
 
-import axios from 'axios';
-import axiosApiInstance from '../../AxiosApiInstance';
 
 
 export default function Home () {
@@ -37,19 +37,32 @@ export default function Home () {
   });
 
   useEffect(() => {
-    axios.get(`http://127.0.0.1:8000/project-statistics/${selectedYear}/`)
+    api.get(`http://127.0.0.1:8000/project-statistics/${selectedYear}/`, {
+      headers: {
+        'Authorization': `Bearer ${getAccessToken()}`
+      }
+    })
       .then(response => setData(response.data))
       .catch(error => console.error(error));
-    axios.get(`http://127.0.0.1:8000/project-hours/${selectedYear}/`)
-      .then(response => {setProjectHours([]);setProjectHours(response.data)})
+    
+    api.get(`http://127.0.0.1:8000/project-hours/${selectedYear}/`, {
+      headers: {
+        'Authorization': `Bearer ${getAccessToken()}`
+      }
+    })
+      .then(response => {
+        setProjectHours([]);
+        setProjectHours(response.data);
+      })
       .catch(error => console.error(error));
   }, [selectedYear]);
-
+  
 
   const handleYearChange = (year) => {
     setSelectedYear(year);
     setIsDropdownOpen(false); 
   };
+  
 
   const toggleDropdown = () => {
     setIsDropdownOpen((prevState) => !prevState);
@@ -59,7 +72,6 @@ export default function Home () {
       <div className='basis-[12%]'>
         <Sidebar />
       </div>
-      
       <div className='basis-[88%] pb-5 pt-14 px-3 lg:py-8 lg:px-11 lg:overflow-x-hidden md:overflow-x-scroll '>
         <h1 className='text-3xl mb-10 text-color10 font-bold font-face-b'>Home</h1>
           
@@ -130,7 +142,7 @@ export default function Home () {
 
                   {isDropdownOpen && (
                     <ul className="absolute left-0 mt-2 w-24 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
-                      {years?.map((year) => (
+                      {years.map((year) => (
                         <li
                           key={year}
                           className={`${
