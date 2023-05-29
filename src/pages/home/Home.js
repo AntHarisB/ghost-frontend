@@ -8,7 +8,7 @@ import { getAccessToken,clearTokens } from '../../Api';
 
 
 
-export default function Home () {
+export default function Home ({user}) {
   const [selected, setSelected] = useState(null);
 
   const handleItemClick = (item) => {
@@ -70,8 +70,9 @@ export default function Home () {
   return (
     <div className='flex'>
       <div className='basis-[12%]'>
-        <Sidebar />
+        <Sidebar user={user}/>
       </div>
+      {console.log('home',user)}
       <div className='basis-[88%] pb-5 pt-14 px-3 lg:py-8 lg:px-11 lg:overflow-x-hidden md:overflow-x-scroll '>
         <h1 className='text-3xl mb-10 text-color10 font-bold font-face-b'>Home</h1>
           
