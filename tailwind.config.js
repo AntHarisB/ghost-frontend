@@ -59,6 +59,13 @@ module.exports = {
         312:"312px",
         150:"150px",
         86:"86px",
+        251:"251px",
+        203:"203px",
+        214:"214px",
+        320:"320px",
+        252:"252px",
+        
+        
       },
 
       height:{
@@ -86,6 +93,9 @@ module.exports = {
         695:"695px",
         100:"100px",
         60:"60px",
+        138:"138px",
+        240:"240px",
+        
       },
       backgroundImage: {
         'sidebar-gradient': 'linear-gradient(179.32deg, #FCFDFC 8.04%, #E6F2ED 99.41%)',
@@ -93,6 +103,10 @@ module.exports = {
       fontSize: {
        32:['32px'],
       },
+      borderWidth: {
+        DEFAULT: '1px',
+        bo: '0.5px',
+      }
     },
   },
   plugins: [],
