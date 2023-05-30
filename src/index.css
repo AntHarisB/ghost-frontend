@@ -33,4 +33,13 @@
     font-weight: 700;
     font-style: normal;
    }
- 
+   .selected {
+    font-family:"GilroyB";
+    font-weight: 700;
+  }
+
+  .color{
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    color: #43A57C;
+  }
