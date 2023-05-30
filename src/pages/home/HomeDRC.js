@@ -32,7 +32,7 @@ const chartTextStyle = {
  };
 
 
-export default function Home () {
+export default function Home ({ticks}) {
   const [selected, setSelected] = useState(null);
   const [data, setData] = useState({
     project_name: "",
@@ -316,7 +316,7 @@ export default function Home () {
                     <BarChart 
                       width={500}
                       height={250}
-                      data={datae}	
+                      data={data}	
                     >
                       <CartesianGrid strokeDasharray='3 3 3 0' vertical={false} stroke={gridLineStyle.stroke}/>
                       <XAxis dataKey='name' 
