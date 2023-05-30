@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 
 const chartTextStyle = {
 	fontFamily: 'GilroyM',
@@ -27,7 +27,7 @@ const chartTextStyle = {
  };
 
  
-export default function HoursOverview({name, data, ticks, projectHours}) {	 
+export default function HoursOverview({projectHours}) {	 
 
   const [hoursOverview, setHoursOverview] = useState([]);
   const [highestHours, setHighestHours] = useState(0);
@@ -51,7 +51,7 @@ export default function HoursOverview({name, data, ticks, projectHours}) {
       <div  className='flex-col space-y-7 '>	
         <div className=' w-1010 h-68  border-b flex items-center justify-between'>
 		   <div>
-          <span className='text-lg font-face-gsb font-semibold mr-4 text-color10'>{name}</span>
+          <span className='text-lg font-face-gsb font-semibold mr-4 text-color10'>Hours overview</span>
           <span className='text-base font-link font-medium underline text-color8 '>See details</span>
 			 </div>
 			 <div className='w-396  h-4 flex justify-between items-center'>
