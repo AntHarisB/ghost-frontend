@@ -2,7 +2,8 @@ import React, { useState, useEffect }  from 'react'
 import Sidebar from '../../components/Sidebar'
 import RevenuesCosts from '../../charts/RevenuesCosts'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts' 
-import axios from 'axios'
+import api from '../../Api'
+import { getAccessToken } from '../../Api'
 
 
 
@@ -34,6 +35,7 @@ const chartTextStyle = {
 
 export default function Home () {
   const [selected, setSelected] = useState(null);
+  const [largestProject, setLargestProject] = useState([]);
   const [data, setData] = useState({
     project_name: "",
     project_value: 0,
@@ -59,6 +61,8 @@ export default function Home () {
     actual_avg_margin: 0
   })
 
+  
+  
   const handleItemClick = (item) => {
     if (selected === item) {
       setSelected(null);
@@ -66,43 +70,78 @@ export default function Home () {
       setSelected(item); 
     }
   };
-
-
-
-
+  
+  
+  
+  
   const [selectedYear, setSelectedYear] = useState('2023');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false); 
-
+  const [highestValue,setHighestValue]=useState();
   const years = ['2019','2020','2021', '2022', '2023'];
-
+  
   const handleYearChange = (year) => {
     setSelectedYear(year);
     setIsDropdownOpen(false); 
   };
-
+  
   const toggleDropdown = () => {
     setIsDropdownOpen((prevState) => !prevState);
   };
-
-
-
-
+  
+  
+  
+  
+  
+  useEffect(() => {
+    api.get(`http://127.0.0.1:8000/api/actual_costs_revenue/${selectedYear}/`, {
+      headers: {
+        'Authorization': `Bearer ${getAccessToken()}`
+      }
+    })
+    .then(response => {
+      const responseData = response.data;
+      const totalProjectValue = responseData.reduce((sum, item) => sum + item.project_value, 0);
+      setData({ ...data, project_value: totalProjectValue });
+    })
+    .catch(error => console.error(error));
+    api.get(`http://127.0.0.1:8000/api/actual_planned_costs_revenue/${selectedYear}/`, {
+      headers: {
+        'Authorization': `Bearer ${getAccessToken()}`
+      }
+    })
+    .then(response => setPlanedCost(response.data[0]))
+    .catch(error => console.error(error));
+    api.get(`http://127.0.0.1:8000/api/stats_revenue_costs/${selectedYear}/`, {
+      headers: {
+        'Authorization': `Bearer ${getAccessToken()}`
+      }
+    })
+    .then(response => setRevenue(response.data[0]))
+    .catch(error => console.error(error));
+  }, [selectedYear]);
+  
 
   useEffect(() => {
-    axios.get(`http://127.0.0.1:8000/api/actual_costs_revenue/2020/`)
+    api.get(`http://127.0.0.1:8000/api/actual_costs_revenue/${selectedYear}/`, {
+      headers: {
+        'Authorization': `Bearer ${getAccessToken()}`
+      }
+    })
       .then(response => {
-        const responseData = response.data;
-        const totalProjectValue = responseData.reduce((sum, item) => sum + item.project_value, 0);
-        setData({ ...data, project_value: totalProjectValue });
+        const apiData = response.data;
+        const chartData = apiData.map(project => ({
+          name: project.project_name,
+          Grand_Total_Total_Billed: project.project_value,
+          Grand_Total_Cost: project.costs_actual,
+        }));
+        setData(chartData);
+        setHighestValue(Math.max(...chartData.map(item => item.Grand_Total_Total_Billed)));
+        console.log(highestValue)
       })
-      .catch(error => console.error(error));
-      axios.get(`http://127.0.0.1:8000/api/actual_planned_costs_revenue/2020/`)
-      .then(response => setPlanedCost(response.data[0]))
-      .catch(error => console.error(error));
-      axios.get(`http://127.0.0.1:8000/api/stats_revenue_costs/2020/`)
-      .then(response => setRevenue(response.data[0]))
-      .catch(error => console.error(error));
-  }, []);
+      .catch(error => {
+        console.error('Error fetching data:', error);
+      });
+  }, [selectedYear]);
 
 
   return (
@@ -111,11 +150,9 @@ export default function Home () {
         <Sidebar />
       </div>
 
-      
       <div className='basis-[88%] pb-5 pt-14 px-3 lg:py-8 lg:px-11 lg:overflow-x-hidden lg:overflow-y-hidden md:overflow-x-scroll '>
 
         <h1 className='text-3xl mb-10 text-color10 font-bold font-face-b'>Home</h1>
-          
           <div className='block space-y-10 lg:space-y-0 lg:flex lg:flex-row lg:justify-between lg:items-center'>
             
             <div className='flex mb-3 '>
@@ -287,8 +324,7 @@ export default function Home () {
                     </div>  
                   </div>                
               </div>
-          </div>
-
+          </div>         
           <div className='flex-col'>
 
                 <div className='w-screen overflow-x-auto md:overflow-x-auto lg:overflow-x-hidden lg:w-auto'>
@@ -302,11 +338,11 @@ export default function Home () {
             <div className='w-396  h-4 flex justify-between items-center'>
               <div className='flex'>
             <div className='w-4 h-4 mr-2 rounded-full border border-color15 border-2'></div>
-                <span className='text-sm font-face-m text-color10 font-medium'>Grand Total Hours Available</span>
+                <span className='text-sm font-face-m text-color10 font-medium'>Grand Total Total Billed</span>
                 </div>
                 <div className='flex'>
                 <div className='w-4 h-4 mr-2 rounded-full border border-color8 border-2'></div>
-                <span className='text-sm font-face-m font-medium text-color10'>Grand Total Hours Billed</span>
+                <span className='text-sm font-face-m font-medium text-color10'>Grand Total Cost</span>
                 </div>
 
               </div>
@@ -316,7 +352,7 @@ export default function Home () {
                     <BarChart 
                       width={500}
                       height={250}
-                      data={datae}	
+                      data={data}	
                     >
                       <CartesianGrid strokeDasharray='3 3 3 0' vertical={false} stroke={gridLineStyle.stroke}/>
                       <XAxis dataKey='name' 
@@ -328,11 +364,11 @@ export default function Home () {
                         tickLine={{ display: 'none' }}
                         dx={-5} 
                         dy={-3}
-                        ticks={ticks} 
+                        ticks={[0, highestValue * 0.25, highestValue * 0.5, highestValue * 0.75, highestValue]} 
                         tick={secchartTextStyle} />
                       <Tooltip />
-                      <Bar dataKey='Grand_Total_Hours_Available' fill='#FF9F5A' barSize={20} radius={[5, 5, 0, 0]}/>
-                      <Bar dataKey='Grand_Total_Hours_Billed' fill='#7BB99F' barSize={20} radius={[5, 5, 0, 0]}/>
+                      <Bar dataKey='Grand_Total_Total_Billed' fill='#FF9F5A' barSize={20} radius={[5, 5, 0, 0]}/>
+                      <Bar dataKey='Grand_Total_Cost' fill='#7BB99F' barSize={20} radius={[5, 5, 0, 0]}/>
                     </BarChart>
                   </ResponsiveContainer>
                 </div>							
@@ -340,13 +376,10 @@ export default function Home () {
             </div>     
             </div>             
             <div className='w-screen overflow-x-auto md:overflow-x-auto lg:overflow-x-hidden '>
-              <RevenuesCosts/> 
+              <RevenuesCosts selectedYear={selectedYear}/> 
             </div>
           </div>
       </div>
     </div>
   )
 }
-
-
-

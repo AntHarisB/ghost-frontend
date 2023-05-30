@@ -3,7 +3,8 @@ import Sidebar from '../../components/Sidebar'
 import SalesChannel from '../../charts/SalesChannels';
 import ProjectScope from '../../charts/ProjectScope';
 import HoursOverview from '../../charts/HoursOverview'
-
+import api from '../../Api';
+import { getAccessToken } from '../../Api';
 import axios from 'axios';
 
 
@@ -49,7 +50,7 @@ export const ticks = [0, 1500, 3000, 4500, 6000];
 
 
 
-export default function Home () {
+export default function Home ({user}) {
   const [selected, setSelected] = useState(null);
 
   const handleItemClick = (item) => {

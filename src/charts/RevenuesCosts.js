@@ -57,8 +57,9 @@ const gridLineStyle = {
   strokeDasharray: '3 3 3 0',
 };
 
-export default function RevenuesCosts() {
+export default function RevenuesCosts({selectedYear}) {
 
+  
   
   return (
     <div className='border w-1050 h-695 mt-10 flex justify-center rounded-md'>
