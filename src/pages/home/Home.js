@@ -3,7 +3,6 @@ import Sidebar from '../../components/Sidebar'
 import SalesChannel from '../../charts/SalesChannels';
 import ProjectScope from '../../charts/ProjectScope';
 import HoursOverview from '../../charts/HoursOverview'
-
 import axios from 'axios';
 
 
@@ -376,6 +375,3 @@ export default function Home () {
     </div>
   )
 }
-
-
-
