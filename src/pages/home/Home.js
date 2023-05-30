@@ -377,6 +377,3 @@ export default function Home ({user}) {
     </div>
   )
 }
-
-
-

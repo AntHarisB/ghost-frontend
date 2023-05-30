@@ -113,6 +113,3 @@ export default function ProjectScope({projectHours}) {
     </div>
   );
 }
-
-
-
