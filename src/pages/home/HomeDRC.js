@@ -1,7 +1,9 @@
+
 import React, { useState, useEffect }  from 'react'
 import Sidebar from '../../components/Sidebar'
 import RevenuesCosts from '../../charts/RevenuesCosts'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts' 
+
 
 
 const chartTextStyle = {
@@ -32,6 +34,30 @@ const chartTextStyle = {
 
 export default function Home () {
   const [selected, setSelected] = useState(null);
+  const [data, setData] = useState({
+    project_name: "",
+    project_value: 0,
+    costs_actual:0
+  });
+  const [planedCost, setPlanedCost] = useState({
+    costs_actual: 0,
+    costs_planned: 0,
+    project_value: 0,
+    project_value_planned: 0,
+    revenue_gap: 0,
+    month: 0,
+    month_name: "",
+    date_project: ""
+  });
+  const [revenue, setRevenue]=useState({
+    actual_revenue: 0,
+    planned_revenue: 0,
+    planned_direct_cost: 0,
+    actual_direct_cost: 0,
+    margin: 0,
+    actual_gross_profit: 0,
+    actual_avg_margin: 0
+  })
 
   const handleItemClick = (item) => {
     if (selected === item) {
@@ -41,55 +67,9 @@ export default function Home () {
     }
   };
 
-  const datae = [
-    {
-      name: 'AlphaBid',
-      Grand_Total_Hours_Billed: 280000,
-      Grand_Total_Hours_Available: 75000,
-      
-    },
-    {
-      name: 'Audiowolf',
-      Grand_Total_Hours_Billed: 550000,
-      Grand_Total_Hours_Available: 200000,
-      
-    },
-    {
-      name: 'GIZ',
-      Grand_Total_Hours_Billed: 160000,
-      Grand_Total_Hours_Available: 210000,
-      
-    },
-    {
-      name: 'HUB71',
-      Grand_Total_Hours_Billed: 160000,
-      Grand_Total_Hours_Available: 210000,
-      
-    },
-    {
-      name: 'Kutuby',
-      Grand_Total_Hours_Billed: 50000,
-      Grand_Total_Hours_Available: 30000,
-      
-    },
-    {
-      name: 'Travelspot',
-      Grand_Total_Hours_Billed: 330000,
-      Grand_Total_Hours_Available: 480000,
-    },
-     {
-      name: 'Virgin Pulse',
-      Grand_Total_Hours_Billed: 330000,
-      Grand_Total_Hours_Available: 480000,
-    },
-    {
-      name: 'Zeppelin(CAT)',
-      Grand_Total_Hours_Billed: 375000,
-      Grand_Total_Hours_Available: 525000,
-    }
-  ];
 
-  const ticks = [0, 150000, 300000, 450000, 600000];
+
+
   const [selectedYear, setSelectedYear] = useState('2023');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false); 
 
@@ -108,13 +88,32 @@ export default function Home () {
 
 
 
+  useEffect(() => {
+    axios.get(`http://127.0.0.1:8000/api/actual_costs_revenue/2020/`)
+      .then(response => {
+        const responseData = response.data;
+        const totalProjectValue = responseData.reduce((sum, item) => sum + item.project_value, 0);
+        setData({ ...data, project_value: totalProjectValue });
+      })
+      .catch(error => console.error(error));
+      axios.get(`http://127.0.0.1:8000/api/actual_planned_costs_revenue/2020/`)
+      .then(response => setPlanedCost(response.data[0]))
+      .catch(error => console.error(error));
+      axios.get(`http://127.0.0.1:8000/api/stats_revenue_costs/2020/`)
+      .then(response => setRevenue(response.data[0]))
+      .catch(error => console.error(error));
+  }, []);
+
+
   return (
     <div className='flex h-full'>
       <div className='basis-[12%] h-auto '>
         <Sidebar />
       </div>
+
       
       <div className='basis-[88%] pb-5 pt-14 px-3 lg:py-8 lg:px-11 lg:overflow-x-hidden lg:overflow-y-hidden md:overflow-x-scroll '>
+
         <h1 className='text-3xl mb-10 text-color10 font-bold font-face-b'>Home</h1>
           
           <div className='block space-y-10 lg:space-y-0 lg:flex lg:flex-row lg:justify-between lg:items-center'>
@@ -150,6 +149,7 @@ export default function Home () {
                       </span>
               </div>
             </div>
+
 
             <div className='flex mr-5'>
                 <div className='flex  items-center justify-center '>
@@ -216,12 +216,13 @@ export default function Home () {
                 </div>
               </div>
           </div>
+           
 
           <div className='block space-y-5 lg:space-y-0  mt-10 lg:mt-10 lg:h-170 lg:w-1050 lg:grid lg:gap-x-8 lg:gap-y-7 lg:grid-cols-3 lg:my-0 my-10 md:grid-cols-2'> 
               <div className='h-70 lg:w-330  justify-between border flex items-center rounded-md'>
                   <div className='flex flex-col w-127 h-50 ml-4'>
                     <span className='text-sm font-face-r font-normal h-22 text-color9'>Actual revenue</span>
-                    <span className='text-lg font-face-b font-bold h-26 text-color10'>1,615,341.00 KM</span>                    
+                    <span className='text-lg font-face-b font-bold h-26 text-color10'>{(((revenue.actual_revenue.toFixed(2))*100)/100)} KM</span>                    
                   </div>
                    
                   <div className='pr-4'>
@@ -236,7 +237,7 @@ export default function Home () {
               <div className='h-70 lg:w-330   lg:w-auto justify-between border flex items-center rounded-md'>
                   <div className='flex flex-col w-139 h-50 ml-4'>
                       <span className='text-sm font-face-r font-normal h-22 text-color9'>Planned direct costs</span>
-                      <span className='text-lg font-face-b font-bold h-26 text-color10'>1,890,000.00 KM</span>
+                      <span className='text-lg font-face-b font-bold h-26 text-color10'>{(((revenue.planned_direct_cost.toFixed(2))*100)/100)} KM</span>
                   </div>
 
                   <div className='pr-4'>
@@ -252,14 +253,14 @@ export default function Home () {
               <div className='h-170 lg:w-330 row-span-2 justify-center bg-color7 flex items-center rounded-md'>
                   <div className='flex flex-col w-212 h-76 justify-center items-center'>
                       <span className='text-lg font-face-m font-medium h-7 w-150 text-center text-color9'>Actual gross profit</span>
-                      <span className='text-3xl font-face-gsb font-semibold h-10 w-212 text-center text-color10'>-284,086.00KM</span>
+                      <span className='text-3xl font-face-gsb font-semibold h-10 w-212 text-center text-color10'>{(((revenue.actual_gross_profit.toFixed(2))*100)/100)}KM</span>
                   </div>                    
               </div>
 
               <div className='h-70 lg:w-330 justify-between border flex items-center rounded-md'>
                   <div className='flex flex-col w-103 h-50 ml-4'>
                       <span className='text-sm font-face-r font-normal h-22 text-color9'>Actual margin %</span>
-                      <span className='text-lg font-face-b font-bold h-26 text-color10'>40%</span>
+                      <span className='text-lg font-face-b font-bold h-26 text-color10'>{(((revenue.margin.toFixed(2))*100)/100)}%</span>
                   </div>
 
                   <div className='pr-4'>
@@ -289,6 +290,7 @@ export default function Home () {
           </div>
 
           <div className='flex-col'>
+
                 <div className='w-screen overflow-x-auto md:overflow-x-auto lg:overflow-x-hidden lg:w-auto'>
                 <div className='border w-1050  h-392 mt-10 flex justify-center rounded-md'>
             <div  className='flex-col space-y-7 '>	
@@ -306,6 +308,7 @@ export default function Home () {
                 <div className='w-4 h-4 mr-2 rounded-full border border-color8 border-2'></div>
                 <span className='text-sm font-face-m font-medium text-color10'>Grand Total Hours Billed</span>
                 </div>
+
               </div>
               </div>
                 <div className='w-988  h-280 flex id="chart"'>

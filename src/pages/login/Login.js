@@ -3,37 +3,40 @@ import '../../App.css';
 import LoginBgImg from "./components/LoginBgImg";
 import AxiosInstance from '../../AxiosInstance.js';
 import AxiosApiInstance from '../../AxiosApiInstance.js';
+import {useNavigate} from 'react-router-dom'
 
 
 
-export default function Login(){
-  const [userLoginData, setUserLoginData]=useState({
-    username:'',
-    password:''
+export default function Login({ setUser }) {
+  const navigate = useNavigate();
+  const [userLoginData, setUserLoginData] = useState({
+    username: '',
+    password: ''
   });
 
-  const handleSubmit=async(e)=>{
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    AxiosInstance.post('/api/token/', {username: userLoginData.username, password: userLoginData.password})
-        .then(res => {
-          localStorage.setItem('access_token', res.data.access);
-          localStorage.setItem('refresh_token', res.data.refresh);
-          AxiosInstance.get('/user/', {
-            headers: {
-              'Authorization': `Bearer ${res.data.access}`
-            }
-          })
-            .then(res => {
-              window.location.href = 'http://localhost:3000/home';
-            })
-            .catch(err => {
-              console.log(err);
-            });
+    AxiosInstance.post('/api/token/', { username: userLoginData.username, password: userLoginData.password })
+      .then(res => {
+        localStorage.setItem('access_token', res.data.access);
+        localStorage.setItem('refresh_token', res.data.refresh);
+        AxiosInstance.get('/user/', {
+          headers: {
+            'Authorization': `Bearer ${res.data.access}`
+          }
         })
-        .catch(err => {
-          console.log(err);
-        });
-    }
+        .then(res => {
+          const filteredUser = res.data.find((item) => item.username === userLoginData.username);
+          setUser(filteredUser);
+          localStorage.setItem('user', JSON.stringify(filteredUser));
+          navigate('/home'); 
+          console.log(res.data);
+        })
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }
 
     const changeUserLoginData=(e)=>{
       setUserLoginData({...userLoginData, [e.target.name]:e.target.value})

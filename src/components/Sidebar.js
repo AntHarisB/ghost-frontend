@@ -7,6 +7,8 @@ import { useState } from 'react';
 export default function Dashboard() {
   const [showSidebar, setShowSidebar] = useState(false);
   const [selected, setSelected] = useState(null);
+  const storedUser = localStorage.getItem('user');
+  const user = storedUser ? JSON.parse(storedUser) : null;
   const handleItemClick = (item) => {
     if (selected === item) {
       setSelected(null);
@@ -53,7 +55,7 @@ export default function Dashboard() {
               <img src={image} alt="img" className="w-54 h-54" /> 
                 <div className='md:hidden lg:block'>
                   <div className='mr-5'>
-                    <h2 className='font-medium text-base text-color5 font-link'>Miron Lukač</h2>
+                    <h2 className='font-medium text-base text-color5 font-link'>{user.first_name} {user.last_name}</h2>
                   </div> 
                 
                   <div className='text-start '>
