@@ -4,7 +4,7 @@ import RevenuesCosts from '../../charts/RevenuesCosts'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts' 
 import api from '../../Api'
 import { getAccessToken } from '../../Api'
-
+import { useNavigate } from 'react-router-dom'
 
 
 const chartTextStyle = {
@@ -35,7 +35,7 @@ const chartTextStyle = {
 
 export default function Home () {
   const [selected, setSelected] = useState(null);
-  const [largestProject, setLargestProject] = useState([]);
+  const navigate=useNavigate();
   const [data, setData] = useState({
     project_name: "",
     project_value: 0,
@@ -136,7 +136,6 @@ export default function Home () {
         }));
         setData(chartData);
         setHighestValue(Math.max(...chartData.map(item => item.Grand_Total_Total_Billed)));
-        console.log(highestValue)
       })
       .catch(error => {
         console.error('Error fetching data:', error);
@@ -158,7 +157,7 @@ export default function Home () {
             <div className='flex mb-3 '>
               <div className={`flex items-center justify-center text-center py-5 px-3 lg:py-0 lg:px-0 w-1/3 border border-color11 h-10 lg:w-40 rounded-l-md cursor-pointer ' ${
                 selected === 1 ? 'bg-color14' : ''}`}
-                  onClick={() => handleItemClick(1)}
+                  onClick={() => {handleItemClick(1); navigate('/home')}}
                     >
                     <span className={`text-sm font-normal text-color12 font-link cursor-pointer ${
                         selected === 1 ? 'color' : ''}`}
@@ -168,7 +167,7 @@ export default function Home () {
 
               <div className={`flex items-center justify-center border-color11 py-5 lg:py-0  w-1/3 border-y h-10 lg:w-236 cursor-pointer ' ${
                 selected === 2 ? 'bg-color14' : ''}`}
-                  onClick={() => handleItemClick(2)}
+                  onClick={() => {handleItemClick(2); navigate('/homedrc')}}
                     >
                     <span className ={`text-sm font-normal text-center text-color12 font-link cursor-pointer ${
                         selected === 2 ? 'color' : ''}`}
@@ -313,7 +312,7 @@ export default function Home () {
               <div className='h-70 lg:w-330    lg:w-auto justify-between border flex items-center rounded-md'>
                   <div className='flex flex-col w-121 h-50 ml-4'>
                       <span className='text-sm font-face-r font-normal h-22 text-color9'>Actual avg. margin</span>
-                      <span className='text-lg font-face-b font-bold h-26 text-color10'>102,382.00 KM</span>
+                      <span className='text-lg font-face-b font-bold h-26 text-color10'>{(((revenue.actual_avg_margin.toFixed(2))*100)/100)}KM</span>
                   </div>
 
                   <div className='pr-4'>
