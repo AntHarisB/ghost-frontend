@@ -316,7 +316,7 @@ export default function Home () {
                     <BarChart 
                       width={500}
                       height={250}
-                      data={datae}	
+                      
                     >
                       <CartesianGrid strokeDasharray='3 3 3 0' vertical={false} stroke={gridLineStyle.stroke}/>
                       <XAxis dataKey='name' 
@@ -328,7 +328,7 @@ export default function Home () {
                         tickLine={{ display: 'none' }}
                         dx={-5} 
                         dy={-3}
-                        ticks={ticks} 
+                         
                         tick={secchartTextStyle} />
                       <Tooltip />
                       <Bar dataKey='Grand_Total_Hours_Available' fill='#FF9F5A' barSize={20} radius={[5, 5, 0, 0]}/>
