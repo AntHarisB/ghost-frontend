@@ -5,53 +5,12 @@ import ProjectScope from '../../charts/ProjectScope';
 import HoursOverview from '../../charts/HoursOverview'
 import api from '../../Api';
 import { getAccessToken } from '../../Api';
-
-
-export const datah = [
-	{
-		name: 'January:1/1/2023',
-		Grand_Total_Hours_Billed: 2900,
-		Grand_Total_Hours_Available: 750,
-		
-	},
-	{
-		name: 'March:1/3/2023',
-		Grand_Total_Hours_Billed: 5500,
-		Grand_Total_Hours_Available: 2000,
-		
-	},
-	{
-		name: 'May:1/5/2023',
-		Grand_Total_Hours_Billed: 1600,
-		Grand_Total_Hours_Available: 2100,
-		
-	},
-	{
-		name: 'July:1/7/2023',
-		Grand_Total_Hours_Billed: 500,
-		Grand_Total_Hours_Available: 300,
-		
-	},
-	{
-		name: 'September:1/9/2023',
-		Grand_Total_Hours_Billed: 3200,
-		Grand_Total_Hours_Available: 4700,
-		
-	},
-	{
-		name: 'November:1/11/2023',
-		Grand_Total_Hours_Billed: 3750,
-		Grand_Total_Hours_Available: 5250,
-	}
-];
-
-export const ticks = [0, 1500, 3000, 4500, 6000];
-
+import {useNavigate} from 'react-router-dom'
 
 
 export default function Home ({user}) {
   const [selected, setSelected] = useState(null);
-
+  const navigate=useNavigate();
   const handleItemClick = (item) => {
     if (selected === item) {
       setSelected(null);
@@ -64,7 +23,6 @@ export default function Home ({user}) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false); 
 
   const years = ['2019','2020','2021', '2022', '2023'];
-  const [totalProjects, setTotalProjects] = useState(0);
   const [projectHours, setProjectHours]=useState([]);
   const [data, setData] = useState({
     total_projects: 0,
@@ -115,7 +73,6 @@ export default function Home ({user}) {
       <div className='basis-[12%]'>
         <Sidebar user={user}/>
       </div>
-      {console.log('home',user)}
       <div className='basis-[88%] pb-5 pt-14 px-3 lg:py-8 lg:px-11 lg:overflow-x-hidden md:overflow-x-scroll '>
         <h1 className='text-3xl mb-10 text-color10 font-bold font-face-b'>Home</h1>
           
@@ -124,7 +81,7 @@ export default function Home ({user}) {
             <div className='flex mb-3 '>
               <div className={`flex items-center justify-center text-center py-5 px-3 lg:py-0 lg:px-0 w-1/3 border border-color11 h-10 lg:w-40 rounded-l-md cursor-pointer ' ${
                 selected === 1 ? 'bg-color14' : ''}`}
-                  onClick={() => handleItemClick(1)}
+                  onClick={() => {handleItemClick(1); navigate('/home')} }
                     >
                     <span className={`text-sm font-normal text-color12 font-link cursor-pointer ${
                         selected === 1 ? 'color' : ''}`}
@@ -134,7 +91,7 @@ export default function Home ({user}) {
 
               <div className={`flex items-center justify-center border-color11 py-5 lg:py-0  w-1/3 border-y h-10 lg:w-236 cursor-pointer ' ${
                 selected === 2 ? 'bg-color14' : ''}`}
-                  onClick={() => handleItemClick(2)}
+                  onClick={() => {handleItemClick(1); navigate('/homedrc')}}
                     >
                     <span className ={`text-sm font-normal text-center text-color12 font-link cursor-pointer ${
                         selected === 2 ? 'color' : ''}`}
@@ -368,7 +325,7 @@ export default function Home ({user}) {
             </div>
               <div className='w-screen overflow-x-auto md:overflow-x-auto lg:overflow-x-hidden lg:w-auto'>
 
-                <HoursOverview name={"Hours overview"} data={datah} ticks={ticks} projectHours={projectHours}/> 
+                <HoursOverview projectHours={projectHours}/> 
 
               </div>
           </div>
