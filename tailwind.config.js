@@ -85,7 +85,6 @@ module.exports = {
         141:"142px",
         137:"137px",
         128:"128px",
-
       },
 
       height:{
@@ -134,4 +133,3 @@ module.exports = {
   },
   plugins: [],
 }
-

@@ -11,7 +11,7 @@ import { useNavigate } from 'react-router-dom';
 
 export default function Home ({user}) {
   const [selected, setSelected] = useState(null);
-
+  const navigate=useNavigate();
   const handleItemClick = (item) => {
     if (selected === item) {
       setSelected(null);
@@ -24,7 +24,6 @@ export default function Home ({user}) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false); 
   const navigate=useNavigate();
   const years = ['2019','2020','2021', '2022', '2023'];
-  const [totalProjects, setTotalProjects] = useState(0);
   const [projectHours, setProjectHours]=useState([]);
   const [data, setData] = useState({
     total_projects: 0,
@@ -75,7 +74,6 @@ export default function Home ({user}) {
       <div className='basis-[12%]'>
         <Sidebar user={user}/>
       </div>
-      {console.log('home',user)}
       <div className='basis-[88%] pb-5 pt-14 px-3 lg:py-8 lg:px-11 lg:overflow-x-hidden md:overflow-x-scroll '>
         <h1 className='text-3xl mb-10 text-color10 font-bold font-face-b'>Home</h1>
           
@@ -328,12 +326,10 @@ export default function Home ({user}) {
             </div>
               <div className='w-screen overflow-x-auto md:overflow-x-auto lg:overflow-x-hidden lg:w-auto'>
                 <HoursOverview projectHours={projectHours}/> 
+
               </div>
           </div>
       </div>
     </div>
   )
 }
-
-
-

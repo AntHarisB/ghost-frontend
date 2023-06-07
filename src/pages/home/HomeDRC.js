@@ -33,7 +33,7 @@ const chartTextStyle = {
  };
 
 
-export default function Home () {
+export default function Home ({ticks}) {
   const [selected, setSelected] = useState(null);
   const navigate=useNavigate();
   const [data, setData] = useState({
