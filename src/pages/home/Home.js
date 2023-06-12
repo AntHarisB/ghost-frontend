@@ -5,7 +5,8 @@ import ProjectScope from '../../charts/ProjectScope';
 import HoursOverview from '../../charts/HoursOverview'
 import api from '../../Api';
 import { getAccessToken } from '../../Api';
-import {useNavigate} from 'react-router-dom'
+import { useNavigate } from 'react-router-dom';
+
 
 
 export default function Home ({user}) {
@@ -21,7 +22,7 @@ export default function Home ({user}) {
 
   const [selectedYear, setSelectedYear] = useState('2023');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false); 
-
+  const navigate=useNavigate();
   const years = ['2019','2020','2021', '2022', '2023'];
   const [projectHours, setProjectHours]=useState([]);
   const [data, setData] = useState({
@@ -81,7 +82,7 @@ export default function Home ({user}) {
             <div className='flex mb-3 '>
               <div className={`flex items-center justify-center text-center py-5 px-3 lg:py-0 lg:px-0 w-1/3 border border-color11 h-10 lg:w-40 rounded-l-md cursor-pointer ' ${
                 selected === 1 ? 'bg-color14' : ''}`}
-                  onClick={() => {handleItemClick(1); navigate('/home')} }
+                  onClick={() => {handleItemClick(1); navigate('/home')}}
                     >
                     <span className={`text-sm font-normal text-color12 font-link cursor-pointer ${
                         selected === 1 ? 'color' : ''}`}
@@ -91,7 +92,7 @@ export default function Home ({user}) {
 
               <div className={`flex items-center justify-center border-color11 py-5 lg:py-0  w-1/3 border-y h-10 lg:w-236 cursor-pointer ' ${
                 selected === 2 ? 'bg-color14' : ''}`}
-                  onClick={() => {handleItemClick(1); navigate('/homedrc')}}
+                  onClick={() => {handleItemClick(2); navigate('/homedrc')}}
                     >
                     <span className ={`text-sm font-normal text-center text-color12 font-link cursor-pointer ${
                         selected === 2 ? 'color' : ''}`}
@@ -101,7 +102,7 @@ export default function Home ({user}) {
 
               <div className={`flex items-center justify-center border py-5 px-3 w-1/3 lg:px-0 lg:py-0 border-color11 h-10 lg:w-99 rounded-r-md cursor-pointer ' ${
                 selected === 3 ? 'bg-color14' : ''}`}
-                   onClick={() => handleItemClick(3)}
+                   onClick={() => {handleItemClick(2); navigate('/homeplan')}}
                     >
                       <span className={`text-sm font-normal text-color12 font-link cursor-pointer ${
                           selected === 3 ? 'color' : ''}`}
@@ -324,7 +325,6 @@ export default function Home ({user}) {
               </div>
             </div>
               <div className='w-screen overflow-x-auto md:overflow-x-auto lg:overflow-x-hidden lg:w-auto'>
-
                 <HoursOverview projectHours={projectHours}/> 
 
               </div>
