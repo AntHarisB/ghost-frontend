@@ -22,7 +22,6 @@ export default function Home ({user}) {
 
   const [selectedYear, setSelectedYear] = useState('2023');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false); 
-  const navigate=useNavigate();
   const years = ['2019','2020','2021', '2022', '2023'];
   const [projectHours, setProjectHours]=useState([]);
   const [data, setData] = useState({
