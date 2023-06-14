@@ -3,54 +3,15 @@ import Sidebar from '../../components/Sidebar'
 import SalesChannel from '../../charts/SalesChannels';
 import ProjectScope from '../../charts/ProjectScope';
 import HoursOverview from '../../charts/HoursOverview'
-import axios from 'axios';
-
-
-export const datah = [
-	{
-		name: 'January:1/1/2023',
-		Grand_Total_Hours_Billed: 2900,
-		Grand_Total_Hours_Available: 750,
-		
-	},
-	{
-		name: 'March:1/3/2023',
-		Grand_Total_Hours_Billed: 5500,
-		Grand_Total_Hours_Available: 2000,
-		
-	},
-	{
-		name: 'May:1/5/2023',
-		Grand_Total_Hours_Billed: 1600,
-		Grand_Total_Hours_Available: 2100,
-		
-	},
-	{
-		name: 'July:1/7/2023',
-		Grand_Total_Hours_Billed: 500,
-		Grand_Total_Hours_Available: 300,
-		
-	},
-	{
-		name: 'September:1/9/2023',
-		Grand_Total_Hours_Billed: 3200,
-		Grand_Total_Hours_Available: 4700,
-		
-	},
-	{
-		name: 'November:1/11/2023',
-		Grand_Total_Hours_Billed: 3750,
-		Grand_Total_Hours_Available: 5250,
-	}
-];
-
-export const ticks = [0, 1500, 3000, 4500, 6000];
+import api from '../../Api';
+import { getAccessToken } from '../../Api';
+import { useNavigate } from 'react-router-dom';
 
 
 
-export default function Home () {
+export default function Home ({user}) {
   const [selected, setSelected] = useState(null);
-
+  const navigate=useNavigate();
   const handleItemClick = (item) => {
     if (selected === item) {
       setSelected(null);
@@ -61,10 +22,41 @@ export default function Home () {
 
   const [selectedYear, setSelectedYear] = useState('2023');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false); 
-
   const years = ['2019','2020','2021', '2022', '2023'];
+  const [projectHours, setProjectHours]=useState([]);
+  const [data, setData] = useState({
+    total_projects: 0,
+    total_value: 0,
+    avg_value: 0,
+    avg_lead_closing: 0,
+    avg_team_size: 0,
+    avg_velocity: 0,
+    weeks_over_ddl: 0,
+    avg_hourly_price: 0
+  });
+
   
 
+  useEffect(() => {
+    api.get(`http://127.0.0.1:8000/project-statistics/${selectedYear}/`, {
+      headers: {
+        'Authorization': `Bearer ${getAccessToken()}`
+      }
+    })
+      .then(response => setData(response.data))
+      .catch(error => console.error(error));
+    
+    api.get(`http://127.0.0.1:8000/project-hours/${selectedYear}/`, {
+      headers: {
+        'Authorization': `Bearer ${getAccessToken()}`
+      }
+    })
+      .then(response => {
+        setProjectHours([]);
+        setProjectHours(response.data);
+      })
+      .catch(error => console.error(error));
+  }, [selectedYear]);
   
 
   const handleYearChange = (year) => {
@@ -79,9 +71,8 @@ export default function Home () {
   return (
     <div className='flex'>
       <div className='basis-[12%]'>
-        <Sidebar />
+        <Sidebar user={user}/>
       </div>
-      {console.log('home')}
       <div className='basis-[88%] pb-5 pt-14 px-3 lg:py-8 lg:px-11 lg:overflow-x-hidden md:overflow-x-scroll '>
         <h1 className='text-3xl mb-10 text-color10 font-bold font-face-b'>Home</h1>
           
@@ -90,7 +81,7 @@ export default function Home () {
             <div className='flex mb-3 '>
               <div className={`flex items-center justify-center text-center py-5 px-3 lg:py-0 lg:px-0 w-1/3 border border-color11 h-10 lg:w-40 rounded-l-md cursor-pointer ' ${
                 selected === 1 ? 'bg-color14' : ''}`}
-                  onClick={() => handleItemClick(1)}
+                  onClick={() => {handleItemClick(1); navigate('/home')}}
                     >
                     <span className={`text-sm font-normal text-color12 font-link cursor-pointer ${
                         selected === 1 ? 'color' : ''}`}
@@ -100,7 +91,7 @@ export default function Home () {
 
               <div className={`flex items-center justify-center border-color11 py-5 lg:py-0  w-1/3 border-y h-10 lg:w-236 cursor-pointer ' ${
                 selected === 2 ? 'bg-color14' : ''}`}
-                  onClick={() => handleItemClick(2)}
+                  onClick={() => {handleItemClick(2); navigate('/homedrc')}}
                     >
                     <span className ={`text-sm font-normal text-center text-color12 font-link cursor-pointer ${
                         selected === 2 ? 'color' : ''}`}
@@ -110,7 +101,7 @@ export default function Home () {
 
               <div className={`flex items-center justify-center border py-5 px-3 w-1/3 lg:px-0 lg:py-0 border-color11 h-10 lg:w-99 rounded-r-md cursor-pointer ' ${
                 selected === 3 ? 'bg-color14' : ''}`}
-                   onClick={() => handleItemClick(3)}
+                   onClick={() => {handleItemClick(2); navigate('/homeplan')}}
                     >
                       <span className={`text-sm font-normal text-color12 font-link cursor-pointer ${
                           selected === 3 ? 'color' : ''}`}
@@ -189,7 +180,7 @@ export default function Home () {
               <div className='h-70 lg:w-60  justify-between border flex items-center rounded-md'>
                   <div className='flex flex-col w-122 h-50 ml-4'>
                     <span className='text-sm font-face-r font-normal h-22 text-color9'>Number of projects</span>
-                    <span className='text-lg font-face-b font-bold h-26 text-color10'></span>                    
+                    <span className='text-lg font-face-b font-bold h-26 text-color10'>{data.total_projects}</span>                    
                   </div>
                    
                   <div className='pr-4'>
@@ -204,7 +195,7 @@ export default function Home () {
               <div className='h-70 lg:w-60  lg:w-auto justify-between border flex items-center rounded-md'>
                   <div className='flex flex-col w-136 h-50 ml-4'>
                       <span className='text-sm font-face-r font-normal h-22 text-color9'>Total project value</span>
-                      <span className='text-lg font-face-b font-bold h-26 text-color10'> KM</span>
+                      <span className='text-lg font-face-b font-bold h-26 text-color10'>{(((data.total_value.toFixed(2))*100)/100)} KM</span>
                   </div>
 
                   <div className='pr-4'>
@@ -226,7 +217,7 @@ export default function Home () {
               <div className='h-70 lg:w-60   lg:w-auto justify-between border flex items-center rounded-md'>
                   <div className='flex flex-col w-117 h-50 ml-4'>
                       <span className='text-sm font-face-r font-normal h-22 text-color9'>Avg. project value</span>
-                      <span className='text-lg font-face-b font-bold h-26 text-color10'> KM</span>
+                      <span className='text-lg font-face-b font-bold h-26 text-color10'>{((data.avg_value.toFixed(2))*100)/100} KM</span>
                   </div>
 
                   <div className='pr-4'>
@@ -241,7 +232,7 @@ export default function Home () {
               <div className='h-70 lg:w-60   lg:w-auto justify-between border flex items-center rounded-md'>
                   <div className='flex flex-col w-129 h-50 ml-4'>
                       <span className='text-sm font-face-r font-normal h-22 text-color9'>Avg. lead closing (d)</span>
-                      <span className='text-lg font-face-b font-bold h-26 text-color10'></span>
+                      <span className='text-lg font-face-b font-bold h-26 text-color10'>{(((data.avg_lead_closing.toFixed(2))*100)/100).toFixed(2)}</span>
                   </div>
 
                   <div className='pr-4'>
@@ -256,7 +247,7 @@ export default function Home () {
               <div className='h-70 lg:w-60  lg:w-auto justify-between border flex items-center rounded-md'>
                   <div className='flex flex-col w-92 h-50 ml-4'>
                       <span className='text-sm font-face-r font-normal h-22 text-color9'>Avg. team size</span>
-                      <span className='text-lg font-face-b font-bold h-26 text-color10'></span>
+                      <span className='text-lg font-face-b font-bold h-26 text-color10'>{(((data.avg_team_size.toFixed(2))*100)/100)}</span>
                   </div>
 
                   <div className='pr-4'>
@@ -271,7 +262,7 @@ export default function Home () {
               <div className='h-70 lg:w-60   lg:w-auto justify-between border flex items-center rounded-md'>
                   <div className='flex flex-col w-81 h-50 ml-4'>
                       <span className='text-sm font-face-r font-normal h-22 text-color9'>Avg.velocity</span>
-                      <span className='text-lg font-face-b font-bold h-26 text-color10'></span>
+                      <span className='text-lg font-face-b font-bold h-26 text-color10'>{((data.avg_velocity.toFixed(2))*100)/100}</span>
                   </div>
 
                   <div className='pr-4'>
@@ -286,7 +277,7 @@ export default function Home () {
               <div className='h-70 lg:w-60   lg:w-auto justify-between border flex items-center rounded-md'>
                   <div className='flex flex-col w-134 h-50 ml-4'>
                       <span className='text-sm font-face-r font-normal h-22 text-color9'>Weeks over deadline</span>
-                      <span className='text-lg font-face-b font-bold h-26 text-color10'></span>
+                      <span className='text-lg font-face-b font-bold h-26 text-color10'>{((data.weeks_over_ddl.toFixed(2))*100)/100}</span>
                   </div>
 
                   <div className='pr-4'>
@@ -302,7 +293,7 @@ export default function Home () {
               <div className='h-70 lg:w-60  lg:w-auto justify-between border flex items-center rounded-md'>
                   <div className='flex flex-col w-106 h-50 ml-4'>
                       <span className='text-sm font-face-r font-normal h-22 text-color9'>Avg. hourly price</span>
-                      <span className='text-lg font-face-b font-bold h-26 text-color10'></span>
+                      <span className='text-lg font-face-b font-bold h-26 text-color10'>${((data.avg_hourly_price.toFixed(2))*100)/100}</span>
                   </div>
 
                   <div className='pr-4'>
@@ -329,12 +320,11 @@ export default function Home () {
                 <SalesChannel selectedYear={selectedYear}/>
               </div>
               <div className='w-screen overflow-x-auto md:overflow-x-auto lg:overflow-x-hidden lg:w-auto'>
-                <ProjectScope />
+                <ProjectScope projectHours={projectHours}/>
               </div>
             </div>
               <div className='w-screen overflow-x-auto md:overflow-x-auto lg:overflow-x-hidden lg:w-auto'>
-
-                <HoursOverview name={"Hours overview"} data={datah} ticks={ticks} /> 
+                <HoursOverview projectHours={projectHours}/> 
 
               </div>
           </div>
@@ -342,6 +332,3 @@ export default function Home () {
     </div>
   )
 }
-
-
-
