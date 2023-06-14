@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import '../../App.css';
 import LoginBgImg from "./components/LoginBgImg";
 import AxiosInstance from '../../AxiosInstance.js';
-import AxiosApiInstance from '../../AxiosApiInstance.js';
+
 import {useNavigate} from 'react-router-dom'
 
 
