@@ -22,7 +22,21 @@ module.exports = {
         color14:"#F5FFFA",
         color15:"#FF9F5A",
         color16:"#1D2129",
+        color17:"#DFE3E1",
+        color18:"#6C6D75",
+        color19:"#505475",
+        color20:"#CACCD2",
+        color21:"#9EA1B0",
+        color22:"#32C653",
+        color23:"#FFB341",
+        color24:"#CECECE",
+        color25:"#C2C9D1",
+        color26:"#F5F6FB",
+        color27:"#3F3F3F",
+        color28:"#C3C8CD",
+        color29:"#404B57",
       },
+
       width:{
         450:"450px",
         284:"284px",
@@ -85,7 +99,20 @@ module.exports = {
         141:"142px",
         137:"137px",
         128:"128px",
-
+        109:"109px",
+        74:"74px",
+        84:"84px",
+        105:"105px",
+        70:"70px",
+        90:"90px",
+        158.17:"158.17px",
+        101:"101px",
+        530:"530px",
+        386:"386px",
+        35:"35px",
+        22:"22px",
+        272:"272px",
+        49:"49px",
       },
 
       height:{
@@ -118,6 +145,9 @@ module.exports = {
         309:"309px",
         49:"49px",
         457:"457px",
+        30:"30px",
+        47:"47px",
+        35:"35px",
         
       },
       backgroundImage: {
@@ -129,7 +159,11 @@ module.exports = {
       borderWidth: {
         DEFAULT: '1px',
         bo: '0.5px',
-      }
+      },
+    },
+    fontFamily: {
+      sans: ["Open Sans", "sans-serif"],
+      "sans-semibold": ["Open Sans Semi-Bold", "sans-serif"],
     },
   },
   plugins: [],

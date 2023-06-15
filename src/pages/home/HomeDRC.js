@@ -32,7 +32,7 @@ const chartTextStyle = {
  };
 
 
-export default function Home () {
+export default function HomeDRC () {
   const [selected, setSelected] = useState(null);
   const [data, setData] = useState({
     project_name: "",

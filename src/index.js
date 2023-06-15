@@ -8,6 +8,7 @@ import './fonts/Gilroy-Medium.ttf';
 import './fonts/Gilroy-Regular.ttf';
 import './fonts/Gilroy-Bold.ttf';
 
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <BrowserRouter>
