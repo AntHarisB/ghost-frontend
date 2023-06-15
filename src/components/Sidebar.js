@@ -78,7 +78,7 @@ export default function Dashboard() {
                       <svg width="24" height="24" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M12 2.45709L11.4609 2.97272L1.71094 12.7227L2.78906 13.8008L3.75 12.8399V21.5118H10.5V14.0118H13.5V21.5118H20.25V12.8399L21.2109 13.8008L22.2891 12.7227L12.5391 2.97272L12 2.45709ZM12 4.5899L18.75 11.3399V20.0118H15V12.5118H9V20.0118H5.25V11.3399L12 4.5899Z" fill="#1A3835"/>
                       </svg>
-                        <h2 className={`text-sm font-face-b md:hidden lg:block font-bold text-customColor cursor-pointer  ${
+                        <h2 className={`text-sm font-face-m md:hidden lg:block font-medium text-customColor cursor-pointer  ${
                           selected === 1 ? ' selected' : ''}`}
                             onClick={() => handleItemClick(1)}>Home
                         </h2>

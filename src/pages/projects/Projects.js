@@ -65,16 +65,16 @@ export default function Projects(){
       <div className='basis-[12%]'>
         <Sidebar />
       </div>
-      <div className='basis-[88%] flex flex-col space-y-5 md:space-y-5 pb-5 pt-14 px-3 lg:py-8 lg:space-y-5 lg:px-11 lg:overflow-x-hidden lg:overflow-y-hidden md:overflow-x-scroll '>
-        <div className='flex mb-4 justify-between'>
+      <div className='basis-[88%] flex flex-col space-y-5 md:space-y-5 pb-5 pt-14 px-3 lg:py-8 lg:space-y-5 lg:px-11 lg:overflow-x-hidden md:overflow-x-hidden'>
+        <div className='lg:flex md:flex mb-4 lg:justify-between md:justify-between'>
          <h1 className='text-3xl text-color10 font-bold font-face-b'>Projects</h1> 
-         <button className="bg-customColor hover:bg-gray-500 text-white h-10 w-44 text-base font-link font-semibold rounded-md">
+         <button className="bg-customColor hover:bg-gray-500 text-white h-10 w-44 mt-4 lg:mt-0 md:mt-0 md:mr-0 mr-4 text-base font-link font-semibold rounded-md">
             Create new project
          </button>
         </div>      
           <div className='block space-y-10 lg:space-y-0 lg:flex lg:flex-row lg:justify-between lg:items-center'> 
-            <div className='flex mb-3 '>
-              <div className={`flex items-center justify-center text-center py-5 px-3 lg:py-0 lg:px-0 w-1/3 border border-color11 h-10 lg:w-109 rounded-l-md cursor-pointer ' ${
+            <div className='lg:flex lg:flex-row mb-3 grid grid-cols-2'>
+              <div className={`flex items-center justify-center text-center py-5  lg:py-0 lg:px-0 w-full border-y border-l  border-color11 h-10 lg:w-109 rounded-tl-md lg:rounded-l-md cursor-pointer ' ${
                 selected === 1 ? 'bg-color14' : ''}`}
                   onClick={() => handleItemClick(1)}
                     >
@@ -84,7 +84,7 @@ export default function Projects(){
                     </span>
               </div>
                       {console.log(projects)}
-              <div className={`flex items-center justify-center border-color11 py-5 lg:py-0  w-1/3 border-y border-r h-10 lg:w-74 cursor-pointer ' ${
+              <div className={`flex items-center justify-center border-color11 py-5 lg:py-0  border-t border-r border-b border-l rounded-tr-md lg:rounded-none h-10 lg:w-74 cursor-pointer ' ${
                 selected === 2 ? 'bg-color14' : ''}`}
                   onClick={() => handleItemClick(2)}
                     >
@@ -94,7 +94,7 @@ export default function Projects(){
                     </span>
               </div>
 
-              <div className={`flex items-center justify-center border-color11 py-5 lg:py-0  w-1/3 border-y h-10 lg:w-84 cursor-pointer ' ${
+              <div className={`flex items-center justify-center border-color11 py-5 lg:py-0  w-full rounded-bl-lg border-l lg:border-l-0 border-b lg:border-y lg:rounded-none h-10 lg:w-84 cursor-pointer ' ${
                 selected === 3 ? 'bg-color14' : ''}`}
                   onClick={() => handleItemClick(3)}
                     >
@@ -104,7 +104,7 @@ export default function Projects(){
                     </span>
               </div>
 
-              <div className={`flex items-center justify-center border py-5 px-3 w-1/3 lg:px-0 lg:py-0 border-color11 h-10 lg:w-105 rounded-r-md cursor-pointer ' ${
+              <div className={`flex items-center justify-center border-color11 py-5 lg:py-0  w-full rounded-br-md border-l border-r lg:border-t border-b  lg:rounded-r-md  h-10 lg:w-105 cursor-pointer' ${
                 selected === 4 ? 'bg-color14' : ''}`}
                    onClick={() => handleItemClick(4)}
                     >
@@ -116,7 +116,7 @@ export default function Projects(){
             </div>
           </div>
            
-          <div className='w-screen'>
+          <div className='w-screen md:w-full overflow-x-auto md:overflow-x-auto lg:overflow-x-hidden '>
                <div className='border w-1050  h-70  flex  items-center justify-between rounded-t-md'>
                  <div className='pl-4 flex h-30 w-48 justify-between'>
                   <span className='text-lg w-90 h-26 font-medium font-face-m'>All Projects</span>
@@ -198,8 +198,8 @@ export default function Projects(){
                </div>
          </div>      
 
-          <div className='h-47 flex justify-between items-center'>
-            <div className='w-530 h-42  flex'>
+          <div className='h-47 lg:flex lg:justify-between md:flex md:justify-between items-center'>
+            <div className='lg:w-530  h-42 flex'>
                 <span className='text-sm text-color19 py-2 font-link-os'>Rows per page: </span>
                 <div className='px-3 py-1'>
                   <div className='relative'>
@@ -260,12 +260,12 @@ export default function Projects(){
                   <span className='text-color21 text-sm font-link-os'>1 - {rows} of {projects[0]?.total_projects} Projects</span>
                 </div>
             </div>
-            <div className='flex w-386 h-8 space-x-2'>
+            <div className='flex lg:w-386 w-386 h-8 lg:mr-4 md:mr-0 space-x-2'>
               <div className='flex w-272 h-full space-x-2'>
               {Array.from({ length: pages }, (_, index) => (
-        <a href="#" class="inline-flex items-center justify-center w-8 h-full text-sm font-link-os text-[rgba(0,0,0,0.45)] bg-white border border-color25 rounded hover:bg-color26 hover:text-color27  hover:border-color28">{index+1}
-        </a>
-      ))}
+                <a href="#" class="inline-flex items-center justify-center w-8 h-full text-sm font-link-os text-[rgba(0,0,0,0.45)] bg-white border border-color25 rounded hover:bg-color26 hover:text-color27  hover:border-color28">{index+1}
+                </a>
+              ))}
               </div>
               <a href="#" class="inline-flex items-center justify-center w-49 h-full text-sm font-link-os text-[rgba(0,0,0,0.45)] bg-white border border-color25 rounded hover:bg-color26 hover:text-color27  hover:border-color28">Next
               </a>
