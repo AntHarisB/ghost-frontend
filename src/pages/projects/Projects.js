@@ -1,41 +1,15 @@
-import React ,{useState} from 'react';
+import React ,{useState,useEffect} from 'react';
 import Sidebar from '../../components/Sidebar'
-import image from '../../image/developersimage/People.png'
-import image1 from '../../image/developersimage/People (1).png'
-import image2 from '../../image/developersimage/People (2).png'
-import image3 from '../../image/developersimage/People (3).png'
-import image4 from '../../image/developersimage/People (4).png'
-import image5 from '../../image/developersimage/People (5).png'
-import image6 from '../../image/developersimage/People (6).png'
-import image7 from '../../image/developersimage/People (7).png'
-import image8 from '../../image/developersimage/People (8).png'
-import image9 from '../../image/developersimage/People (9).png'
-import image10 from '../../image/developersimage/People (10).png'
-import image11 from '../../image/developersimage/People (11).png'
-import image12 from '../../image/developersimage/People (12).png'
-import image13 from '../../image/developersimage/People (13).png'
-import image14 from '../../image/developersimage/People (14).png'
-import image15 from '../../image/developersimage/People (15).png'
-import image16 from '../../image/developersimage/People (16).png'
-import image17 from '../../image/developersimage/People (17).png'
-import image18 from '../../image/developersimage/People (18).png'
-import image19 from '../../image/developersimage/People (19).png'
-import image20 from '../../image/developersimage/People (20).png'
-import image21 from '../../image/developersimage/People (21).png'
-import image22 from '../../image/developersimage/People (22).png'
-import image23 from '../../image/developersimage/People (23).png'
-import image24 from '../../image/developersimage/People (24).png'
-import image25 from '../../image/developersimage/People (25).png'
-import image26 from '../../image/developersimage/People (26).png'
-import image27 from '../../image/developersimage/People (27).png'
-import image28 from '../../image/developersimage/People (28).png'
-import image29 from '../../image/developersimage/People (29).png'
-
+import api from '../../Api';
+import { getAccessToken } from '../../Api';
 
 
 export default function Projects(){
    const [selected, setSelected] = useState(null);
-
+   const [rows, setRows]=useState(10);
+   const [pages, setPages]=useState(0);
+   const [projects, setProjects]=useState([])
+   const [filteredProjects, setFilteredProjects] = useState([]);
    const handleItemClick = (item) => {
       if (selected === item) {
         setSelected(null);
@@ -66,13 +40,31 @@ export default function Projects(){
       setIsDropdownOpen((prevState) => !prevState);
     };
   
+     useEffect(()=>{
+      api.get(`http://127.0.0.1:8000/api/projects/`, {
+      headers: {
+        'Authorization': `Bearer ${getAccessToken()}`
+      }
+      })
+      .then(response => setProjects(response.data))
+      .catch(error => console.error(error));
+ }, []);
+    
+      useEffect(()=>{
+        let num=0;
+        num=projects[0]?.total_projects/rows;
+        if(num%2==0){
+          setPages(Math.floor(num))
+        }else{
+          setPages(Math.floor(num)+1);
+        }
+      },[projects])
 
    return(
    <div className='flex h-full'>
       <div className='basis-[12%]'>
         <Sidebar />
       </div>
-  
       <div className='basis-[88%] flex flex-col space-y-5 md:space-y-5 pb-5 pt-14 px-3 lg:py-8 lg:space-y-5 lg:px-11 lg:overflow-x-hidden lg:overflow-y-hidden md:overflow-x-scroll '>
         <div className='flex mb-4 justify-between'>
          <h1 className='text-3xl text-color10 font-bold font-face-b'>Projects</h1> 
@@ -91,7 +83,7 @@ export default function Projects(){
                           onClick={() => handleItemClick(1)}>All Projects
                     </span>
               </div>
-
+                      {console.log(projects)}
               <div className={`flex items-center justify-center border-color11 py-5 lg:py-0  w-1/3 border-y border-r h-10 lg:w-74 cursor-pointer ' ${
                 selected === 2 ? 'bg-color14' : ''}`}
                   onClick={() => handleItemClick(2)}
@@ -128,7 +120,7 @@ export default function Projects(){
                <div className='border w-1050  h-70  flex  items-center justify-between rounded-t-md'>
                  <div className='pl-4 flex h-30 w-48 justify-between'>
                   <span className='text-lg w-90 h-26 font-medium font-face-m'>All Projects</span>
-                     <span className='text-sm py-1 font-medium w-70 bg-color14 text-center rounded-md font-face-m text-color13'>45 total</span>
+                     <span className='text-sm py-1 font-medium w-70 bg-color14 text-center rounded-md font-face-m text-color13'>{projects[0]?.total_projects} total </span>
                  </div>
                  <div className="pr-4 relative flex items-center">
                      <button className="absolute left-0 ml-2">
@@ -168,316 +160,41 @@ export default function Projects(){
                           <span className='text-sm font-medium font-face-m text-color18'>Status</span>
                         </div>
                      </div>
-
-                     <div className='flex flex-row h-60 border-x border-b items-center'>
+                    {projects.map((project,index)=>(
+                    <div key={index} className='flex flex-row h-60 border-x border-b items-center'>
                         <div className='w-157 h-10 py-1.5 pl-4 '>
-                          <span className='text-sm font-medium font-face-m text-color18'>Virgin Pulse</span>
+                          <span className='text-sm font-medium font-face-m text-color18'>{project.project_name}</span>
                         </div>
                         <div className='w-158.17 h-10 py-1.5 pl-2 '>
-                          <span className='text-sm font-medium font-face-m text-color18'>Inox industy and...</span>
+                          <span className='text-sm font-medium font-face-m text-color18'>{project.description}</span>
                         </div>
                         <div className='w-158.17 h-10 py-1.5  '>
-                          <span className='text-sm font-medium font-face-m text-color18'>Jan 2022 - Oct 2023</span>
+                          <span className='text-sm font-medium font-face-m text-color18'>{`${project.start}-${project.end}`}</span>
                         </div>
                         <div className='w-101 h-10 items-center py-0.5'>
                            <div class="flex -space-x-4 overflow-hidden">
-                              <img class="inline-block h-35 w-35 rounded-full  ring-white" src={image} alt="img"/>
-                              <img class="inline-block h-35 w-35 rounded-full  ring-white" src={image1} alt=""/>
-                              <img class="inline-block h-35 w-35 rounded-full  ring-white" src={image2} alt=""/> 
-                              <a class="flex items-center justify-center mt-0.5 h-8 w-8 text-sm text-white font-semibold font-face-gsb bg-customColor rounded-full" href="#">4+</a>
+                           {project.users.slice(0, 3).map((item,index) => (<img key={index} className="inline-block h-35 w-35 rounded-full ring-white" src={item.profile_photo} alt={`${item.first_name} ${item.last_name}`}/>))}
+                              {project.users.length>3 ? <a class="flex items-center justify-center mt-0.5 h-8 w-8 text-sm text-white font-semibold font-face-gsb bg-customColor rounded-full" href="#">{project.users.length-3}+</a> : null}
                            </div>
                         </div>
                         <div className='w-158.17 h-10 py-1.5 pl-10 '>
-                          <span className='text-sm font-medium font-face-m text-color18'>$45</span>
+                          <span className='text-sm font-medium font-face-m text-color18'>${project.hourly_price}</span>
                         </div>
                         <div className='w-158.17 h-10 py-1.5 pl-8 '>
-                          <span className='text-sm font-medium font-face-m text-color18'>145,900,000.00 KM</span>
+                          <span className='text-sm font-medium font-face-m text-color18'>{project.project_value} KM</span>
                         </div>
                         <div className='w-158.17 h-10 items-center pl-10 flex'>
-                          <span class="flex items-center text-sm font-medium font-face-m text-color18">
-                            <span class="flex h-1.5 w-1.5 bg-color22 rounded-full mr-1.5 flex-shrink-0"></span>Active
-                          </span>
-                        </div>
-                     </div>
-
-                     <div className='flex flex-row h-60 border-x border-b items-center'>
-                        <div className='w-157 h-10 py-1.5 pl-4 '>
-                          <span className='text-sm font-medium font-face-m text-color18'>AlphaBid</span>
-                        </div>
-                        <div className='w-158.17 h-10 py-1.5 pl-2 '>
-                          <span className='text-sm font-medium font-face-m text-color18'>Inox industy and...</span>
-                        </div>
-                        <div className='w-158.17 h-10 py-1.5  '>
-                          <span className='text-sm font-medium font-face-m text-color18'>Jan 2022 - Oct 2023</span>
-                        </div>
-                        <div className='w-101 h-10 items-center py-0.5'>
-                           <div class="flex -space-x-4 overflow-hidden">
-                              <img class="inline-block h-35 w-35 rounded-full  ring-white" src={image3} alt="img"/>
-                              <img class="inline-block h-35 w-35 rounded-full  ring-white" src={image4} alt=""/>
-                              <img class="inline-block h-35 w-35 rounded-full  ring-white" src={image5} alt=""/>
-                              <a class="flex items-center justify-center mt-0.5 h-8 w-8 text-sm text-white font-semibold font-face-gsb bg-customColor rounded-full" href="#">5+</a>
-                           </div>
-                        </div>
-                        <div className='w-158.17 h-10 py-1.5 pl-10 '>
-                          <span className='text-sm font-medium font-face-m text-color18'>$45</span>
-                        </div>
-                        <div className='w-158.17 h-10 py-1.5 pl-8 '>
-                          <span className='text-sm font-medium font-face-m text-color18'>145,900,000.00 KM</span>
-                        </div>
-                        <div className='w-158.17 h-10 items-center pl-10 flex'>
-                          <span class="flex items-center text-sm font-medium font-face-m text-color18">
-                            <span class="flex h-1.5 w-1.5 bg-color22 rounded-full mr-1.5 flex-shrink-0"></span>Active
-                          </span>
-                        </div>
-                     </div>
-
-                     <div className='flex flex-row h-60 border-x border-b items-center'>
-                        <div className='w-157 h-10 py-1.5 pl-4 '>
-                          <span className='text-sm font-medium font-face-m text-color18'>Zapelin</span>
-                        </div>
-                        <div className='w-158.17 h-10 py-1.5 pl-2 '>
-                          <span className='text-sm font-medium font-face-m text-color18'>Inox industy and...</span>
-                        </div>
-                        <div className='w-158.17 h-10 py-1.5  '>
-                          <span className='text-sm font-medium font-face-m text-color18'>Jan 2022 - Oct 2023</span>
-                        </div>
-                        <div className='w-101 h-10 items-center py-0.5'>
-                           <div class="flex -space-x-4 overflow-hidden">
-                              <img class="inline-block h-35 w-35 rounded-full  ring-white" src={image6} alt="img"/>
-                              <img class="inline-block h-35 w-35 rounded-full  ring-white" src={image7} alt=""/>
-                              <img class="inline-block h-35 w-35 rounded-full  ring-white" src={image8} alt=""/>
-                              <a class="flex items-center justify-center mt-0.5 h-8 w-8 text-sm text-white font-semibold font-face-gsb bg-customColor rounded-full" href="#">1+</a>
-                           </div>
-                        </div>
-                        <div className='w-158.17 h-10 py-1.5 pl-10 '>
-                          <span className='text-sm font-medium font-face-m text-color18'>$45</span>
-                        </div>
-                        <div className='w-158.17 h-10 py-1.5 pl-8 '>
-                          <span className='text-sm font-medium font-face-m text-color18'>145,900,000.00 KM</span>
-                        </div>
-                        <div className='w-158.17 h-10 items-center pl-10 flex'>
-                          <span class="flex items-center text-sm font-medium font-face-m text-color18">
-                            <span class="flex h-1.5 w-1.5 bg-color22 rounded-full mr-1.5 flex-shrink-0"></span>Active
-                          </span>
-                        </div>
-                     </div>
-
-                     <div className='flex flex-row h-60 border-x border-b items-center'>
-                        <div className='w-157 h-10 py-1.5 pl-4 '>
-                          <span className='text-sm font-medium font-face-m text-color18'>HUB71</span>
-                        </div>
-                        <div className='w-158.17 h-10 py-1.5 pl-2 '>
-                          <span className='text-sm font-medium font-face-m text-color18'>Inox industy and...</span>
-                        </div>
-                        <div className='w-158.17 h-10 py-1.5  '>
-                          <span className='text-sm font-medium font-face-m text-color18'>Jan 2022 - Oct 2023</span>
-                        </div>
-                        <div className='w-101 h-10 items-center py-0.5'>
-                           <div class="flex -space-x-4 overflow-hidden">
-                              <img class="inline-block h-35 w-35 rounded-full  ring-white" src={image9} alt="img"/>
-                              <img class="inline-block h-35 w-35 rounded-full  ring-white" src={image10} alt=""/>
-                              <img class="inline-block h-35 w-35 rounded-full  ring-white" src={image11} alt=""/>
-                             
-                           </div>
-                        </div>
-                        <div className='w-158.17 h-10 py-1.5 pl-10 '>
-                          <span className='text-sm font-medium font-face-m text-color18'>$45</span>
-                        </div>
-                        <div className='w-158.17 h-10 py-1.5 pl-8 '>
-                          <span className='text-sm font-medium font-face-m text-color18'>145,900,000.00 KM</span>
-                        </div>
-                        <div className='w-158.17 h-10 items-center pl-10 flex'>
-                          <span class="flex items-center text-sm font-medium font-face-m text-color18">
-                            <span class="flex h-1.5 w-1.5 bg-color22 rounded-full mr-1.5 flex-shrink-0"></span>Active
-                          </span>
-                        </div>
-                     </div>
-
-                     <div className='flex flex-row h-60 border-x border-b items-center'>
-                        <div className='w-157 h-10 py-1.5 pl-4 '>
-                          <span className='text-sm font-medium font-face-m text-color18'>Kutuby</span>
-                        </div>
-                        <div className='w-158.17 h-10 py-1.5 pl-2 '>
-                          <span className='text-sm font-medium font-face-m text-color18'>Inox industy and...</span>
-                        </div>
-                        <div className='w-158.17 h-10 py-1.5  '>
-                          <span className='text-sm font-medium font-face-m text-color18'>Jan 2022 - Oct 2023</span>
-                        </div>
-                        <div className='w-101 h-10 items-center py-0.5'>
-                           <div class="flex -space-x-4 overflow-hidden">
-                              <img class="inline-block h-35 w-35 rounded-full  ring-white" src={image12} alt="img"/>
-                              <img class="inline-block h-35 w-35 rounded-full  ring-white" src={image13} alt=""/>
-                              <img class="inline-block h-35 w-35 rounded-full  ring-white" src={image14} alt=""/>
-                              <a class="flex items-center justify-center mt-0.5 h-8 w-8 text-sm text-white font-semibold font-face-gsb bg-customColor rounded-full" href="#">1+</a>
-                           </div>
-                        </div>
-                        <div className='w-158.17 h-10 py-1.5 pl-10 '>
-                          <span className='text-sm font-medium font-face-m text-color18'>$45</span>
-                        </div>
-                        <div className='w-158.17 h-10 py-1.5 pl-8 '>
-                          <span className='text-sm font-medium font-face-m text-color18'>145,900,000.00 KM</span>
-                        </div>
-                        <div className='w-158.17 h-10 items-center pl-10 flex'>
-                          <span class="flex items-center text-sm font-medium font-face-m text-color18">
-                            <span class="flex h-1.5 w-1.5 bg-color23 rounded-full mr-1.5 flex-shrink-0"></span>On hold
-                          </span>
-                        </div>
-                     </div>
-
-                     <div className='flex flex-row h-60 border-x border-b items-center'>
-                        <div className='w-157 h-10 py-1.5 pl-4 '>
-                          <span className='text-sm font-medium font-face-m text-color18'>AudioWold</span>
-                        </div>
-                        <div className='w-158.17 h-10 py-1.5 pl-2 '>
-                          <span className='text-sm font-medium font-face-m text-color18'>Inox industy and...</span>
-                        </div>
-                        <div className='w-158.17 h-10 py-1.5  '>
-                          <span className='text-sm font-medium font-face-m text-color18'>Jan 2022 - Oct 2023</span>
-                        </div>
-                        <div className='w-101 h-10 items-center py-0.5'>
-                           <div class="flex -space-x-4 overflow-hidden">
-                              <img class="inline-block h-35 w-35 rounded-full  ring-white" src={image15} alt="img"/>
-                              <img class="inline-block h-35 w-35 rounded-full  ring-white" src={image16} alt=""/>
-                              <img class="inline-block h-35 w-35 rounded-full  ring-white" src={image17} alt=""/>
-                              <a class="flex items-center justify-center mt-0.5 h-8 w-8 text-sm text-white font-semibold font-face-gsb bg-customColor rounded-full" href="#">3+</a>
-                           </div>
-                        </div>
-                        <div className='w-158.17 h-10 py-1.5 pl-10 '>
-                          <span className='text-sm font-medium font-face-m text-color18'>$45</span>
-                        </div>
-                        <div className='w-158.17 h-10 py-1.5 pl-8 '>
-                          <span className='text-sm font-medium font-face-m text-color18'>145,900,000.00 KM</span>
-                        </div>
-                        <div className='w-158.17 h-10 items-center pl-10 flex'>
-                          <span class="flex items-center text-sm font-medium font-face-m text-color18">
-                            <span class="flex h-1.5 w-1.5 bg-color23 rounded-full mr-1.5 flex-shrink-0"></span>On hold
-                          </span>
-                        </div>
-                     </div>
-
-                     <div className='flex flex-row h-60 border-x border-b items-center'>
-                        <div className='w-157 h-10 py-1.5 pl-4 '>
-                          <span className='text-sm font-medium font-face-m text-color18'>Roomrs</span>
-                        </div>
-                        <div className='w-158.17 h-10 py-1.5 pl-2 '>
-                          <span className='text-sm font-medium font-face-m text-color18'>Inox industy and...</span>
-                        </div>
-                        <div className='w-158.17 h-10 py-1.5  '>
-                          <span className='text-sm font-medium font-face-m text-color18'>Jan 2022 - Oct 2023</span>
-                        </div>
-                        <div className='w-101 h-10 items-center py-0.5'>
-                           <div class="flex -space-x-4 overflow-hidden">
-                              <img class="inline-block h-35 w-35 rounded-full  ring-white" src={image18} alt="img"/>
-                              <img class="inline-block h-35 w-35 rounded-full  ring-white" src={image19} alt=""/>
-                              <img class="inline-block h-35 w-35 rounded-full  ring-white" src={image20} alt=""/>
-                              
-                           </div>
-                        </div>
-                        <div className='w-158.17 h-10 py-1.5 pl-10 '>
-                          <span className='text-sm font-medium font-face-m text-color18'>$45</span>
-                        </div>
-                        <div className='w-158.17 h-10 py-1.5 pl-8 '>
-                          <span className='text-sm font-medium font-face-m text-color18'>145,900,000.00 KM</span>
-                        </div>
-                        <div className='w-158.17 h-10 items-center pl-10 flex'>
-                          <span class="flex items-center text-sm font-medium font-face-m text-color18">
-                            <span class="flex h-1.5 w-1.5 bg-color23 rounded-full mr-1.5 flex-shrink-0"></span>On hold
-                          </span>
-                        </div>
-                     </div>
-
-                     <div className='flex flex-row h-60 border-x border-b items-center'>
-                        <div className='w-157 h-10 py-1.5 pl-4 '>
-                          <span className='text-sm font-medium font-face-m text-color18'>Travelpot</span>
-                        </div>
-                        <div className='w-158.17 h-10 py-1.5 pl-2 '>
-                          <span className='text-sm font-medium font-face-m text-color18'>Inox industy and...</span>
-                        </div>
-                        <div className='w-158.17 h-10 py-1.5  '>
-                          <span className='text-sm font-medium font-face-m text-color18'>Jan 2022 - Oct 2023</span>
-                        </div>
-                        <div className='w-101 h-10 items-center py-0.5'>
-                           <div class="flex -space-x-4 overflow-hidden">
-                              <img class="inline-block h-35 w-35 rounded-full  ring-white" src={image21} alt="img"/>
-                              <img class="inline-block h-35 w-35 rounded-full  ring-white" src={image22} alt=""/>
-                              <img class="inline-block h-35 w-35 rounded-full  ring-white" src={image23} alt=""/>
-                             
-                           </div>
-                        </div>
-                        <div className='w-158.17 h-10 py-1.5 pl-10 '>
-                          <span className='text-sm font-medium font-face-m text-color18'>$45</span>
-                        </div>
-                        <div className='w-158.17 h-10 py-1.5 pl-8 '>
-                          <span className='text-sm font-medium font-face-m text-color18'>145,900,000.00 KM</span>
-                        </div>
-                        <div className='w-158.17 h-10 items-center pl-10 flex'>
-                          <span class="flex items-center text-sm font-medium font-face-m text-color18">
-                            <span class="flex h-1.5 w-1.5 bg-color24 rounded-full mr-1.5 flex-shrink-0"></span>Inactive
-                          </span>
-                        </div>
-                     </div>
-
-                     <div className='flex flex-row h-60 border-x border-b items-center'>
-                        <div className='w-157 h-10 py-1.5 pl-4 '>
-                          <span className='text-sm font-medium font-face-m text-color18'>GIZ</span>
-                        </div>
-                        <div className='w-158.17 h-10 py-1.5 pl-2 '>
-                          <span className='text-sm font-medium font-face-m text-color18'>Inox industy and...</span>
-                        </div>
-                        <div className='w-158.17 h-10 py-1.5  '>
-                          <span className='text-sm font-medium font-face-m text-color18'>Jan 2022 - Oct 2023</span>
-                        </div>
-                        <div className='w-101 h-10 items-center py-0.5'>
-                           <div class="flex -space-x-4 overflow-hidden">
-                              <img class="inline-block h-35 w-35 rounded-full  ring-white" src={image24} alt="img"/>
-                              <img class="inline-block h-35 w-35 rounded-full  ring-white" src={image25} alt=""/>
-                              <img class="inline-block h-35 w-35 rounded-full  ring-white" src={image26} alt=""/>
-                              <a class="flex items-center justify-center mt-0.5 h-8 w-8 text-sm text-white font-semibold font-face-gsb bg-customColor rounded-full" href="#">2+</a>
-                           </div>
-                        </div>
-                        <div className='w-158.17 h-10 py-1.5 pl-10 '>
-                          <span className='text-sm font-medium font-face-m text-color18'>$45</span>
-                        </div>
-                        <div className='w-158.17 h-10 py-1.5 pl-8 '>
-                          <span className='text-sm font-medium font-face-m text-color18'>145,900,000.00 KM</span>
-                        </div>
-                        <div className='w-158.17 h-10 items-center pl-10 flex'>
-                          <span class="flex items-center text-sm font-medium font-face-m text-color18">
-                            <span class="flex h-1.5 w-1.5 bg-color24 rounded-full mr-1.5 flex-shrink-0"></span>Inactive
-                          </span>
-                        </div>
-                     </div>
-
-                     <div className='flex flex-row h-60 border-x border-b items-center'>
-                        <div className='w-157 h-10 py-1.5 pl-4 '>
-                          <span className='text-sm font-medium font-face-m text-color18'>Bosch</span>
-                        </div>
-                        <div className='w-158.17 h-10 py-1.5 pl-2 '>
-                          <span className='text-sm font-medium font-face-m text-color18'>Inox industy and...</span>
-                        </div>
-                        <div className='w-158.17 h-10 py-1.5  '>
-                          <span className='text-sm font-medium font-face-m text-color18'>Jan 2022 - Oct 2023</span>
-                        </div>
-                        <div className='w-101 h-10 items-center py-0.5'>
-                           <div class="flex -space-x-4 overflow-hidden">
-                              <img class="inline-block h-35 w-35 rounded-full  ring-white" src={image27} alt="img"/>
-                              <img class="inline-block h-35 w-35 rounded-full  ring-white" src={image28} alt=""/>
-                              <img class="inline-block h-35 w-35 rounded-full  ring-white" src={image29} alt=""/>
+                          <span className="flex items-center text-sm font-medium font-face-m text-color18">
+                            <span className={project.status=="Active" ? "flex h-1.5 w-1.5 bg-color22 rounded-full mr-1.5 flex-shrink-0" : 
+                            project.status=="On hold" ? "flex h-1.5 w-1.5 bg-color23 rounded-full mr-1.5 flex-shrink-0" : 
+                            "flex h-1.5 w-1.5 bg-color24 rounded-full mr-1.5 flex-shrink-0" }>
                             
-                           </div>
-                        </div>
-                        <div className='w-158.17 h-10 py-1.5 pl-10 '>
-                          <span className='text-sm font-medium font-face-m text-color18'>$45</span>
-                        </div>
-                        <div className='w-158.17 h-10 py-1.5 pl-8 '>
-                          <span className='text-sm font-medium font-face-m text-color18'>145,900,000.00 KM</span>
-                        </div>
-                        <div className='w-158.17 h-10 items-center pl-10 flex'>
-                          <span class="flex items-center text-sm font-medium font-face-m text-color18">
-                            <span class="flex h-1.5 w-1.5 bg-color24 rounded-full mr-1.5 flex-shrink-0"></span>Inactive
+                            
+                            </span>{project.status}
                           </span>
                         </div>
-                     </div>                    
+                     </div>
+                    ))}
                </div>
          </div>      
 
@@ -514,7 +231,7 @@ export default function Projects(){
                             className={`${
                               number === selectedValueNum ? 'bg-color7 text-customColor text-sm font-link-os' : 'text-sm   text-gray-500'
                             } cursor-pointer select-none relative py-1 pl-3`}
-                            onClick={() => handleYearChange(number)}
+                            onClick={() => [handleYearChange(number), setRows(number)]}
                           >
                             <span className="block truncate">{number}</span>
                             {number === selectedValueNum && (
@@ -540,25 +257,15 @@ export default function Projects(){
                   </div>
                 </div>
                 <div className='py-1.5 px-4'>
-                  <span className='text-color21 text-sm font-link-os'>1 - 10 of 540 Projects</span>
+                  <span className='text-color21 text-sm font-link-os'>1 - {rows} of {projects[0]?.total_projects} Projects</span>
                 </div>
             </div>
             <div className='flex w-386 h-8 space-x-2'>
               <div className='flex w-272 h-full space-x-2'>
-              <a href="#" class="inline-flex items-center justify-center w-8 h-full text-sm font-link-os text-[rgba(0,0,0,0.45)] bg-white border border-color25 rounded hover:bg-color26 hover:text-color27  hover:border-color28">1
-              </a>
-              <a href="#" class="inline-flex items-center justify-center w-8 h-full text-sm font-link-os text-[rgba(0,0,0,0.45)] bg-white border border-color25 rounded hover:bg-color26 hover:text-color27  hover:border-color28">2
-              </a>
-              <a href="#" class="inline-flex items-center justify-center w-8 h-full text-sm font-link-os text-[rgba(0,0,0,0.45)] bg-white border border-color25 rounded hover:bg-color26 hover:text-color27  hover:border-color28">3
-              </a>
-              <a href="#" class="inline-flex items-center justify-center w-8 h-full text-sm font-link-os text-[rgba(0,0,0,0.45)] bg-white border border-color25 rounded hover:bg-color26 hover:text-color27  hover:border-color28">4
-              </a>
-              <a href="#" class="inline-flex items-center justify-center w-8 h-full text-sm font-link-os text-[rgba(0,0,0,0.45)] bg-white border border-color25 rounded hover:bg-color26 hover:text-color27  hover:border-color28">5
-              </a>
-              <a href="#" class="inline-flex items-center justify-center w-8 h-full text-sm font-link-os text-[rgba(0,0,0,0.45)] bg-white border border-color25 rounded hover:bg-color26 hover:text-color27  hover:border-color28">6
-              </a>
-              <a href="#" class="inline-flex items-center justify-center w-8 h-full text-sm font-link-os text-[rgba(0,0,0,0.45)] bg-white border border-color25 rounded hover:bg-color26 hover:text-color27  hover:border-color28">7
-              </a>
+              {Array.from({ length: pages }, (_, index) => (
+        <a href="#" class="inline-flex items-center justify-center w-8 h-full text-sm font-link-os text-[rgba(0,0,0,0.45)] bg-white border border-color25 rounded hover:bg-color26 hover:text-color27  hover:border-color28">{index+1}
+        </a>
+      ))}
               </div>
               <a href="#" class="inline-flex items-center justify-center w-49 h-full text-sm font-link-os text-[rgba(0,0,0,0.45)] bg-white border border-color25 rounded hover:bg-color26 hover:text-color27  hover:border-color28">Next
               </a>
