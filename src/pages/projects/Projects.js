@@ -4,12 +4,17 @@ import api from '../../Api';
 import { getAccessToken } from '../../Api';
 
 
+
 export default function Projects(){
    const [selected, setSelected] = useState(null);
    const [rows, setRows]=useState(10);
    const [pages, setPages]=useState(0);
+   const [currentPage, setCurrentPage]=useState(1);
    const [projects, setProjects]=useState([])
-   const [filteredProjects, setFilteredProjects] = useState([]);
+   const [allProjects, setAllProjects]=useState([]);
+   const [emptySearch, setEmptySearch]=useState(false);
+
+
    const handleItemClick = (item) => {
       if (selected === item) {
         setSelected(null);
@@ -24,14 +29,21 @@ export default function Projects(){
       setSelectedNumber(e.target.value);
       console.log('Odabran broj:', e.target.value);
     };
-  
-  
+    
+    const range = 3; 
+    const halfRange = Math.floor(range / 2);
+
+    let startPage = Math.max(currentPage - halfRange, 1);
+    let endPage = Math.min(startPage + range - 1, pages);
+
+
     const [selectedValueNum, setSelectedValueNum] = useState('10');
     const [isDropdownOpen, setIsDropdownOpen] = useState(false); 
   
     const numbers = ['1','2','3', '4', '5','6','7','8','9','10'];
   
-    const handleYearChange = (number) => {
+    const handleRowChange = (number,e) => {
+      e.preventDefault();
       setSelectedValueNum(number);
       setIsDropdownOpen(false); 
     };
@@ -40,25 +52,103 @@ export default function Projects(){
       setIsDropdownOpen((prevState) => !prevState);
     };
   
-     useEffect(()=>{
-      api.get(`http://127.0.0.1:8000/api/projects/`, {
-      headers: {
-        'Authorization': `Bearer ${getAccessToken()}`
-      }
+    const fetchProjects=()=>{
+      api.get(`http://127.0.0.1:8000/api/projects/${rows}/?page=${currentPage}`, {
+        headers: {
+          'Authorization': `Bearer ${getAccessToken()}`
+        }
       })
-      .then(response => setProjects(response.data))
+      .then(response => {console.log(response.data); setProjects(response.data)})
       .catch(error => console.error(error));
- }, []);
+    }
+     useEffect(()=>{
+      fetchProjects();
+ }, [rows, currentPage]);
     
       useEffect(()=>{
         let num=0;
-        num=projects[0]?.total_projects/rows;
+        num=projects.count/rows;
         if(num%2==0){
           setPages(Math.floor(num))
         }else{
           setPages(Math.floor(num)+1);
         }
       },[projects])
+
+      const handleNextPage = () => {
+        if (currentPage+2 >= pages) {
+          setCurrentPage(pages-1);
+        }else if(currentPage < pages){
+          setCurrentPage(currentPage + 1);
+        }
+      };
+      
+      if (endPage - startPage + 1 < range) {
+        startPage = Math.max(endPage - range + 1, 1);
+      }
+
+      const fetchAllProjects=()=>{
+        api.get(`http://127.0.0.1:8000/api/projects/`, {
+          headers: {
+            'Authorization': `Bearer ${getAccessToken()}`
+          }
+        })
+        .then(response => {setAllProjects(response.data)})
+        .catch(error => console.error(error));
+      }
+      useEffect(()=>{
+        fetchAllProjects();
+      },[])
+
+      const filterProjects = (e) => {
+        const searchValue = e.target.value.toLowerCase();
+        let countOfProjects;
+        const filteredProjects = allProjects.filter((item) =>
+          item.project_name.toLowerCase().includes(searchValue)
+        );
+        setProjects({ results: filteredProjects, count: filteredProjects.length });
+        if (!filteredProjects) {
+          setEmptySearch(true);
+        }else{
+          setEmptySearch(false);
+        }
+      };
+
+      const handleKeyPress = (e) => {
+        if (e.key === 'Enter') {
+          filterProjects(e);
+        }
+      };
+
+      const fetchCompleted=()=>{
+        api.get(`http://127.0.0.1:8000/api/onhold_projects/${rows}`, {
+      headers: {
+        'Authorization': `Bearer ${getAccessToken()}`
+      }
+      })
+      .then(response => {setProjects(response.data); setAllProjects(response.data.results)})
+      .catch(error => console.error(error));
+      }
+
+      const fetchActive=()=>{
+        api.get(`http://127.0.0.1:8000/api/active_projects/${rows}`, {
+      headers: {
+        'Authorization': `Bearer ${getAccessToken()}`
+      }
+      })
+      .then(response => {setProjects(response.data); setAllProjects(response.data.results)})
+      .catch(error => console.error(error));
+      }
+
+      const fetchInactive=()=>{
+        api.get(`http://127.0.0.1:8000/api/inactive_projects/${rows}`, {
+      headers: {
+        'Authorization': `Bearer ${getAccessToken()}`
+      }
+      })
+      .then(response => {setProjects(response.data); setAllProjects(response.data.results)})
+      .catch(error => console.error(error));
+      }
 
    return(
    <div className='flex h-full'>
@@ -71,22 +161,22 @@ export default function Projects(){
          <button className="bg-customColor hover:bg-gray-500 text-white h-10 w-44 text-base font-link font-semibold rounded-md">
             Create new project
          </button>
-        </div>      
+        </div>     
+
           <div className='block space-y-10 lg:space-y-0 lg:flex lg:flex-row lg:justify-between lg:items-center'> 
             <div className='flex mb-3 '>
               <div className={`flex items-center justify-center text-center py-5 px-3 lg:py-0 lg:px-0 w-1/3 border border-color11 h-10 lg:w-109 rounded-l-md cursor-pointer ' ${
                 selected === 1 ? 'bg-color14' : ''}`}
-                  onClick={() => handleItemClick(1)}
+                  onClick={() => {handleItemClick(1); fetchProjects(); fetchAllProjects();}}
                     >
                     <span className={`text-sm font-normal text-color12 font-link cursor-pointer ${
                         selected === 1 ? 'color' : ''}`}
                           onClick={() => handleItemClick(1)}>All Projects
                     </span>
               </div>
-                      {console.log(projects)}
               <div className={`flex items-center justify-center border-color11 py-5 lg:py-0  w-1/3 border-y border-r h-10 lg:w-74 cursor-pointer ' ${
                 selected === 2 ? 'bg-color14' : ''}`}
-                  onClick={() => handleItemClick(2)}
+                  onClick={() => {handleItemClick(2); fetchActive()}}
                     >
                     <span className ={`text-sm font-normal text-center text-color12 font-link cursor-pointer ${
                         selected === 2 ? 'color' : ''}`}
@@ -96,7 +186,7 @@ export default function Projects(){
 
               <div className={`flex items-center justify-center border-color11 py-5 lg:py-0  w-1/3 border-y h-10 lg:w-84 cursor-pointer ' ${
                 selected === 3 ? 'bg-color14' : ''}`}
-                  onClick={() => handleItemClick(3)}
+                  onClick={() => {handleItemClick(3);fetchInactive()}}
                     >
                     <span className ={`text-sm font-normal text-center text-color12 font-link cursor-pointer ${
                         selected === 3 ? 'color' : ''}`}
@@ -106,7 +196,7 @@ export default function Projects(){
 
               <div className={`flex items-center justify-center border py-5 px-3 w-1/3 lg:px-0 lg:py-0 border-color11 h-10 lg:w-105 rounded-r-md cursor-pointer ' ${
                 selected === 4 ? 'bg-color14' : ''}`}
-                   onClick={() => handleItemClick(4)}
+                   onClick={() => {handleItemClick(4); fetchCompleted()}}
                     >
                       <span className={`text-sm font-normal text-color12 font-link cursor-pointer ${
                           selected === 4 ? 'color' : ''}`}
@@ -115,12 +205,11 @@ export default function Projects(){
               </div>
             </div>
           </div>
-           
           <div className='w-screen'>
                <div className='border w-1050  h-70  flex  items-center justify-between rounded-t-md'>
                  <div className='pl-4 flex h-30 w-48 justify-between'>
                   <span className='text-lg w-90 h-26 font-medium font-face-m'>All Projects</span>
-                     <span className='text-sm py-1 font-medium w-70 bg-color14 text-center rounded-md font-face-m text-color13'>{projects[0]?.total_projects} total </span>
+                     <span className='text-sm py-1 font-medium w-70 bg-color14 text-center rounded-md font-face-m text-color13'>{projects.count} total </span>
                  </div>
                  <div className="pr-4 relative flex items-center">
                      <button className="absolute left-0 ml-2">
@@ -130,6 +219,7 @@ export default function Projects(){
 
                      </button>
                      <input
+                     onKeyDown={handleKeyPress}
                      type="text"
                      placeholder="Search"
                      className="w-64 pl-10 pr-4 py-2 border placeholder-color6 border-color17 text-color6 text-sm font-link font-normal rounded-md focus:outline-none focus:ring-1 focus:ring-gray-400"
@@ -160,41 +250,40 @@ export default function Projects(){
                           <span className='text-sm font-medium font-face-m text-color18'>Status</span>
                         </div>
                      </div>
-                    {projects.map((project,index)=>(
-                    <div key={index} className='flex flex-row h-60 border-x border-b items-center'>
+                     
+                    {!emptySearch ? projects.results?.map((project,index)=>(
+                      <div key={index} className='flex flex-row h-60 border-x border-b items-center'>
                         <div className='w-157 h-10 py-1.5 pl-4 '>
-                          <span className='text-sm font-medium font-face-m text-color18'>{project.project_name}</span>
+                          <span className='text-sm font-medium font-face-m text-color18'>{project?.project_name}</span>
                         </div>
                         <div className='w-158.17 h-10 py-1.5 pl-2 '>
-                          <span className='text-sm font-medium font-face-m text-color18'>{project.description}</span>
+                          <span className='text-sm font-medium font-face-m text-color18'>{project?.description}</span>
                         </div>
                         <div className='w-158.17 h-10 py-1.5  '>
-                          <span className='text-sm font-medium font-face-m text-color18'>{`${project.start}-${project.end}`}</span>
+                          <span className='text-sm font-medium font-face-m text-color18'>{`${project?.start}-${project?.end}`}</span>
                         </div>
                         <div className='w-101 h-10 items-center py-0.5'>
                            <div class="flex -space-x-4 overflow-hidden">
-                           {project.users.slice(0, 3).map((item,index) => (<img key={index} className="inline-block h-35 w-35 rounded-full ring-white" src={item.profile_photo} alt={`${item.first_name} ${item.last_name}`}/>))}
-                              {project.users.length>3 ? <a class="flex items-center justify-center mt-0.5 h-8 w-8 text-sm text-white font-semibold font-face-gsb bg-customColor rounded-full" href="#">{project.users.length-3}+</a> : null}
+                           {project?.users.slice(0, 3).map((item,index) => (<img key={index} className="inline-block h-35 w-35 rounded-full ring-white" src={item?.profile_photo} alt={`${item?.first_name} ${item?.last_name}`}/>))}
+                              {project?.users.length>3 ? <a class="flex items-center justify-center mt-0.5 h-8 w-8 text-sm text-white font-semibold font-face-gsb bg-customColor rounded-full" href="#">{project?.users.length-3}+</a> : null}
                            </div>
                         </div>
                         <div className='w-158.17 h-10 py-1.5 pl-10 '>
-                          <span className='text-sm font-medium font-face-m text-color18'>${project.hourly_price}</span>
+                          <span className='text-sm font-medium font-face-m text-color18'>${project?.hourly_price}</span>
                         </div>
                         <div className='w-158.17 h-10 py-1.5 pl-8 '>
-                          <span className='text-sm font-medium font-face-m text-color18'>{project.project_value} KM</span>
+                          <span className='text-sm font-medium font-face-m text-color18'>{project?.project_value} KM</span>
                         </div>
                         <div className='w-158.17 h-10 items-center pl-10 flex'>
                           <span className="flex items-center text-sm font-medium font-face-m text-color18">
-                            <span className={project.status=="Active" ? "flex h-1.5 w-1.5 bg-color22 rounded-full mr-1.5 flex-shrink-0" : 
-                            project.status=="On hold" ? "flex h-1.5 w-1.5 bg-color23 rounded-full mr-1.5 flex-shrink-0" : 
+                            <span className={project?.status=="Active" ? "flex h-1.5 w-1.5 bg-color22 rounded-full mr-1.5 flex-shrink-0" : 
+                            project?.status=="On hold" ? "flex h-1.5 w-1.5 bg-color23 rounded-full mr-1.5 flex-shrink-0" : 
                             "flex h-1.5 w-1.5 bg-color24 rounded-full mr-1.5 flex-shrink-0" }>
-                            
-                            
-                            </span>{project.status}
+                            </span>{project?.status}
                           </span>
                         </div>
                      </div>
-                    ))}
+                    )): <p className='flex justify-center items-center mt-10'>Not found</p>}
                </div>
          </div>      
 
@@ -231,7 +320,7 @@ export default function Projects(){
                             className={`${
                               number === selectedValueNum ? 'bg-color7 text-customColor text-sm font-link-os' : 'text-sm   text-gray-500'
                             } cursor-pointer select-none relative py-1 pl-3`}
-                            onClick={() => [handleYearChange(number), setRows(number)]}
+                            onClick={(e) => [e.preventDefault(), handleRowChange(number,e), setRows(number)]}
                           >
                             <span className="block truncate">{number}</span>
                             {number === selectedValueNum && (
@@ -257,20 +346,103 @@ export default function Projects(){
                   </div>
                 </div>
                 <div className='py-1.5 px-4'>
-                  <span className='text-color21 text-sm font-link-os'>1 - {rows} of {projects[0]?.total_projects} Projects</span>
+                  <span className='text-color21 text-sm font-link-os'>{((currentPage-1)*rows)+1} - {rows*currentPage>projects.count ? projects.count : rows*currentPage} of {projects.count} Projects</span>
                 </div>
             </div>
             <div className='flex w-386 h-8 space-x-2'>
-              <div className='flex w-272 h-full space-x-2'>
-              {Array.from({ length: pages }, (_, index) => (
-        <a href="#" class="inline-flex items-center justify-center w-8 h-full text-sm font-link-os text-[rgba(0,0,0,0.45)] bg-white border border-color25 rounded hover:bg-color26 hover:text-color27  hover:border-color28">{index+1}
-        </a>
-      ))}
-              </div>
-              <a href="#" class="inline-flex items-center justify-center w-49 h-full text-sm font-link-os text-[rgba(0,0,0,0.45)] bg-white border border-color25 rounded hover:bg-color26 hover:text-color27  hover:border-color28">Next
-              </a>
-              <a href="#" class="inline-flex items-center justify-center w-49 h-full text-sm font-link-os text-[rgba(0,0,0,0.45)] bg-white border border-color25 rounded hover:bg-color26 hover:text-color27  hover:border-color28">Last
-              </a>
+              {/* {Array.from({ length: pages-1 }, (_, index) => (
+                <a onClick={()=>setCurrentPage(index+1)} href="#" class="inline-flex items-center justify-center w-8 h-full text-sm font-link-os text-[rgba(0,0,0,0.45)] bg-white border border-color25 rounded hover:bg-color26 hover:text-color27  hover:border-color28">{index+1}
+                </a>
+              ))} */}
+          {/* <div className='flex w-272 h-full space-x-2'>
+          <a onClick={()=>setCurrentPage(pages-3==currentPage ? pages-3 : currentPage)} href="#" class="inline-flex items-center justify-center w-8 h-full text-sm font-link-os text-[rgba(0,0,0,0.45)] bg-white border border-color25 rounded hover:bg-color26 hover:text-color27  hover:border-color28">{pages-3==currentPage ? pages-3 : currentPage}
+          </a>
+          <a onClick={()=>setCurrentPage(pages-2==currentPage+1 ? pages-2 : currentPage+1)} href="#" class="inline-flex items-center justify-center w-8 h-full text-sm font-link-os text-[rgba(0,0,0,0.45)] bg-white border border-color25 rounded hover:bg-color26 hover:text-color27  hover:border-color28">{pages-2==currentPage+1 ? pages-2 : currentPage+1}
+          </a>
+          <a onClick={()=>setCurrentPage(pages-1==currentPage+2 ? pages-1 : currentPage+2)} href="#" class="inline-flex items-center justify-center w-8 h-full text-sm font-link-os text-[rgba(0,0,0,0.45)] bg-white border border-color25 rounded hover:bg-color26 hover:text-color27  hover:border-color28">{pages-1==currentPage+2 ? pages-1 : currentPage+2}
+          </a>
+          <p>...</p>
+                <a onClick={()=>setCurrentPage(pages)} href="#" class="inline-flex items-center justify-center w-8 h-full text-sm font-link-os text-[rgba(0,0,0,0.45)] bg-white border border-color25 rounded hover:bg-color26 hover:text-color27  hover:border-color28">{pages}
+                </a>
+                </div>
+              <button disabled={projects.next==null} onClick={()=>setCurrentPage(currentPage+1)} class="inline-flex items-center justify-center w-49 h-full text-sm font-link-os text-[rgba(0,0,0,0.45)] bg-white border border-color25 rounded hover:bg-color26 hover:text-color27  hover:border-color28">Next
+                </button></> :  */}
+              {pages>3 ?
+              <>
+                  {Array.from({ length: endPage - startPage + 1 }, (_, index) => {
+              const pageNumber = startPage + index;
+              return (
+                <a
+                  onClick={() => setCurrentPage(pageNumber)}
+                  href="#"
+                  className={`inline-flex items-center justify-center w-8 h-full text-sm font-link-os ${
+                    pageNumber === currentPage
+                      ? 'text-color27 bg-color26 border-color28 hover:text-color27 hover:bg-color26 hover:border-color28'
+                      : 'text-[rgba(0,0,0,0.45)] bg-white border border-color25 hover:bg-color26 hover:text-color27 hover:border-color28'
+                  }`}
+                >
+                  {pageNumber}
+                </a>
+              );
+            })}
+              {endPage < pages && ( 
+                <>
+                  <p>...</p>
+                  <a
+                    onClick={() => setCurrentPage(pages)}
+                    href="#"
+                    className={`inline-flex items-center justify-center w-8 h-full text-sm font-link-os text-[rgba(0,0,0,0.45)] bg-white border border-color25 rounded hover:bg-color26 hover:text-color27  hover:border-color28`}>
+                    {pages}
+                  </a>
+                </>
+              )}
+              <button
+                disabled={projects.next == null}
+                onClick={() => setCurrentPage(currentPage + 1)}
+                className={`inline-flex items-center justify-center w-49 h-full text-sm font-link-os text-[rgba(0,0,0,0.45)] bg-white border border-color25 rounded hover:bg-color26 hover:text-color27  hover:border-color28`}>Next</button>
+              </>
+              :
+              <>
+              <div className="flex w-272 h-full space-x-2">
+              {pages <= 3 ? (
+              <>
+                {Array.from({ length: pages }, (_, index) => {
+                  const pageNumber = index + 1;
+                  return (
+                  <a
+                  onClick={() => setCurrentPage(pageNumber)}
+                  href="#"
+                  className={`inline-flex items-center justify-center w-8 h-full text-sm font-link-os ${
+                    pageNumber === currentPage
+                      ? 'text-color27 bg-color26 border-color28 hover:text-color27 hover:bg-color26 hover:border-color28'
+                      : 'text-[rgba(0,0,0,0.45)] bg-white border border-color25 hover:bg-color26 hover:text-color27 hover:border-color28'
+                  }`}>
+                  {pageNumber}
+                </a>
+              );
+            })}
+          </>
+  ) : (
+    <>
+      <a
+        onClick={() => setCurrentPage(currentPage)}
+        href="#"
+        className="inline-flex items-center justify-center w-8 h-full text-sm font-link-os text-[rgba(0,0,0,0.45)] bg-white border border-color25 rounded hover:bg-color26 hover:text-color27 hover:border-color28">{currentPage}</a>
+      <a
+        onClick={() => setCurrentPage(currentPage + 1)}
+        href="#"
+        className="inline-flex items-center justify-center w-8 h-full text-sm font-link-os text-[rgba(0,0,0,0.45)] bg-white border border-color25 rounded hover:bg-color26 hover:text-color27 hover:border-color28">{currentPage + 1}</a>
+      <a
+        onClick={() => setCurrentPage(currentPage + 2)}
+        href="#"
+        className="inline-flex items-center justify-center w-8 h-full text-sm font-link-os text-[rgba(0,0,0,0.45)] bg-white border border-color25 rounded hover:bg-color26 hover:text-color27 hover:border-color28">{currentPage + 2}</a>
+        </>
+      )}
+      </div>
+      <button
+      disabled={projects.next == null}
+      onClick={() => setCurrentPage(currentPage + 1)}
+      className="inline-flex items-center justify-center w-49 h-full text-sm font-link-os text-[rgba(0,0,0,0.45)] bg-white border border-color25 rounded hover:bg-color26 hover:text-color27 hover:border-color28">Next</button></>}
             </div>
           </div> 
       </div>

@@ -4,13 +4,20 @@ import HomeDRC from './pages/home/HomeDRC'
 import HomePlan from './pages/home/HomePlan'
 import Projects from './pages/projects/Projects'
 import { Route, Routes, useNavigate } from "react-router-dom";
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 
 
 export default function App() {
 const [user, setUser]=useState([]);
-
+const navigate=useNavigate();
+useEffect(()=>{
+  if (!localStorage.getItem("user")){
+    navigate("/login");
+  }else {
+    navigate("/home");
+  }
+},[])
 
   return (
     <>

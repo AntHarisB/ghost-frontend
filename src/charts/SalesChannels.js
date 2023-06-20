@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend } from 'recharts'
-import axios from 'axios'
 import { getAccessToken,clearTokens } from '../Api';
 import api from '../Api';
 
@@ -15,7 +14,7 @@ export default function SalesChannel(selectedYear){
 
   useEffect(()=>{
     const accessToken=getAccessToken();
-    api.get(`http://127.0.0.1:8000/projectcreation-count/${selectedYear.selectedYear}/`, {
+    api.get(`http://127.0.0.1:8000/api/projectcreation-count/${selectedYear.selectedYear}/`, {
   headers: {
     'Authorization': `Bearer ${accessToken}`
   }
@@ -24,10 +23,8 @@ export default function SalesChannel(selectedYear){
     setSalesChannels(response.data);
   })
   .catch(error => {
-    // Handle the error appropriately
     console.error(error);
     if (error.response && error.response.status === 401) {
-      // Token has expired, clear tokens and handle the error
       clearTokens();
       console.log("Access token has expired. Tokens cleared.");
     }
