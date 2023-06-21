@@ -3,6 +3,7 @@ import Home from './pages/home/Home';
 import HomeDRC from './pages/home/HomeDRC'
 import HomePlan from './pages/home/HomePlan'
 import Projects from './pages/projects/Projects'
+import Employees from './pages/employees/Employees'
 import { Route, Routes, useNavigate } from "react-router-dom";
 import { useState } from 'react';
 
@@ -21,6 +22,7 @@ const [user, setUser]=useState([]);
         <Route path="/homedrc" element={<HomeDRC/>} />
         <Route path="/homeplan" element={<HomePlan/>} />
         <Route path="/projects" element={<Projects/>} />
+        <Route path="/employees" element={<Employees/>} />
         <Route path='/*' component={<h1>404</h1>}/>
     </Routes>
     </>
