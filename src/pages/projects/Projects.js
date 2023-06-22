@@ -276,7 +276,7 @@ const handleOptionChange = (event) => {
 
         </div>      
                   
-        <div>
+        {/* <div>
               {isOpen && (
                 <div className="fixed top-0 left-0 right-0 z-50 flex items-center h-full max-h-1024  overflow-y-auto  justify-end bg-black bg-opacity-50">
                   <div className="relative bg-color7 shadow-lg w-496 h-full overflow-y-auto overflow-x-hidden">
@@ -697,9 +697,9 @@ const handleOptionChange = (event) => {
     <div>
     <label className="block text-primary font-face-m font-medium text-base  mb-2" >
                             Status
-                          </label>
+                          </label> */}
       {/* Dropdown button */}
-      <button
+      {/* <button
         id="dropdownRadioButtonButton"
         data-dropdown-toggle="dropdownDefaultRadioButton"
         className="appearance-none font-face-r font-normal text-sm w-400 h-10 border border-color20 border-1 rounded-md  py-2 px-3 text-secondary placeholder-color18 leading-tight focus:outline-none focus:shadow-outline  pl-3  w-400 h-10  inline-flex items-center "
@@ -711,10 +711,10 @@ const handleOptionChange = (event) => {
           <path d="M8 11L3 6.00005L3.7 5.30005L8 9.60005L12.3 5.30005L13 6.00005L8 11Z" fill="#6C6D75"/>
         </svg>
         </div>
-      </button>
+      </button> */}
 
       {/* Dropdown menu */}
-      <div
+      {/* <div
         id="dropdownDefaultRadioButton"
         className="z-10 hidden w-400 h-32 bg-white divide-y divide-gray-100 border border-color20 border-1 border-t-0 rounded-md shadow dark:bg-gray-700 dark:divide-gray-600"
       >
@@ -805,7 +805,7 @@ const handleOptionChange = (event) => {
                   </div>
               
               )}
-            </div>
+            </div> */}
                   
           
           
@@ -938,7 +938,7 @@ const handleOptionChange = (event) => {
                     )): <p className='flex justify-center items-center mt-10'>Not found</p>}
                     
 
-                    <div
+                    {/* <div
                         className='flex flex-row h-60 border-x border-b items-center'
                         onClick={handleClick}
                       >
@@ -1141,7 +1141,7 @@ const handleOptionChange = (event) => {
                         </clipPath>
                         </defs>
                       </svg>
-                    </button>
+                    </button> */}
 
                     {isDropdownOpen && (
                       <ul className="absolute left-0 mt-[-2.5rem] w-54 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 transform -translate-y-full">
@@ -1259,7 +1259,7 @@ const handleOptionChange = (event) => {
       className="inline-flex items-center justify-center w-49 h-full text-sm font-link-os text-[rgba(0,0,0,0.45)] bg-white border border-color25 rounded hover:bg-color26 hover:text-color27 hover:border-color28">Next</button></>}
             </div>
           </div> 
-      </div>
-   </div>
+  //     </div>
+  //  </div>
   )
 }
