@@ -2,7 +2,6 @@ import logo from '../image/antcolony-logo.png';
 import image from '../image/image.jpg';
 import {  MdOutlineHome } from 'react-icons/md';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 
 export default function Dashboard() {
@@ -10,7 +9,6 @@ export default function Dashboard() {
   const [selected, setSelected] = useState(null);
   const storedUser = localStorage.getItem('user');
   const user = storedUser ? JSON.parse(storedUser) : null;
-  const navigate=useNavigate();
   const handleItemClick = (item) => {
     if (selected === item) {
       setSelected(null);
@@ -74,7 +72,7 @@ export default function Dashboard() {
             <div className='flex flex-col space-y-1'>
                 <div className={`flex items-center rounded-md w-64 md:w-auto lg:w-64 h-12 duration-300 cursor-pointer' ${
                     selected === 1 ? 'bg-color7' : ''}`}
-                      onClick={() =>{ handleItemClick(1);navigate('/home')}}
+                      onClick={() => handleItemClick(1)}
                     >
                     <div className='flex items-center md:mx-4 ml-4 lg:ml-4 space-x-3'>
                       <svg width="24" height="24" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -89,7 +87,7 @@ export default function Dashboard() {
 
                 <div className={`flex items-center rounded-md w-64 h-12 md:w-auto lg:w-64 duration-300 cursor-pointer' ${
                     selected === 2 ? 'bg-color7' : ''}`}
-                      onClick={() => {handleItemClick(2); navigate('/projects')}}
+                      onClick={() => handleItemClick(2)}
                     >
                     <div className='flex items-center ml-4 space-x-3'>
                       <svg width="24" height="24" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
