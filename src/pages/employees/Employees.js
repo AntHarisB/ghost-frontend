@@ -194,7 +194,7 @@ useEffect(() => {
         <div className='lg:flex md:flex -mb-2 lg:justify-between md:justify-between'>
          <h1 className='text-3xl text-color10 font-bold font-face-b'>Employees</h1> 
          <button  onClick={toggleModal} data-modal-target="addnewproject-modal" data-modal-toggle="addnewproject-modal" className="bg-customColor hover:bg-gray-500 text-white h-10 w-44 mt-4 lg:mt-0 md:mt-0 md:mr-0 mr-4 text-base font-link font-semibold rounded-md"  type="button">
-            Add new Employee
+            Add New Employee
          </button>
         </div>      
                   
@@ -841,7 +841,7 @@ useEffect(() => {
                   </div>
                 </div>
                 <div className='py-1.5 px-4'>
-                  <span className='text-color21 text-sm font-link-os'>1 - {rows} of {projects[0]?.total_projects} Projects</span>
+                  <span className='text-color21 text-sm font-link-os'>1 - {rows} of {projects[0]?.total_projects} Employees</span>
                 </div>
             </div>
             <div className='flex lg:w-332 w-full h-8  md:mr-0 md:justify-end space-x-2'>
