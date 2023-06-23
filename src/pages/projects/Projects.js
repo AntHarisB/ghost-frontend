@@ -262,11 +262,11 @@ const handleOptionChange = (event) => {
 
    return(
    <div className='flex h-full'>
-      <div className='basis-[12% h-984'>
+      <div className='basis-[12%] h-984'>
         <Sidebar />
       </div>
       <div className='basis-[88%] flex flex-col space-y-5 md:space-y-5 pb-5 pt-14 px-3 lg:py-8 lg:space-y-5 lg:px-11 lg:overflow-x-hidden md:overflow-x-hidden'>
-        <div className='lg:flex md:flex -mb-2 lg:justify-between md:justify-between'>
+        <div className='lg:flex md:flex mb-2 lg:justify-between md:justify-between'>
          <h1 className='text-3xl text-color10 font-bold font-face-b'>Projects</h1> 
          <button  onClick={toggleModal} data-modal-target="addnewproject-modal" data-modal-toggle="addnewproject-modal" className="bg-customColor hover:bg-gray-500 text-white h-10 w-44 mt-4 lg:mt-0 md:mt-0 md:mr-0 mr-4 text-base font-link font-semibold rounded-md"  type="button">
             Create new project
@@ -274,7 +274,7 @@ const handleOptionChange = (event) => {
 
         </div>     
 
-        </div>      
+            
                   
         {/* <div>
               {isOpen && (
@@ -813,7 +813,6 @@ const handleOptionChange = (event) => {
           
           
           
-          
 
           <div className='block space-y-10 lg:space-y-0 lg:flex lg:flex-row lg:justify-between lg:items-center'> 
             <div className='lg:flex lg:flex-row mb-3 grid grid-cols-2'>
@@ -936,7 +935,8 @@ const handleOptionChange = (event) => {
                         </div>
                      </div>
                     )): <p className='flex justify-center items-center mt-10'>Not found</p>}
-                    
+                    </div> 
+                    </div> 
 
                     {/* <div
                         className='flex flex-row h-60 border-x border-b items-center'
@@ -1116,10 +1116,10 @@ const handleOptionChange = (event) => {
                       </div> 
                </div>
          </div>      
+*/}
 
-
-          <div className='h-47 lg:flex lg:justify-between md:flex md:justify-between items-center'>
-            <div className='lg:w-530  h-42 flex'>
+          <div className='h-47 lg:flex mt-4 lg:justify-between w-1050 md:flex md:justify-between items-center'>
+            <div className='lg:w-343  h-42 flex'>
                 <span className='text-sm text-color19 py-2 font-link-os'>Rows per page: </span>
                 <div className='px-3 py-1'>
                   <div className='relative'>
@@ -1141,7 +1141,7 @@ const handleOptionChange = (event) => {
                         </clipPath>
                         </defs>
                       </svg>
-                    </button> */}
+                    </button> 
 
                     {isDropdownOpen && (
                       <ul className="absolute left-0 mt-[-2.5rem] w-54 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 transform -translate-y-full">
@@ -1180,7 +1180,8 @@ const handleOptionChange = (event) => {
                   <span className='text-color21 text-sm font-link-os'>{((currentPage-1)*rows)+1} - {rows*currentPage>projects.count ? projects.count : rows*currentPage} of {projects.count} Projects</span>
                 </div>
             </div>
-            <div className='flex w-386 h-8 space-x-2'>
+            
+            <div className='flex w-332 h-8 space-x-2 '>
               {pages>3 ?
               <>
                   {Array.from({ length: endPage - startPage + 1 }, (_, index) => {
@@ -1258,8 +1259,9 @@ const handleOptionChange = (event) => {
       onClick={() => setCurrentPage(currentPage + 1)}
       className="inline-flex items-center justify-center w-49 h-full text-sm font-link-os text-[rgba(0,0,0,0.45)] bg-white border border-color25 rounded hover:bg-color26 hover:text-color27 hover:border-color28">Next</button></>}
             </div>
-          </div> 
-  //     </div>
-  //  </div>
+          </div>        
+      </div>
+</div>
+</div>
   )
 }
