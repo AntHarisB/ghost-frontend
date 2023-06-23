@@ -12,8 +12,10 @@ export default function Employees(){
    const [selected, setSelected] = useState(null);
    const [rows, setRows]=useState(10);
    const [pages, setPages]=useState(0);
-   const [projects, setProjects]=useState([])
-   const [filteredProjects, setFilteredProjects] = useState([]);
+   const [employees, setEmployees]=useState([]);
+   const [currentPage, setCurrentPage]=useState(1);
+   const [emptySearch, setEmptySearch]=useState(false);
+   const [currentEmployee, setCurrentEmployee]=useState()
    const handleItemClick = (item) => {
       if (selected === item) {
         setSelected(null);
@@ -28,6 +30,12 @@ export default function Employees(){
       setSelectedNumber(e.target.value);
       console.log('Odabran broj:', e.target.value);
     };
+
+    const range = 3; 
+const halfRange = Math.floor(range / 2);
+
+let startPage = Math.max(currentPage - halfRange, 1);
+let endPage = Math.min(startPage + range - 1, pages);
   
   
     const [selectedValueNum, setSelectedValueNum] = useState('10');
@@ -44,26 +52,44 @@ export default function Employees(){
       setIsDropdownOpen((prevState) => !prevState);
     };
   
-     useEffect(()=>{
-      api.get(`http://127.0.0.1:8000/api/projects/`, {
-      headers: {
-        'Authorization': `Bearer ${getAccessToken()}`
-      }
+    const fetchEmployees=()=>{
+      api.get(`http://127.0.0.1:8000/api/employees/${rows}/?page=${currentPage}`, {
+        headers: {
+          'Authorization': `Bearer ${getAccessToken()}`
+        }
       })
-      .then(response => setProjects(response.data))
+      .then(response => {console.log(response.data); setEmployees(response.data)})
       .catch(error => console.error(error));
- }, []);
+    }
+     useEffect(()=>{
+      fetchEmployees();
+ }, [rows,currentPage]);
+
+ if (endPage - startPage + 1 < range) {
+  startPage = Math.max(endPage - range + 1, 1);
+}
     
       useEffect(()=>{
         let num=0;
-        num=projects[0]?.total_projects/rows;
+        num=employees?.count/rows;
         if(num%2==0){
           setPages(Math.floor(num))
         }else{
           setPages(Math.floor(num)+1);
         }
-      },[projects])
+      },[employees])
 
+      const addCurrentEmployee=(id)=>{
+        let temp=employees?.results.find((emp)=>emp.id===id);
+        setCurrentEmployee(temp);
+        console.log(temp)
+      }
+
+      const handleDeleteEmployee=()=>{
+        api.delete(`http://127.0.0.1:8000/api/delete_employee/${currentEmployee.id}/`)
+      .then(response => console.log(response.data))
+      .catch(error => console.error(error));
+      }
 
 
 const [isOpen, setIsOpen] = useState(false);
@@ -490,10 +516,6 @@ useEffect(() => {
         </ul>
       </div>
     </div>
-
-
-
-
                       </div>
                       </div> 
                       
@@ -531,7 +553,7 @@ useEffect(() => {
                           onClick={() => handleItemClick(1)}>All Employees
                     </span>
               </div>
-                      {console.log(projects)}
+
               <div className={`flex items-center justify-center border-color11 py-5 lg:py-0 w-full border-t border-r border-b border-l  lg:rounded-none h-10 lg:w-82 cursor-pointer ' ${
                 selected === 2 ? 'bg-color14' : ''}`}
                   onClick={() => handleItemClick(2)}
@@ -558,7 +580,7 @@ useEffect(() => {
                <div className='border w-1050  h-72  flex  items-center justify-between rounded-t-md'>
                  <div className='ml-4 flex h-30 w-199 justify-between'>
                   <span className='text-lg w-113 h-26 font-medium font-face-m'>All Employees</span>
-                     <span className='text-sm py-1 font-medium w-70 bg-color14 text-center rounded-md font-face-m text-color13'>45 total </span>
+                     <span className='text-sm py-1 font-medium w-70 bg-color14 text-center rounded-md font-face-m text-color13'>{employees?.count} total </span>
                  </div>
                  <div className="pr-4 relative flex items-center">
                      <button className="absolute left-0 ml-2">
@@ -595,26 +617,23 @@ useEffect(() => {
                           <span className='text-sm font-medium font-face-m text-color18'>Actions</span>
                         </div>
                      </div>
-
                      {/* Div s informacijama i popup-om */}
-                    <div
-                        className='flex flex-row h-60 border-x border-b items-center'
-                        onClick={handleClick}
-                      >
+                   {employees.results?.map((employee,index)=>(
+                   <div className='flex flex-row h-60 border-x border-b items-center' onClick={()=>{handleClick(); addCurrentEmployee(employee.id)}}>
                         <div className='w-174.4 l h-10 py-1.5 pl-4'>
-                          <span className='text-sm font-normal font-face-r text-color18'>Zackary</span>
+                          <span className='text-sm font-normal font-face-r text-color18'>{employee?.first_name}</span>
                         </div>
                         <div className='w-174.4 h-10 py-1.5 pl-4'>
-                          <span className='text-sm font-normal font-face-r text-color18'>Satterfield</span>
+                          <span className='text-sm font-normal font-face-r text-color18'>{employee?.last_name}</span>
                         </div>
                         <div className='w-174.4 h-10 py-1.5 pl-4'>
-                          <span className='text-sm font-normal font-face-r text-color18'>Development</span>
+                          <span className='text-sm font-normal font-face-r text-color18'>{employee?.department}</span>
                         </div>   
                         <div className='w-174.4 h-10 py-1.5 pl-6'>
-                          <span className='text-sm font-normal font-face-r text-color18'>4310.00</span>
+                          <span className='text-sm font-normal font-face-r text-color18'>{employee?.monthly_salary}</span>
                         </div>
                         <div className='w-174.4 h-10 py-1.5 pl-5'>
-                          <span className='text-sm font-normal font-face-r text-color18'>Full stack</span>
+                          <span className='text-sm font-normal font-face-r text-color18'>{employee?.tech_stack}</span>
                         </div>
                         <div className='w-176 h-10 py-1.5 pl-5 flex items-center'>
                           <div className='flex w-63 h-22 items-center space-x-2 ml-1'>
@@ -642,7 +661,7 @@ useEffect(() => {
 
                         {showModal && (
                          
-                              <div className="fixed top-0 left-0 right-0 z-50 flex items-center h-full max-h-1440  overflow-y-auto  justify-end bg-black bg-opacity-50"  onClick={() => setShowModal(false)}>
+                              <div className="fixed top-0 left-0 right-0 z-50 flex items-center h-full max-h-1440  overflow-y-auto  justify-end bg-black bg-opacity-10"  onClick={() => setShowModal(false)}>
                   <div className="relative bg-color7 shadow-lg w-496 h-full overflow-y-auto overflow-x-hidden">
                      <div className='flex items-center mt-27 ml-29 mb-4'>
                       <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -650,14 +669,13 @@ useEffect(() => {
                       </svg>
                       <span className='text-base font-semibold font-link text-color30'>Back</span>
                      </div>
-
                      <div className='flex flex-col space-y-4 px-6 mb-20 '>
                       <div className='bg-white h-14 w-448 h-32 rounded-lg items-center'> 
                         <div className="flex m-6 ">
                         <img src={Myimg} alt="My Image" className='h-20 w-20' />
                         <div className='m-4'>
-                          <h1 className='font-face-b font-bold text-primary text-21'>Cale Barton</h1>
-                          <span className='font-face-r font-normal text-base text-color18'>Management</span>
+                          <h1 className='font-face-b font-bold text-primary text-21'>{currentEmployee?.first_name} {currentEmployee?.last_name}</h1>
+                          <span className='font-face-r font-normal text-base text-color18'>{currentEmployee?.department}</span>
                         </div>
                         </div>
                       </div>
@@ -667,14 +685,14 @@ useEffect(() => {
                           <label className="block w-400 h-6 text-primary font-face-m font-medium text-base" >
                             Monthly Salary (BAM)
                           </label>
-                            <span className='block w-400 h-6 text-color18 font-face-r font-normal text-base'>9300.00</span>
+                            <span className='block w-400 h-6 text-color18 font-face-r font-normal text-base'>{currentEmployee?.monthly_salary}</span>
                         </div>
 
                         <div className="w-400 h-36  mb-4">
                           <label className="block w-400 h-6 mt-4 text-primary font-face-m font-medium text-base">
                             Tech Stack
                           </label>
-                          <span className='block w-400 h-6 text-color18 font-face-r font-normal text-base'>N/A</span>
+                          <span className='block w-400 h-6 text-color18 font-face-r font-normal text-base'>{currentEmployee?.tech_stack}</span>
                         </div>
                         
                         
@@ -761,7 +779,7 @@ useEffect(() => {
               </button>
               <button
                 className="w-28 h-10 bg-color34 text-white rounded-md font-link font-semibold text-base"
-                onClick={closeModal}
+                onClick={()=>{closeModal(); handleDeleteEmployee()}}
               >
                 Delete
               </button>
@@ -777,7 +795,7 @@ useEffect(() => {
                   </div>
                           
                         )}
-                      </div> 
+                      </div> ))}
                </div>
          </div>      
 
@@ -841,30 +859,93 @@ useEffect(() => {
                   </div>
                 </div>
                 <div className='py-1.5 px-4'>
-                  <span className='text-color21 text-sm font-link-os'>1 - {rows} of {projects[0]?.total_projects} Projects</span>
+                  <span className='text-color21 text-sm font-link-os'>{((currentPage-1)*rows)+1} - {rows*currentPage>employees.count ? employees.count : rows*currentPage} of {employees.count} Employees</span>
                 </div>
             </div>
-            <div className='flex lg:w-332 w-full h-8  md:mr-0 md:justify-end space-x-2'>
-              <div className='flex w-272 h-full space-x-2'> 
-              <a href="#" class="inline-flex items-center justify-center w-75 h-full text-sm font-link-os text-[rgba(0,0,0,0.45)] bg-white border border-color25 rounded hover:bg-color26 hover:text-color27  hover:border-color28">Previous
-              </a>  
-                <a href="#" class="inline-flex items-center justify-center w-8 h-full text-sm font-link-os text-[rgba(0,0,0,0.45)] bg-white border border-color25 rounded hover:bg-color26 hover:text-color27  hover:border-color28">1
+            <div className='flex w-386 h-8 space-x-2'>
+            <button
+      disabled={employees.previous == null}
+      onClick={() => setCurrentPage(currentPage - 1)}
+      className="inline-flex items-center justify-center w-59 px-2 h-full text-sm font-link-os text-[rgba(0,0,0,0.45)] bg-white border border-color25 rounded hover:bg-color26 hover:text-color27 hover:border-color28">Previous</button>
+              {pages>3 ?
+              <>
+                  {Array.from({ length: endPage - startPage + 1 }, (_, index) => {
+              const pageNumber = startPage + index;
+              return (
+                <a
+                  onClick={() => setCurrentPage(pageNumber)}
+                  href="#"
+                  className={`inline-flex items-center justify-center w-8 h-full text-sm font-link-os ${
+                    pageNumber === currentPage
+                      ? 'text-color27 bg-color26 border-color28 hover:text-color27 hover:bg-color26 hover:border-color28'
+                      : 'text-[rgba(0,0,0,0.45)] bg-white border border-color25 hover:bg-color26 hover:text-color27 hover:border-color28'
+                  }`}
+                >
+                  {pageNumber}
                 </a>
-                <a href="#" class="inline-flex items-center justify-center w-8 h-full text-sm font-link-os text-[rgba(0,0,0,0.45)] bg-white border border-color25 rounded hover:bg-color26 hover:text-color27  hover:border-color28">2
+              );
+            })}
+              {endPage < pages && ( 
+                <>
+                  <p>...</p>
+                  <a
+                    onClick={() => setCurrentPage(pages)}
+                    href="#"
+                    className={`inline-flex items-center justify-center w-8 h-full text-sm font-link-os text-[rgba(0,0,0,0.45)] bg-white border border-color25 rounded hover:bg-color26 hover:text-color27  hover:border-color28`}>
+                    {pages}
+                  </a>
+                </>
+              )}
+              <button
+                disabled={employees.next == null}
+                onClick={() => setCurrentPage(currentPage + 1)}
+                className={`inline-flex items-center justify-center w-49 h-full text-sm font-link-os text-[rgba(0,0,0,0.45)] bg-white border border-color25 rounded hover:bg-color26 hover:text-color27  hover:border-color28`}>Next</button>
+              </>
+              :
+              <>
+              <div className="flex w-272 h-full space-x-2">
+              {pages <= 3 ? (
+              <>
+                {Array.from({ length: pages }, (_, index) => {
+                  const pageNumber = index + 1;
+                  return (
+                  <a
+                  onClick={() => setCurrentPage(pageNumber)}
+                  href="#"
+                  className={`inline-flex items-center justify-center w-8 h-full text-sm font-link-os ${
+                    pageNumber === currentPage
+                      ? 'text-color27 bg-color26 border-color28 hover:text-color27 hover:bg-color26 hover:border-color28'
+                      : 'text-[rgba(0,0,0,0.45)] bg-white border border-color25 hover:bg-color26 hover:text-color27 hover:border-color28'
+                  }`}>
+                  {pageNumber}
                 </a>
-                <a href="#" class="inline-flex items-center justify-center w-8 h-full text-sm font-link-os text-[rgba(0,0,0,0.45)] bg-white border border-color25 rounded hover:bg-color26 hover:text-color27  hover:border-color28">3
-                </a>
-                <a href="#" class="inline-flex items-center justify-center w-8 h-full text-sm pb-2 font-link-os text-[rgba(0,0,0,0.45)] bg-white  hover:bg-color26 hover:text-color27  hover:border-color28">. . .
-                </a>
-                <a href="#" class="inline-flex items-center justify-center w-8 h-full text-sm font-link-os text-[rgba(0,0,0,0.45)] bg-white border border-color25 rounded hover:bg-color26 hover:text-color27  hover:border-color28">45
-                </a>
-              </div>
-              <a href="#" class="inline-flex items-center justify-center w-49 h-full text-sm font-link-os text-[rgba(0,0,0,0.45)] bg-white border border-color25 rounded hover:bg-color26 hover:text-color27  hover:border-color28">Next
-              </a>
-              
+              );
+            })}
+          </>
+  ) : (
+    <>
+      <a
+        onClick={() => setCurrentPage(currentPage)}
+        href="#"
+        className="inline-flex items-center justify-center w-8 h-full text-sm font-link-os text-[rgba(0,0,0,0.45)] bg-white border border-color25 rounded hover:bg-color26 hover:text-color27 hover:border-color28">{currentPage}</a>
+      <a
+        onClick={() => setCurrentPage(currentPage + 1)}
+        href="#"
+        className="inline-flex items-center justify-center w-8 h-full text-sm font-link-os text-[rgba(0,0,0,0.45)] bg-white border border-color25 rounded hover:bg-color26 hover:text-color27 hover:border-color28">{currentPage + 1}</a>
+      <a
+        onClick={() => setCurrentPage(currentPage + 2)}
+        href="#"
+        className="inline-flex items-center justify-center w-8 h-full text-sm font-link-os text-[rgba(0,0,0,0.45)] bg-white border border-color25 rounded hover:bg-color26 hover:text-color27 hover:border-color28">{currentPage + 2}</a>
+        </>
+      )}
+      </div>
+      <button
+      disabled={employees.next == null}
+      onClick={() => setCurrentPage(currentPage + 1)}
+      className="inline-flex items-center justify-center w-49 h-full text-sm font-link-os text-[rgba(0,0,0,0.45)] bg-white border border-color25 rounded hover:bg-color26 hover:text-color27 hover:border-color28">Next</button></>}
             </div>
           </div> 
-      </div>
-   </div>
+       </div>
+    </div>
   )
 }

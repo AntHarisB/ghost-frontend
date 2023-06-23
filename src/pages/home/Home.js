@@ -38,7 +38,7 @@ export default function Home ({user}) {
   
 
   useEffect(() => {
-    api.get(`http://127.0.0.1:8000/project-statistics/${selectedYear}/`, {
+    api.get(`http://127.0.0.1:8000/api/project-statistics/${selectedYear}/`, {
       headers: {
         'Authorization': `Bearer ${getAccessToken()}`
       }
@@ -46,7 +46,7 @@ export default function Home ({user}) {
       .then(response => setData(response.data))
       .catch(error => console.error(error));
     
-    api.get(`http://127.0.0.1:8000/project-hours/${selectedYear}/`, {
+    api.get(`http://127.0.0.1:8000/api/project-hours/${selectedYear}/`, {
       headers: {
         'Authorization': `Bearer ${getAccessToken()}`
       }
