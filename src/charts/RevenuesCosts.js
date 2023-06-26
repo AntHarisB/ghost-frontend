@@ -34,7 +34,7 @@ let name='nesto';
 let revenueGap=123344;
 useEffect(() => {
   api
-    .get(`http://127.0.0.1:8000/api/actual_planned_costs_revenue/${selectedYear}/`, {
+    .get(`/api/actual_planned_costs_revenue/${selectedYear}/`, {
       headers: {
         'Authorization': `Bearer ${getAccessToken()}`
       }

@@ -15,6 +15,18 @@ export default function Projects(){
    const [projects, setProjects]=useState([])
    const [allProjects, setAllProjects]=useState([]);
    const [emptySearch, setEmptySearch]=useState(false);
+   const [currentProject, setCurrentProject]=useState();
+   const [newProject, setNewProject]=useState({
+    project_name: "",
+    description: "",
+    start: "",
+    end:"",
+    team_s: 0,
+    project_value: 0,
+    status: "",
+    hourly_price:0,
+    users: []
+});
 
 
    const handleItemClick = (item) => {
@@ -55,7 +67,7 @@ export default function Projects(){
     };
   
     const fetchProjects=()=>{
-      api.get(`http://127.0.0.1:8000/api/projects/${rows}/?page=${currentPage}`, {
+      api.get(`/api/projects/${rows}/?page=${currentPage}`, {
         headers: {
           'Authorization': `Bearer ${getAccessToken()}`
         }
@@ -90,7 +102,7 @@ export default function Projects(){
       }
 
       const fetchAllProjects=()=>{
-        api.get(`http://127.0.0.1:8000/api/projects/`, {
+        api.get(`/api/projects/`, {
           headers: {
             'Authorization': `Bearer ${getAccessToken()}`
           }
@@ -123,7 +135,7 @@ export default function Projects(){
       };
 
       const fetchCompleted=()=>{
-        api.get(`http://127.0.0.1:8000/api/onhold_projects/${rows}`, {
+        api.get(`/api/onhold_projects/${rows}`, {
       headers: {
         'Authorization': `Bearer ${getAccessToken()}`
       }
@@ -133,7 +145,7 @@ export default function Projects(){
       }
 
       const fetchActive=()=>{
-        api.get(`http://127.0.0.1:8000/api/active_projects/${rows}`, {
+        api.get(`/api/active_projects/${rows}`, {
       headers: {
         'Authorization': `Bearer ${getAccessToken()}`
       }
@@ -143,7 +155,7 @@ export default function Projects(){
       }
 
       const fetchInactive=()=>{
-        api.get(`http://127.0.0.1:8000/api/inactive_projects/${rows}`, {
+        api.get(`/api/inactive_projects/${rows}`, {
       headers: {
         'Authorization': `Bearer ${getAccessToken()}`
       }
@@ -151,6 +163,21 @@ export default function Projects(){
       .then(response => {setProjects(response.data); setAllProjects(response.data.results)})
       .catch(error => console.error(error));
       }
+
+      const addCurrentProject = (name) => {
+        if (projects && projects.results) {
+          let temp = projects.results.find((e) => e.project_name === name);
+          setCurrentProject(temp);
+          console.log(temp)
+        }
+      };
+      
+      const deleteProject=(id)=>{
+        api.delete(`/api/delete_projects/${id}`)
+        .then(response => {console.log(response)})
+        .catch(error => console.error(error));
+      }
+     
 
 const [isOpen, setIsOpen] = useState(false);
 
@@ -276,7 +303,7 @@ const handleOptionChange = (event) => {
 
             
                   
-        {/* <div>
+        <div>
               {isOpen && (
                 <div className="fixed top-0 left-0 right-0 z-50 flex items-center h-full max-h-1024  overflow-y-auto  justify-end bg-black bg-opacity-50">
                   <div className="relative bg-color7 shadow-lg w-496 h-full overflow-y-auto overflow-x-hidden">
@@ -299,8 +326,8 @@ const handleOptionChange = (event) => {
                           </label>
                             <input
                               className="appearance-none font-face-r font-normal text-sm w-400 h-10 border border-color20 border-1 rounded-md  py-2 px-3 text-secondary placeholder-color18 leading-tight focus:outline-none focus:shadow-outline"
-                              id="username"
-                              name="username"
+                              id="project_name"
+                              name="project_name"
                               type=""
                               placeholder="Project name"
                             
@@ -313,8 +340,8 @@ const handleOptionChange = (event) => {
                           </label>
                             <input
                               className="appearance-none font-face-r font-normal text-sm w-400 h-10 border border-color20 border-1 rounded-md  py-2 px-3 text-secondary placeholder-color18 leading-tight focus:outline-none focus:shadow-outline"
-                              id="username"
-                              name="username"
+                              id="description"
+                              name="description"
                               type=""
                               placeholder="Project description"
                             
@@ -697,9 +724,9 @@ const handleOptionChange = (event) => {
     <div>
     <label className="block text-primary font-face-m font-medium text-base  mb-2" >
                             Status
-                          </label> */}
+                          </label> 
       {/* Dropdown button */}
-      {/* <button
+       <button
         id="dropdownRadioButtonButton"
         data-dropdown-toggle="dropdownDefaultRadioButton"
         className="appearance-none font-face-r font-normal text-sm w-400 h-10 border border-color20 border-1 rounded-md  py-2 px-3 text-secondary placeholder-color18 leading-tight focus:outline-none focus:shadow-outline  pl-3  w-400 h-10  inline-flex items-center "
@@ -711,10 +738,10 @@ const handleOptionChange = (event) => {
           <path d="M8 11L3 6.00005L3.7 5.30005L8 9.60005L12.3 5.30005L13 6.00005L8 11Z" fill="#6C6D75"/>
         </svg>
         </div>
-      </button> */}
+      </button> 
 
       {/* Dropdown menu */}
-      {/* <div
+       <div
         id="dropdownDefaultRadioButton"
         className="z-10 hidden w-400 h-32 bg-white divide-y divide-gray-100 border border-color20 border-1 border-t-0 rounded-md shadow dark:bg-gray-700 dark:divide-gray-600"
       >
@@ -805,7 +832,7 @@ const handleOptionChange = (event) => {
                   </div>
               
               )}
-            </div> */}
+            </div> 
                   
           
           
@@ -901,9 +928,9 @@ const handleOptionChange = (event) => {
                         <div className='w-150 h-10 py-1.5 pl-8 '>
                           <span className='text-sm font-medium font-face-m text-color18'>Status</span>
                         </div>
-                     </div>                {console.log(projects.results)}  
+                     </div>           
                     {!emptySearch ? projects.results?.map((project,index)=>(
-                      <div key={index} className='flex flex-row h-60 border-x border-b items-center'>
+                      <div key={index} className='flex flex-row h-60 border-x border-b items-center'  onClick={()=>{handleClick(); addCurrentProject(project.project_name); deleteProject(index)}}>
                         <div className='w-157 h-10 py-1.5 pl-4 '>
                           <span className='text-sm font-medium font-face-m text-color18'>{project?.project_name}</span>
                         </div>
@@ -937,36 +964,7 @@ const handleOptionChange = (event) => {
                         )): <p className='flex justify-center items-center mt-10'>Not found</p>}
                     
 
-                    {/* <div
-                        className='flex flex-row h-60 border-x border-b items-center'
-                        onClick={handleClick}
-                      >
-                        <div className='w-157 l h-10 py-1.5 pl-4'>
-                          <span className='text-sm font-medium font-face-m text-color18'>HUB</span>
-                        </div>
-                        <div className='w-158.17 h-10 py-1.5 pl-2'>
-                          <span className='text-sm font-medium font-face-m text-color18'>hgfgdjsfjdjf</span>
-                        </div>
-                        <div className='w-158.17 h-10 py-1.5'>
-                          <span className='text-sm font-medium font-face-m text-color18'>456</span>
-                        </div>
-                        <div className='w-101 h-10 items-center py-0.5'>
-                          <div className="flex -space-x-4 overflow-hidden">
-                            <a className="flex items-center justify-center mt-0.5 h-8 w-8 text-sm text-white font-semibold font-face-gsb bg-customColor rounded-full" href="#">3+</a>
-                          </div>
-                        </div>
-                        <div className='w-158.17 h-10 py-1.5 pl-10'>
-                          <span className='text-sm font-medium font-face-m text-color18'>655</span>
-                        </div>
-                        <div className='w-158.17 h-10 py-1.5 pl-8'>
-                          <span className='text-sm font-medium font-face-m text-color18'>554324432 KM</span>
-                        </div>
-                        <div className='w-158.17 h-10 items-center pl-10 flex'>
-                          <span className="flex items-center text-sm font-medium font-face-m text-color18">
-                            <span className="flex h-1.5 w-1.5 bg-color22 rounded-full mr-1.5 flex-shrink-0"></span>
-                            Active
-                          </span>
-                        </div>
+                     
 
                         {showModal && (
                          
@@ -981,7 +979,7 @@ const handleOptionChange = (event) => {
 
                      <div className='flex flex-col space-y-4 px-6 mb-20 '>
                       <div className='bg-white h-14 w-448 rounded-lg'> 
-                        <h1 className='my-3 mx-6 text-[21px] font-face-b font-bold text-primary'>HUB71</h1>
+                        <h1 className='my-3 mx-6 text-[21px] font-face-b font-bold text-primary'>{currentProject?.project_name}</h1>
                       </div>
 
                       <div className='bg-white h-678 w-448 rounded-lg justify-center p-6 grid grid-cols-1 divide-y'>
@@ -989,21 +987,21 @@ const handleOptionChange = (event) => {
                           <label className="block w-400 h-6 text-primary font-face-m font-medium text-base" >
                             Name
                           </label>
-                            <span className='block w-400 h-6 text-color18 font-face-r font-normal text-base'>HUB71</span>
+                            <span className='block w-400 h-6 text-color18 font-face-r font-normal text-base'>{currentProject?.project_name}</span>
                         </div>
 
                         <div className="w-400 h-36  mb-4">
                           <label className="block w-400 h-6 mt-4 text-primary font-face-m font-medium text-base">
                             Description
                           </label>
-                          <span className='block w-400 h-120 text-color18 font-face-r font-normal text-base'>Rerum amet maxime. Soluta molestiae ipsum quibusdam. In dolor sapiente ratione quidem vel nostrum perferendis repellendus. Sint eaque architecto ut ullam eius totam nihil vel aut. Quo nam possimus quibusdam corporis.</span>
+                          <span className='block w-400 h-120 text-color18 font-face-r font-normal text-base'>{currentProject?.description}</span>
                         </div>
                         
                         <div className=" w-400 h-12  mb-4">
                           <label className="block w-400 h-6 mt-4 text-primary font-face-m font-medium text-base" >
                             Duration
                           </label>
-                          <span className='block w-400 h-6 text-color18 font-face-r font-normal text-base'>January 2023 - December 2023</span>
+                          <span className='block w-400 h-6 text-color18 font-face-r font-normal text-base'>{currentProject?.start}-{currentProject?.end}</span>
                         </div>
                         
                         
@@ -1011,7 +1009,9 @@ const handleOptionChange = (event) => {
                       <label className="block w-400 h-6 mt-4 text-primary font-face-m font-medium text-base">
                           Team members
                           </label>
-                          <span className='block w-400 h-6 text-color18 font-face-r font-normal text-base'>Gustavo Hayes, Greg Jerde</span>
+                          <div className='flex'>
+                          {currentProject?.users.map(user=>(<span className='block w-400 h-6 text-color18 font-face-r font-normal text-base'>{`${user.first_name} ${user.last_name}`}</span>))}
+                          </div>
                       </div>
 
 
@@ -1021,7 +1021,7 @@ const handleOptionChange = (event) => {
                           <label className="block w-400 h-6 mt-4 text-primary font-face-m font-medium text-base" >
                             Hourly Rate (USD)
                           </label>
-                          <span className='block w-400 h-6 text-color18 font-face-r font-normal text-base'>Nejra</span>
+                          <span className='block w-400 h-6 text-color18 font-face-r font-normal text-base'>{currentProject?.hourly_price}</span>
                         </div>
 
                        
@@ -1031,7 +1031,7 @@ const handleOptionChange = (event) => {
                           <label className="block w-400 h-6 mt-4 text-primary font-face-m font-medium text-base" >
                           Project Value (BAM) 
                           </label>
-                          <span className='block w-400 h-6 text-color18 font-face-r font-normal text-base'>145,900,000.00 KM</span>
+                          <span className='block w-400 h-6 text-color18 font-face-r font-normal text-base'>{currentProject?.project_value} KM</span>
                         </div>
                        
 
@@ -1042,7 +1042,7 @@ const handleOptionChange = (event) => {
                           </label>
                           <span className="flex items-center block w-400 h-6 text-color18 font-face-r font-normal text-base">
                             <span className="flex h-1.5 w-1.5 bg-color22 rounded-full mr-1.5 flex-shrink-0"></span>
-                            Active
+                            {currentProject?.status}
                           </span>
                       </div>
 
@@ -1105,7 +1105,7 @@ const handleOptionChange = (event) => {
         </div>
       )}
     </div>
-                      <button type="button" class=" bg-customColor text-base font-link font-semibold h-10 w-119 text-white  rounded-md text-base ">Add project</button>
+                      <button type="button" class=" bg-customColor text-base font-link font-semibold h-10 w-119 text-white  rounded-md text-base ">Edit project</button>
                       </div>
                       </div>
 
@@ -1115,7 +1115,6 @@ const handleOptionChange = (event) => {
                       </div> 
                </div>
          </div>      
-*/}
 
           <div className='h-47 lg:flex mt-4 lg:justify-between w-1050 md:flex md:justify-between items-center'>
             <div className='lg:w-343  h-42 flex'>
@@ -1265,8 +1264,6 @@ const handleOptionChange = (event) => {
           </div>        
       </div>
 </div>
-</div>
-</div> 
-</div> 
-  )
-}
+
+);
+};

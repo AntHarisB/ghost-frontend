@@ -93,7 +93,7 @@ export default function Home ({ticks}) {
   
   
   useEffect(() => {
-    api.get(`http://127.0.0.1:8000/api/actual_costs_revenue/${selectedYear}/`, {
+    api.get(`/api/actual_costs_revenue/${selectedYear}/`, {
       headers: {
         'Authorization': `Bearer ${getAccessToken()}`
       }
@@ -104,14 +104,14 @@ export default function Home ({ticks}) {
       setData({ ...data, project_value: totalProjectValue });
     })
     .catch(error => console.error(error));
-    api.get(`http://127.0.0.1:8000/api/actual_planned_costs_revenue/${selectedYear}/`, {
+    api.get(`/api/actual_planned_costs_revenue/${selectedYear}/`, {
       headers: {
         'Authorization': `Bearer ${getAccessToken()}`
       }
     })
     .then(response => setPlanedCost(response.data[0]))
     .catch(error => console.error(error));
-    api.get(`http://127.0.0.1:8000/api/stats_revenue_costs/${selectedYear}/`, {
+    api.get(`/api/stats_revenue_costs/${selectedYear}/`, {
       headers: {
         'Authorization': `Bearer ${getAccessToken()}`
       }
@@ -122,7 +122,7 @@ export default function Home ({ticks}) {
   
 
   useEffect(() => {
-    api.get(`http://127.0.0.1:8000/api/actual_costs_revenue/${selectedYear}/`, {
+    api.get(`/api/actual_costs_revenue/${selectedYear}/`, {
       headers: {
         'Authorization': `Bearer ${getAccessToken()}`
       }

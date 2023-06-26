@@ -25,7 +25,7 @@ export default function HomePlan(){
   });
 
   useEffect(()=>{
-     api.get(`http://127.0.0.1:8000/api/plan`, {
+     api.get(`/api/plan`, {
      headers: {
        'Authorization': `Bearer ${getAccessToken()}`
      }

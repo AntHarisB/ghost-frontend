@@ -53,7 +53,7 @@ let endPage = Math.min(startPage + range - 1, pages);
     };
   
     const fetchEmployees=()=>{
-      api.get(`http://127.0.0.1:8000/api/employees/${rows}/?page=${currentPage}`, {
+      api.get(`/api/employees/${rows}/?page=${currentPage}`, {
         headers: {
           'Authorization': `Bearer ${getAccessToken()}`
         }
@@ -86,7 +86,7 @@ let endPage = Math.min(startPage + range - 1, pages);
       }
 
       const handleDeleteEmployee=()=>{
-        api.delete(`http://127.0.0.1:8000/api/delete_employee/${currentEmployee.id}/`)
+        api.delete(`/api/delete_employee/${currentEmployee.id}/`)
       .then(response => console.log(response.data))
       .catch(error => console.error(error));
       }
