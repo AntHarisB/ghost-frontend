@@ -910,7 +910,7 @@ const handleOptionChange = (event) => {
                                     <label className="block w-400 h-6 mt-4 text-primary font-face-m font-medium text-base" >
                                       Hourly Rate (USD)
                                     </label>
-                                    <span className='block w-400 h-6 text-color18 font-face-r font-normal text-base'>Nejra</span>
+                                    <span className='block w-400 h-6 text-color18 font-face-r font-normal text-base'>234</span>
                                   </div>
                                   <div className="mb-4 w-400 h-12">
                                     <label className="block w-400 h-6 mt-4 text-primary font-face-m font-medium text-base" >

@@ -48,9 +48,9 @@ export default function Employees(){
         <Sidebar />
       </div>
       <div className='basis-[88%] flex flex-col space-y-5 md:space-y-5 pb-5 pt-14 px-3 lg:py-8 lg:space-y-5 lg:px-11 lg:overflow-x-hidden md:overflow-x-hidden'>
-        <div className='lg:flex md:flex -mb-2 lg:justify-between md:justify-between'>
+        <div className='lg:flex md:flex lg:-mb-2 lg:justify-between md:justify-between'>
          <h1 className='text-3xl text-color10 font-bold mb-6 font-face-b'>Invoicing</h1> 
-         <button className="bg-customColor hover:bg-gray-500 text-white h-10 w-44 mt-4 lg:mt-0 md:mt-0 md:mr-0 mr-4 text-base font-link font-semibold rounded-md"  type="button">
+         <button className="bg-customColor hover:bg-gray-500 text-white h-10 w-44 -mt-2 lg:mt-0 md:mt-0 md:mr-0 mr-4 text-base font-link font-semibold rounded-md"  type="button">
             Create New Invoice
          </button>
         </div>                  
@@ -89,10 +89,10 @@ export default function Employees(){
             </div>
           </div>
            
-          <div className='w-screen md:w-full overflow-x-auto md:overflow-x-auto lg:overflow-x-hidden '>
-               <div className='border w-1050  h-72  flex  items-center justify-between rounded-t-md'>
-                 <div className='ml-4 flex h-30 w-199 justify-between'>
-                  <span className='text-lg w-113 h-26 font-medium font-face-m'>All Invoices</span>
+          <div className='w-screen md:w-full overflow-x-auto overflow-y-hidden md:overflow-x-auto lg:overflow-x-hidden '>
+               <div className='border w-1050  h-72  flex items-center justify-between rounded-t-md'>
+                 <div className='ml-4 flex h-30 w-177 justify-between'>
+                  <span className='text-lg w-91 h-26 font-medium font-face-m'>All Invoices</span>
                      <span className='text-sm py-1 font-medium w-70 bg-color14 text-center rounded-md font-face-m text-color13'>45 total </span>
                  </div>
                  <div className="pr-4 relative flex items-center">
@@ -110,23 +110,23 @@ export default function Employees(){
                   </div>
                </div>  
                <div className='flex flex-col w-1050'>
-                     <div className='flex flex-row h-10 border-x border-b items-center'>
-                        <div className='w-174.8 h-10 py-1.5 pl-4 '>
-                          <span className='text-sm font-medium font-face-m text-color18'>First Name</span>
+                     <div className='flex flex-row h-10 border-x border-b  items-center'>
+                        <div className='w-263 h-10 py-1.5 pl-4 '>
+                          <span className='text-sm font-medium font-face-m text-color18'>Client</span>
                         </div>
-                        <div className='w-174.8 h-10 py-1.5 pl-4 '>
-                          <span className='text-sm font-medium font-face-m text-color18'>Last Name</span>
+                        <div className='w-180 h-10 py-1.5 pl-4 '>
+                          <span className='text-sm font-medium font-face-m text-color18'>Industry</span>
                         </div>
-                        <div className='w-174.8 h-10 py-1.5 pl-4 '>
-                          <span className='text-sm font-medium font-face-m text-color18'>Department</span>
+                        <div className='w-142 h-10 py-1.5 pl-4 '>
+                          <span className='text-sm font-medium font-face-m text-color18'>Total Hours Billed</span>
                         </div>
-                        <div className='w-174.8 h-10 py-1.5 pl-6 '>
-                          <span className='text-sm font-medium font-face-m text-color18'>Monthly Salary (BAM)</span>
+                        <div className='w-180 h-10 py-1.5 pl-6 '>
+                          <span className='text-sm font-medium font-face-m text-color18'>Amount Billed (BAM)</span>
                         </div>
-                        <div className='w-174.8 h-10 py-1.5 pl-4 '>
-                          <span className='text-sm font-medium font-face-m text-color18'>Tech Stack</span>
+                        <div className='w-101 h-10 py-1.5 pl-4 '>
+                          <span className='text-sm font-medium font-face-m text-color18'>Status</span>
                         </div>
-                        <div className='w-176 h-10 py-1.5 pl-4 '>
+                        <div className='w-184 h-10 py-1.5 pl-4 '>
                           <span className='text-sm font-medium font-face-m text-color18'>Actions</span>
                         </div>
                      </div>
@@ -136,52 +136,57 @@ export default function Employees(){
                         className='flex flex-row h-60 border-x border-b items-center'
                        
                       >
-                        <div className='w-174.4 l h-10 py-1.5 pl-4'>
-                          <span className='text-sm font-normal font-face-r text-color18'>Zackary</span>
+                        <div className='w-263 h-10 py-1.5 pl-4'>
+                          <span className='text-sm font-normal font-face-r text-color18'>Gerlach - Mills</span>
                         </div>
-                        <div className='w-174.4 h-10 py-1.5 pl-4'>
-                          <span className='text-sm font-normal font-face-r text-color18'>Satterfield</span>
+                        <div className='w-180 h-10 py-1.5 pl-3'>
+                          <span className='text-sm font-normal font-face-r text-color18'>Tools</span>
                         </div>
-                        <div className='w-174.4 h-10 py-1.5 pl-4'>
-                          <span className='text-sm font-normal font-face-r text-color18'>Development</span>
+                        <div className='w-142 h-10 py-1.5 pl-4'>
+                          <span className='text-sm font-normal font-face-r text-color18'>1863</span>
                         </div>   
-                        <div className='w-174.4 h-10 py-1.5 pl-6'>
-                          <span className='text-sm font-normal font-face-r text-color18'>4310.00</span>
+                        <div className='w-180 h-10 py-1.5 pl-6'>
+                          <span className='text-sm font-normal font-face-r text-color18'>126000.45</span>
                         </div>
-                        <div className='w-174.4 h-10 py-1.5 pl-5'>
-                          <span className='text-sm font-normal font-face-r text-color18'>Full stack</span>
+                        <div className='w-101 h-10 py-1.5 pl-4'>
+                        <span className="flex items-center block w-400 h-6 text-color18 font-face-r font-normal text-sm">
+                                      <span className="flex h-1.5 w-1.5 bg-color22 rounded-full mr-1.5 flex-shrink-0"></span>
+                                        Paid
+                                    </span>
                         </div>
-                        <div className='w-176 h-10 py-1.5 pl-5 flex items-center'>
-                          <div className='flex w-63 h-22 items-center space-x-2 ml-1'>
-                          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                              <g clip-path="url(#clip0_899_353)">
-                              <path d="M3.02656 10.7486C3.05781 10.7486 3.08906 10.7454 3.12031 10.7408L5.74844 10.2798C5.77969 10.2736 5.80938 10.2595 5.83125 10.2361L12.4547 3.61263C12.4692 3.59817 12.4807 3.581 12.4885 3.5621C12.4963 3.5432 12.5004 3.52294 12.5004 3.50247C12.5004 3.48201 12.4963 3.46175 12.4885 3.44284C12.4807 3.42394 12.4692 3.40677 12.4547 3.39232L9.85781 0.793878C9.82813 0.764191 9.78906 0.748566 9.74688 0.748566C9.70469 0.748566 9.66563 0.764191 9.63594 0.793878L3.0125 7.41732C2.98906 7.44075 2.975 7.46888 2.96875 7.50013L2.50781 10.1283C2.49261 10.212 2.49804 10.2981 2.52364 10.3792C2.54923 10.4604 2.59421 10.534 2.65469 10.5939C2.75781 10.6939 2.8875 10.7486 3.02656 10.7486ZM4.07969 8.02357L9.74688 2.35794L10.8922 3.50325L5.225 9.16888L3.83594 9.41419L4.07969 8.02357ZM12.75 12.0611H1.25C0.973438 12.0611 0.75 12.2845 0.75 12.5611V13.1236C0.75 13.1923 0.80625 13.2486 0.875 13.2486H13.125C13.1938 13.2486 13.25 13.1923 13.25 13.1236V12.5611C13.25 12.2845 13.0266 12.0611 12.75 12.0611Z" fill="#6C6D75"/>
-                              </g>
-                              <defs>
-                              <clipPath id="clip0_899_353">
-                              <rect width="14" height="14" fill="white"/>
-                              </clipPath>
-                              </defs>
-                           </svg>
-                           <span className='font-normal font-face-r text-sm text-color18'>Edit</span>
-                           
+                        <div className='w-184 h-10 py-1.5 pl-3 flex items-center'>
+                          <div className='flex space-x-2'>
+                          <button className='w-8 h-8 rounded border border-color17 items-center justify-center px-2'>
+                            <svg width="14" height="16" viewBox="0 0 14 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M11.375 11.5V13.25H2.625V11.5H1.75V13.25C1.75 13.4821 1.84219 13.7046 2.00628 13.8687C2.17038 14.0328 2.39294 14.125 2.625 14.125H11.375C11.6071 14.125 11.8296 14.0328 11.9937 13.8687C12.1578 13.7046 12.25 13.4821 12.25 13.25V11.5H11.375Z" fill="#6C6D75"/>
+                                <path d="M11.375 7.125L10.7581 6.50813L7.4375 9.82438V1.875H6.5625V9.82438L3.24187 6.50813L2.625 7.125L7 11.5L11.375 7.125Z" fill="#6C6D75"/>
+                              </svg>
+                          </button>
+                          <button className='w-8 h-8 rounded border border-color17 items-center justify-center px-2'>
+                            <svg width="14" height="16" viewBox="0 0 14 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M10.233 9.97536C10.233 7.95621 8.57925 7.72612 7.25052 7.54154C5.80239 7.3399 4.983 7.16529 4.983 5.91842C4.983 4.87148 6.07985 4.5 7.01903 4.5C7.48714 4.48486 7.95214 4.58121 8.37569 4.78111C8.79924 4.981 9.16921 5.27872 9.45508 5.64971L10.1359 5.10029C9.82976 4.70663 9.44882 4.37736 9.01499 4.13141C8.58116 3.88545 8.103 3.72765 7.608 3.66709V2.3125H6.733V3.63462C5.15135 3.73052 4.108 4.62337 4.108 5.91837C4.108 7.98775 5.78362 8.22081 7.13003 8.40775C8.553 8.60585 9.358 8.7763 9.358 9.97536C9.358 11.302 7.98748 11.5 7.1705 11.5C5.67013 11.5 5.03628 11.0783 4.44842 10.3503L3.76758 10.8997C4.11442 11.3567 4.56302 11.7267 5.07778 11.9801C5.59253 12.2335 6.15926 12.3634 6.733 12.3596V13.6875H7.608V12.3554C9.23795 12.2223 10.233 11.3372 10.233 9.97536Z" fill="#6C6D75"/>
+                            </svg>
+                          </button>
+                          <button className='w-8 h-8 rounded border border-color17 items-center justify-center px-2'>
+                            <svg width="14" height="16" viewBox="0 0 14 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M12.25 3.625H1.75C1.51794 3.625 1.29538 3.71719 1.13128 3.88128C0.967187 4.04538 0.875 4.26794 0.875 4.5V11.5C0.875 11.7321 0.967187 11.9546 1.13128 12.1187C1.29538 12.2828 1.51794 12.375 1.75 12.375H12.25C12.4821 12.375 12.7046 12.2828 12.8687 12.1187C13.0328 11.9546 13.125 11.7321 13.125 11.5V4.5C13.125 4.26794 13.0328 4.04538 12.8687 3.88128C12.7046 3.71719 12.4821 3.625 12.25 3.625ZM11.2875 4.5L7 7.46625L2.7125 4.5H11.2875ZM1.75 11.5V4.89812L6.75063 8.35875C6.82386 8.40956 6.91087 8.43678 7 8.43678C7.08913 8.43678 7.17614 8.40956 7.24937 8.35875L12.25 4.89812V11.5H1.75Z" fill="#6C6D75"/>
+                            </svg>
+                          </button>
+                          <button className='w-8 h-8 rounded border border-color17 items-center justify-center px-2'>
+                            <svg width="14" height="16" viewBox="0 0 14 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M4.625 2.875H4.5C4.56875 2.875 4.625 2.81875 4.625 2.75V2.875H9.375V2.75C9.375 2.81875 9.43125 2.875 9.5 2.875H9.375V4H10.5V2.75C10.5 2.19844 10.0516 1.75 9.5 1.75H4.5C3.94844 1.75 3.5 2.19844 3.5 2.75V4H4.625V2.875ZM12.5 4H1.5C1.22344 4 1 4.22344 1 4.5V5C1 5.06875 1.05625 5.125 1.125 5.125H2.06875L2.45469 13.2969C2.47969 13.8297 2.92031 14.25 3.45313 14.25H10.5469C11.0813 14.25 11.5203 13.8313 11.5453 13.2969L11.9313 5.125H12.875C12.9438 5.125 13 5.06875 13 5V4.5C13 4.22344 12.7766 4 12.5 4ZM10.4266 13.125H3.57344L3.19531 5.125H10.8047L10.4266 13.125Z" fill="#6C6D75"/>
+                            </svg>
+                          </button> 
                           </div>
-                          <div className='h-3 w-0 border mr-1'></div>
-                          <div className='flex ml-2 w-81 h-22 items-center space-x-2'>
-                          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                              <path d="M4.625 1.87357H4.5C4.56875 1.87357 4.625 1.81732 4.625 1.74857V1.87357H9.375V1.74857C9.375 1.81732 9.43125 1.87357 9.5 1.87357H9.375V2.99857H10.5V1.74857C10.5 1.197 10.0516 0.748566 9.5 0.748566H4.5C3.94844 0.748566 3.5 1.197 3.5 1.74857V2.99857H4.625V1.87357ZM12.5 2.99857H1.5C1.22344 2.99857 1 3.222 1 3.49857V3.99857C1 4.06732 1.05625 4.12357 1.125 4.12357H2.06875L2.45469 12.2954C2.47969 12.8283 2.92031 13.2486 3.45313 13.2486H10.5469C11.0813 13.2486 11.5203 12.8298 11.5453 12.2954L11.9313 4.12357H12.875C12.9438 4.12357 13 4.06732 13 3.99857V3.49857C13 3.222 12.7766 2.99857 12.5 2.99857ZM10.4266 12.1236H3.57344L3.19531 4.12357H10.8047L10.4266 12.1236Z" fill="#6C6D75"/>
-                          </svg>
-                           <span className='font-normal font-face-r text-sm text-color18'>Delete</span>                         
                           </div>
                           </div>
                           </div>
-                          </div>
-                    
+                          </div>     
 
                         
 
 
-          <div className='h-47 lg:flex lg:justify-between md:flex md:justify-between items-center'>
+          <div className='h-47 lg:flex mt-2 lg:justify-between md:flex md:justify-between items-center'>
             <div className='lg:w-530  h-42 flex'>
                 <span className='text-sm text-color19 py-2 font-link-os'>Rows per page: </span>
                 <div className='px-3 py-1'>
@@ -243,7 +248,7 @@ export default function Employees(){
                   <span className='text-color21 text-sm font-link-os'>1 - {rows} of {projects[0]?.total_projects} Invoices</span>
                 </div>
             </div>
-            <div className='flex lg:w-332 w-full h-8  md:mr-0 md:justify-end space-x-2'>
+            <div className='flex lg:w-332 w-full h-8 mt-2 lg:mt-0 md:mr-0 md:justify-end space-x-2'>
               <div className='flex w-272 h-full space-x-2'> 
               <a href="#" class="inline-flex items-center justify-center w-75 h-full text-sm font-link-os text-[rgba(0,0,0,0.45)] bg-white border border-color25 rounded hover:bg-color26 hover:text-color27  hover:border-color28">Previous
               </a>  
@@ -263,7 +268,7 @@ export default function Employees(){
               
             </div>
           </div> 
-      </div>
+      
 
       </div> 
       </div>  
