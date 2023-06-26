@@ -25,7 +25,7 @@ export default function HomePlan(){
   });
 
   useEffect(()=>{
-     api.get(`http://127.0.0.1:8000/api/plan`, {
+     api.get(`/api/plan`, {
      headers: {
        'Authorization': `Bearer ${getAccessToken()}`
      }
@@ -99,26 +99,26 @@ export default function HomePlan(){
                      <div className='space-y-0.5 '>
                         <div className='flex w-1009 h-10  justify-between items-center'>
                            <span className='text-xl font-face-r font-normal w-124 text-color10'>Development</span>
-                           <span className='text-xl font-face-gsb font-semibold h-6 w-157 text-color10'>{planData[0]?.dev_total} KM</span>
+                           <span className='text-xl font-face-gsb font-semibold h-6 w-157 text-color10'>{planData[0]?.dev_total ? planData[0].dev_total.toLocaleString() : ''} KM</span>
                         </div>
                         <div className='flex w-1009 h-10  justify-between items-center'>
                            <span className='text-xl font-face-r font-normal  w-63 text-color10'>Design</span>
-                           <span className='text-xl font-face-gsb font-semibold h-6 w-153 text-color10'>{planData[0]?.design_total} KM</span>
+                           <span className='text-xl font-face-gsb font-semibold h-6 w-153 text-color10'>{planData[0]?.design_total ? planData[0].design_total.toLocaleString() : ''} KM</span>
                         </div>
                         <div className='flex w-1009 h-10  justify-between items-center'>
                            <span className='text-xl font-face-r font-normal  w-53 text-color10'>Other</span>
-                           <span className='text-xl font-face-gsb font-semibold h-6 w-167 text-color10'>{planData[0]?.other_total} KM</span>
+                           <span className='text-xl font-face-gsb font-semibold h-6 w-167 text-color10'>{planData[0]?.other_total ? planData[0].other_total.toLocaleString() : ''} KM</span>
                         </div>
                         <div className='flex w-1009 h-10 justify-between items-center'>
                            <span className='text-xl font-face-r font-normal  w-123 text-color10'>Total revenue</span>
-                           <span className='text-xl font-face-gsb font-semibold h-6 w-157 text-color10'>{planData[0]?.total_rev_total} KM</span>
+                           <span className='text-xl font-face-gsb font-semibold h-6 w-157 text-color10'>{planData[0]?.total_rev_total ? planData[0].total_rev_total.toLocaleString() : ''} KM</span>
                         </div>  
                      </div>	
                   </div>
                   <div className='w-1049 mt-1 bg-color7'>
                      <div className='flex h-10  px-5 h-49 justify-between items-center'>
                         <span className='text-xl font-face-gsb font-semibold  w-155 text-customColor'>NET PROFIT 2023</span>
-                        <span className='text-xl font-face-b font-bold h-6 w-167 text-customColor'>{planData[0]?.neto} KM</span>
+                        <span className='text-xl font-face-b font-bold h-6 w-167 text-customColor'>{planData[0]?.neto ? planData[0].neto.toLocaleString() : ''} KM</span>
                      </div>
                   </div>
                </div>     
@@ -136,38 +136,38 @@ export default function HomePlan(){
                   <div className='space-y-0.5 '>
                      <div className='flex w-1009 h-10 justify-between items-center'>
                         <span className='text-xl font-face-r font-normal w-55 text-color10'>Direct</span>
-                        <span className='text-xl font-face-gsb font-semibold h-6 w-158 text-color10'>{planData[0]?.direct_total} KM</span>
+                        <span className='text-xl font-face-gsb font-semibold h-6 w-158 text-color10'>{planData[0]?.direct_total ? planData[0].direct_total.toLocaleString() : ''} KM</span>
                      </div>
                      <div className='flex w-1009 h-10 justify-between items-center'>
                         <span className='text-xl font-face-r font-normal  w-69 text-color10'>Indirect</span>
-                        <span className='text-xl font-face-gsb font-semibold h-6 w-154 text-color10'>{planData[0]?.indirect_total} KM</span>
+                        <span className='text-xl font-face-gsb font-semibold h-6 w-154 text-color10'>{planData[0]?.indirect_total ? planData[0].indirect_total.toLocaleString() : ''} KM</span>
                      </div>
                      <div className='flex w-1009 h-10 justify-between items-center'>
                         <span className='text-xl font-face-r font-normal  w-91 text-color10'>Marketing</span>
-                        <span className='text-xl font-face-gsb font-semibold h-6 w-158 text-color10'>{planData[0]?.marketing_total} KM</span>
+                        <span className='text-xl font-face-gsb font-semibold h-6 w-158 text-color10'>{planData[0]?.marketing_total ? planData[0].marketing_total.toLocaleString() : ''} KM</span>
                      </div>
                      <div className='flex w-1009 h-10 justify-between items-center'>
                         <span className='text-xl font-face-r font-normal  w-79 text-color10'>HR costs</span>
-                        <span className='text-xl font-face-gsb font-semibold h-6 w-141 text-color10'>{planData[0]?.HRcost_total} KM</span>
+                        <span className='text-xl font-face-gsb font-semibold h-6 w-141 text-color10'>{planData[0]?.HRcost_total ? planData[0].HRcost_total.toLocaleString() : ''} KM</span>
                      </div>
                      <div className='flex w-1009 h-10  justify-between items-center'>
                         <span className='text-xl font-face-r font-normal  w-99 text-color10'>Office cost</span>
-                        <span className='text-xl font-face-gsb font-semibold h-6 w-137 text-color10'>{planData[0]?.officeCost_total} KM</span>
+                        <span className='text-xl font-face-gsb font-semibold h-6 w-137 text-color10'>{planData[0]?.officeCost_total ? planData[0].officeCost_total.toLocaleString() : ''} KM</span>
                      </div>
                      <div className='flex w-1009 h-10 justify-between items-center'>
                         <span className='text-xl font-face-r font-normal  w-102 text-color10'>Sales costs</span>
-                        <span className='text-xl font-face-gsb font-semibold h-6 w-128 text-color10'>{planData[0]?.salesCosts_total} KM</span>
+                        <span className='text-xl font-face-gsb font-semibold h-6 w-128 text-color10'>{planData[0]?.salesCosts_total ? planData[0].salesCosts_total.toLocaleString() : ''} KM</span>
                      </div>
                      <div className='flex w-1009 h-10  justify-between items-center'>
                         <span className='text-xl font-face-r font-normal  w-106 text-color10'>Other costs</span>
-                        <span className='text-xl font-face-gsb font-semibold h-6 w-99 text-color10'>{planData[0]?.otherCosts_total} KM</span>
+                        <span className='text-xl font-face-gsb font-semibold h-6 w-99 text-color10'>{planData[0]?.otherCosts_total ? planData[0].otherCosts_total.toLocaleString() : ''} KM</span>
                      </div>
                   </div>	    
                </div>
                <div className='w-1049 mt-5 bg-color7'>
                   <div className='flex h-10  px-5 h-49 justify-between items-center'>
                      <span className='text-xl font-face-gsb font-semibold  w-155 text-customColor'>TOTAL EXPENSES</span>
-                     <span className='text-xl font-face-b font-bold h-6 w-167 text-customColor'>{planData[0]?.expenses} KM</span>
+                     <span className='text-xl font-face-b font-bold h-6 w-167 text-customColor'>{planData[0]?.expenses ? planData[0].expenses.toLocaleString() : ''} KM</span>
                   </div>
                </div>
             </div>     

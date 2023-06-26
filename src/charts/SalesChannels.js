@@ -14,11 +14,7 @@ export default function SalesChannel(selectedYear){
 
   useEffect(()=>{
     const accessToken=getAccessToken();
-    api.get(`http://127.0.0.1:8000/api/projectcreation-count/${selectedYear.selectedYear}/`, {
-  headers: {
-    'Authorization': `Bearer ${accessToken}`
-  }
-})
+    api.get(`/api/projectcreation-count/${selectedYear.selectedYear}/`)
   .then(response => {
     setSalesChannels(response.data);
   })

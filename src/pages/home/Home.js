@@ -38,7 +38,7 @@ export default function Home ({user}) {
   
 
   useEffect(() => {
-    api.get(`http://127.0.0.1:8000/api/project-statistics/${selectedYear}/`, {
+    api.get(`/api/project-statistics/${selectedYear}/`, {
       headers: {
         'Authorization': `Bearer ${getAccessToken()}`
       }
@@ -46,7 +46,7 @@ export default function Home ({user}) {
       .then(response => setData(response.data))
       .catch(error => console.error(error));
     
-    api.get(`http://127.0.0.1:8000/api/project-hours/${selectedYear}/`, {
+    api.get(`/api/project-hours/${selectedYear}/`, {
       headers: {
         'Authorization': `Bearer ${getAccessToken()}`
       }
@@ -195,7 +195,7 @@ export default function Home ({user}) {
               <div className='h-70 lg:w-60  lg:w-auto justify-between border flex items-center rounded-md'>
                   <div className='flex flex-col w-136 h-50 ml-4'>
                       <span className='text-sm font-face-r font-normal h-22 text-color9'>Total project value</span>
-                      <span className='text-lg font-face-b font-bold h-26 text-color10'>{(((data.total_value.toFixed(2))*100)/100)} KM</span>
+                      <span className='text-lg font-face-b font-bold h-26 text-color10'>{(((data.total_value.toFixed(2))*100)/100).toLocaleString()} KM</span>
                   </div>
 
                   <div className='pr-4'>
@@ -215,9 +215,9 @@ export default function Home ({user}) {
               </div>
 
               <div className='h-70 lg:w-60   lg:w-auto justify-between border flex items-center rounded-md'>
-                  <div className='flex flex-col w-117 h-50 ml-4'>
+                  <div className='flex flex-col w-130 h-50 ml-4'>
                       <span className='text-sm font-face-r font-normal h-22 text-color9'>Avg. project value</span>
-                      <span className='text-lg font-face-b font-bold h-26 text-color10'>{((data.avg_value.toFixed(2))*100)/100} KM</span>
+                      <span className='text-lg font-face-b font-bold h-26 text-color10'>{(((data.avg_value.toFixed(2))*100)/100).toLocaleString()} KM</span>
                   </div>
 
                   <div className='pr-4'>
