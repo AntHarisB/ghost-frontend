@@ -44,8 +44,17 @@ export default function HoursOverview({projectHours}) {
   }, [projectHours]);
 
   useEffect(() => {
-    setHighestHours(Math.max(...hoursOverview.map((obj) => obj.Grand_Total_Hours_Available)));
+	if (hoursOverview.length > 0) {
+	  const maxBilledHours = Math.max(...hoursOverview.map((obj) => obj.Grand_Total_Hours_Billed));
+	  const maxAvailableHours = Math.max(...hoursOverview.map((obj) => obj.Grand_Total_Hours_Available));
+	  if(maxBilledHours>maxAvailableHours){
+		setHighestHours(maxBilledHours);
+	  }else{
+		setHighestHours(maxAvailableHours);
+	  }
+	}
   }, [hoursOverview]);
+  
 
 	return (
       <div className='border w-1050  h-392 mt-10 flex justify-center rounded-md'>

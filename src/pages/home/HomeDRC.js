@@ -119,7 +119,17 @@ export default function Home ({ticks}) {
     .then(response => setRevenue(response.data[0]))
     .catch(error => console.error(error));
   }, [selectedYear]);
-  
+
+  const highestNumber=()=>{
+    const highestAvaliable =Math.max(...data.map(item => item.Grand_Total_Total_Billed))
+    const highestCost =Math.max(...data.map(item => item.Grand_Total_Cost))
+    if(highestAvaliable>highestCost){
+      setHighestValue(highestAvaliable);
+      }else{
+      setHighestValue(highestCost);
+      }
+  }
+   
 
   useEffect(() => {
     api.get(`/api/actual_costs_revenue/${selectedYear}/`, {
@@ -134,13 +144,21 @@ export default function Home ({ticks}) {
           Grand_Total_Total_Billed: project.project_value,
           Grand_Total_Cost: project.costs_actual,
         }));
+        let highestAvaliable =Math.max(...chartData?.map(item => item.Grand_Total_Total_Billed))
+        let highestCost =Math.max(...chartData?.map(item => item.Grand_Total_Cost))
+        if(highestAvaliable>highestCost){
+        setHighestValue(highestAvaliable);
+        }else{
+        setHighestValue(highestCost);
+        }
+        console.log(highestAvaliable)
         setData(chartData);
-        setHighestValue(Math.max(...chartData.map(item => item.Grand_Total_Total_Billed)));
       })
       .catch(error => {
         console.error('Error fetching data:', error);
       });
   }, [selectedYear]);
+
 
 
   return (
