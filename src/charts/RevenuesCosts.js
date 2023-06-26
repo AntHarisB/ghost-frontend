@@ -233,7 +233,7 @@ useEffect(() => {
           <div className='h-100 w-262 row-span-2 justify-center bg-color7 flex items-center rounded-md'>
               <div className='flex flex-col w-28 h-60 justify-center items-center'>
                   <span className='text-sm font-face-m font-medium h-22 w-86 text-center text-color9'>Revenue gap</span>
-                  <span className='text-2xl font-face-gsb font-semibold h-8 w-28 text-center text-color10'>{data[0]?.revenueGap || 0} KM</span>
+                  <span className='text-2xl font-face-gsb font-semibold h-8 w-40 text-center text-color10'>{data[0]?.revenueGap || 0} KM</span>
               </div>                    
           </div>
           <div className='h-100 w-262 row-span-2 justify-center bg-color7 flex items-center rounded-md'>
