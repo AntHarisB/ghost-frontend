@@ -15,8 +15,7 @@ export default function Login({ setUser }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    api
-      .post("http://127.0.0.1:8000/api/token/", {
+    api.post("http://127.0.0.1:8000/api/token/", {
         username: userLoginData.username,
         password: userLoginData.password,
       })
@@ -47,8 +46,7 @@ export default function Login({ setUser }) {
 
   const passwordReset = (e) => {
     e.preventDefault();
-    api
-      .post(`http://127.0.0.1:8000/api/password_reset/`, { email: resetEmail })
+    api.post(`http://127.0.0.1:8000/api/password_reset/`, { email: resetEmail })
       .then((response) => console.log(response.data))
       .catch((error) => console.error(error));
     console.log(resetEmail);
@@ -86,14 +84,14 @@ export default function Login({ setUser }) {
                 className="block text-primary font-face-m font-medium text-base  mb-2"
                 htmlFor="username"
               >
-                Username
+                Email
               </label>
               <input
                 className="appearance-none sm:w-450  font-face-r font-normal text-base w-full h-12 border border-tertiary border-1 rounded border-opacity-100 py-2 px-3 text-secondary placeholder-secondary-500 leading-tight focus:outline-none focus:shadow-outline"
                 id="username"
                 name="username"
                 type=""
-                placeholder="Enter your username"
+                placeholder="Enter your email"
                 onChange={changeUserLoginData}
               />
             </div>
