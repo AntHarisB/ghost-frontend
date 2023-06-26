@@ -43,7 +43,17 @@ export default function Login({ setUser }) {
     }
 
   
+    const [showPopup, setShowPopup] = useState(false);
 
+    const handleForgotPasswordClick = () => {
+      setShowPopup(true);
+    };
+  
+    const handleClosePopup = () => {
+      setShowPopup(false);
+    };
+      
+      
   return(
  <div className="flex flex-col lg:flex-row min-h-screen ">
 
@@ -96,10 +106,42 @@ export default function Login({ setUser }) {
           </div>
 
               <div className="text-right" >
-                <a  href="#" className="text-customColor text-right font-face-m font-medium text-base underline ">
+                <a  href="#" className="text-customColor text-right font-face-m font-medium text-base underline "  onClick={handleForgotPasswordClick}>
                   Forgot password?
                 </a>
               </div>
+              {showPopup && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                <div className="bg-white w-692 h-309 rounded shadow">
+                  <h2 className="text-customColor text-center font-face-m font-medium text-xl mt-4">Forgot Password?</h2>
+                  <form onSubmit={handleSubmit}>
+                    <p className="text-color35 font-face-r font-normal text-sm mx-5 mt-4">It appears that you have requested to reset your password for your account with AntColony. We understand how frustrating it can be to forget your password, but worry not, we're here to assist you in regaining access to your account.</p>
+                    <div className="mx-5 my-2">
+                      <label className="block text-primary font-face-m font-medium text-base  mb-2" htmlFor="username">
+                        E-mail:
+                      </label>
+                      <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        required
+                        placeholder="Enter your e-mail"
+                        className="appearance-none sm:w-450  font-face-r font-normal text-sm w-full h-12 border border-tertiary border-1 rounded border-opacity-100 py-2 px-3 text-secondary placeholder-secondary-500 leading-tight focus:outline-none focus:shadow-outline"
+                      />
+                    </div>
+                
+                    <div className="flex justify-end mt-10 space-x-2 mx-5">
+                    <button class="relative  items-center justify-center  w-85 h-10 border border-customColor overflow-hidden  rounded-md " onClose={handleClosePopup}>
+                      <span class="relative text-base font-link font-semibold  text-customColor  ">
+                          Cancel
+                      </span>
+                    </button>
+                    <button type="button" class=" bg-customColor text-base font-link font-semibold h-10 w-85 text-white  rounded-md text-base " onClose={handleClosePopup}>Submit</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+              )}
         </div>
       </div>
     </form>
