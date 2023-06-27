@@ -292,7 +292,7 @@ const handleOptionChange = (event) => {
       <div className='basis-[12%] h-984'>
         <Sidebar />
       </div>
-      <div className='basis-[88%] flex flex-col space-y-5 md:space-y-5 pb-5 pt-14 px-3 lg:py-8 lg:space-y-5 lg:px-11 lg:overflow-x-hidden md:overflow-x-hidden'>
+      <div className='basis-[88%] flex flex-col space-y-5 md:space-y-5 pb-5 pt-14 px-3 lg:py-8 lg:space-y-3 lg:px-11 lg:overflow-x-hidden md:overflow-x-hidden'>
         <div className='lg:flex md:flex mb-2 lg:justify-between md:justify-between'>
          <h1 className='text-3xl text-color10 font-bold font-face-b'>Projects</h1> 
          <button  onClick={toggleModal} data-modal-target="addnewproject-modal" data-modal-toggle="addnewproject-modal" className="bg-customColor hover:bg-gray-500 text-white h-10 w-44 mt-4 lg:mt-0 md:mt-0 md:mr-0 mr-4 text-base font-link font-semibold rounded-md"  type="button">
@@ -928,7 +928,8 @@ const handleOptionChange = (event) => {
                         <div className='w-150 h-10 py-1.5 pl-8 '>
                           <span className='text-sm font-medium font-face-m text-color18'>Status</span>
                         </div>
-                     </div>           
+                     </div> 
+
                     {!emptySearch ? projects.results?.map((project,index)=>(
                       <div key={index} className='flex flex-row h-60 border-x border-b items-center'  onClick={()=>{handleClick(); addCurrentProject(project.project_name); deleteProject(index)}}>
                         <div className='w-157 h-10 py-1.5 pl-4 '>
@@ -961,10 +962,7 @@ const handleOptionChange = (event) => {
                           </span>
                         </div>
                      </div>
-                        )): <p className='flex justify-center items-center mt-10'>Not found</p>}
-                    
-
-                     
+                      )): <p className='flex justify-center items-center mt-10'>Not found</p>}
 
                         {showModal && (
                          
@@ -1010,7 +1008,7 @@ const handleOptionChange = (event) => {
                           Team members
                           </label>
                           <div className='flex'>
-                          {currentProject?.users.map(user=>(<span className='block w-400 h-6 text-color18 font-face-r font-normal text-base'>{`${user.first_name} ${user.last_name}`}</span>))}
+                          {currentProject?.users.map(user=>(<span className='block w-400 h-6 text-color18 font-face-r font-normal text-base'>{/*{`${user.first_name} ${user.last_name}`}*/}Nejra Rizvic</span>))}
                           </div>
                       </div>
 
