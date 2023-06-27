@@ -928,7 +928,8 @@ const handleOptionChange = (event) => {
                         <div className='w-150 h-10 py-1.5 pl-8 '>
                           <span className='text-sm font-medium font-face-m text-color18'>Status</span>
                         </div>
-                     </div>           
+                     </div> 
+
                     {!emptySearch ? projects.results?.map((project,index)=>(
                       <div key={index} className='flex flex-row h-60 border-x border-b items-center'  onClick={()=>{handleClick(); addCurrentProject(project.project_name); deleteProject(index)}}>
                         <div className='w-157 h-10 py-1.5 pl-4 '>
@@ -961,10 +962,7 @@ const handleOptionChange = (event) => {
                           </span>
                         </div>
                      </div>
-                        )): <p className='flex justify-center items-center mt-10'>Not found</p>}
-                    
-
-                     
+                      )): <p className='flex justify-center items-center mt-10'>Not found</p>}
 
                         {showModal && (
                          
@@ -1010,7 +1008,7 @@ const handleOptionChange = (event) => {
                           Team members
                           </label>
                           <div className='flex'>
-                          {currentProject?.users.map(user=>(<span className='block w-400 h-6 text-color18 font-face-r font-normal text-base'>{`${user.first_name} ${user.last_name}`}</span>))}
+                          {currentProject?.users.map(user=>(<span className='block w-400 h-6 text-color18 font-face-r font-normal text-base'>{/*{`${user.first_name} ${user.last_name}`}*/}Nejra Rizvic</span>))}
                           </div>
                       </div>
 

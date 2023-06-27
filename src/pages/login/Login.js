@@ -66,6 +66,9 @@ export default function Login({ setUser }) {
     setShowPopup(false);
   };
 
+  const handleCancelClick = () => {
+    handleClosePopup();
+  };
   return (
     <div className="flex flex-col lg:flex-row min-h-screen ">
       <LoginBgImg />
@@ -179,7 +182,7 @@ export default function Login({ setUser }) {
                       <div className="flex justify-end mt-10 space-x-2 mx-5">
                         <button
                           className="relative  items-center justify-center  w-85 h-10 border border-customColor overflow-hidden  rounded-md "
-                          onClose={handleClosePopup}
+                          onClick={handleCancelClick}
                         >
                           <span className="relative text-base font-link font-semibold  text-customColor  ">
                             Cancel
