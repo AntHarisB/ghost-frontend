@@ -15,6 +15,7 @@ export default function Employees(){
    const [employees, setEmployees]=useState([]);
    const [currentPage, setCurrentPage]=useState(1);
    const [emptySearch, setEmptySearch]=useState(false);
+   const [allEmployees, setAllEmployees]=useState()
    const [currentEmployee, setCurrentEmployee]=useState()
    const handleItemClick = (item) => {
       if (selected === item) {
@@ -61,8 +62,20 @@ let endPage = Math.min(startPage + range - 1, pages);
       .then(response => {console.log(response.data); setEmployees(response.data)})
       .catch(error => console.error(error));
     }
+
+    const fetchAllEmployees=()=>{
+      api.get(`/api/employees_list/`, {
+        headers: {
+          'Authorization': `Bearer ${getAccessToken()}`
+        }
+      })
+      .then(response => {console.log(response.data); setAllEmployees(response.data)})
+      .catch(error => console.error(error));
+    }
+
      useEffect(()=>{
       fetchEmployees();
+      fetchAllEmployees();
  }, [rows,currentPage]);
 
  if (endPage - startPage + 1 < range) {
@@ -211,6 +224,25 @@ useEffect(() => {
     closeModal();
   };
 
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      filterEmployees(e);
+    }
+  };
+
+  const filterEmployees = (e) => {
+    const searchValue = e.target.value.toLowerCase();
+    const filteredEmployees = allEmployees.filter((item) =>
+      item.first_name.toLowerCase().includes(searchValue)
+    );
+    setEmployees({ results: filteredEmployees, count: filteredEmployees.length });
+    if (!filteredEmployees) {
+      setEmptySearch(true);
+    }else{
+      setEmptySearch(false);
+    }
+  };
+
    return(
    <div className='flex h-full'>
       <div className='basis-[12% h-984'>
@@ -223,7 +255,6 @@ useEffect(() => {
             Add new Employee
          </button>
         </div>      
-                  
         <div>
               {isOpen && (
                 <div className="fixed top-0 left-0 right-0 z-50 flex items-center h-full max-h-1024  overflow-y-auto  justify-end bg-black bg-opacity-50">
@@ -546,7 +577,7 @@ useEffect(() => {
             <div className='flex  mb-3 '>
               <div className={`flex items-center justify-center text-center py-5  lg:py-0 lg:px-0 w-full border-y border-l  border-color11 h-10 lg:w-127 rounded-l-md lg:rounded-l-md cursor-pointer ' ${
                 selected === 1 ? 'bg-color14' : ''}`}
-                  onClick={() => handleItemClick(1)}
+                  onClick={() => {handleItemClick(1); fetchEmployees(); fetchAllEmployees()}}
                     >
                     <span className={`text-sm font-normal text-color12 font-link cursor-pointer ${
                         selected === 1 ? 'color' : ''}`}
@@ -590,6 +621,7 @@ useEffect(() => {
 
                      </button>
                      <input
+                     onKeyDown={handleKeyPress}
                      type="text"
                      placeholder="Search"
                      className="w-64 pl-10 pr-4 py-2 border placeholder-color6 border-color17 text-color6 text-sm font-link font-normal rounded-md focus:outline-none focus:ring-1 focus:ring-gray-400"
