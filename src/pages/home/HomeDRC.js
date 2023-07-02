@@ -93,40 +93,34 @@ export default function Home ({ticks}) {
   
   
   useEffect(() => {
-    api.get(`http://127.0.0.1:8000/api/actual_costs_revenue/${selectedYear}/`, {
-      headers: {
-        'Authorization': `Bearer ${getAccessToken()}`
-      }
-    })
+    api.get(`/api/actual_costs_revenue/${selectedYear}/`)
     .then(response => {
       const responseData = response.data;
       const totalProjectValue = responseData.reduce((sum, item) => sum + item.project_value, 0);
       setData({ ...data, project_value: totalProjectValue });
     })
     .catch(error => console.error(error));
-    api.get(`http://127.0.0.1:8000/api/actual_planned_costs_revenue/${selectedYear}/`, {
-      headers: {
-        'Authorization': `Bearer ${getAccessToken()}`
-      }
-    })
+    api.get(`/api/actual_planned_costs_revenue/${selectedYear}/`)
     .then(response => setPlanedCost(response.data[0]))
     .catch(error => console.error(error));
-    api.get(`http://127.0.0.1:8000/api/stats_revenue_costs/${selectedYear}/`, {
-      headers: {
-        'Authorization': `Bearer ${getAccessToken()}`
-      }
-    })
+    api.get(`/api/stats_revenue_costs/${selectedYear}/`)
     .then(response => setRevenue(response.data[0]))
     .catch(error => console.error(error));
   }, [selectedYear]);
-  
+
+  const highestNumber=()=>{
+    const highestAvaliable =Math.max(...data.map(item => item.Grand_Total_Total_Billed))
+    const highestCost =Math.max(...data.map(item => item.Grand_Total_Cost))
+    if(highestAvaliable>highestCost){
+      setHighestValue(highestAvaliable);
+      }else{
+      setHighestValue(highestCost);
+      }
+  }
+   
 
   useEffect(() => {
-    api.get(`http://127.0.0.1:8000/api/actual_costs_revenue/${selectedYear}/`, {
-      headers: {
-        'Authorization': `Bearer ${getAccessToken()}`
-      }
-    })
+    api.get(`/api/actual_costs_revenue/${selectedYear}/`)
       .then(response => {
         const apiData = response.data;
         const chartData = apiData.map(project => ({
@@ -134,13 +128,21 @@ export default function Home ({ticks}) {
           Grand_Total_Total_Billed: project.project_value,
           Grand_Total_Cost: project.costs_actual,
         }));
+        let highestAvaliable =Math.max(...chartData?.map(item => item.Grand_Total_Total_Billed))
+        let highestCost =Math.max(...chartData?.map(item => item.Grand_Total_Cost))
+        if(highestAvaliable>highestCost){
+        setHighestValue(highestAvaliable);
+        }else{
+        setHighestValue(highestCost);
+        }
+        console.log(highestAvaliable)
         setData(chartData);
-        setHighestValue(Math.max(...chartData.map(item => item.Grand_Total_Total_Billed)));
       })
       .catch(error => {
         console.error('Error fetching data:', error);
       });
   }, [selectedYear]);
+
 
 
   return (
@@ -256,9 +258,9 @@ export default function Home ({ticks}) {
 
           <div className='block space-y-5 lg:space-y-0  mt-10 lg:mt-10 lg:h-170 lg:w-1050 lg:grid lg:gap-x-8 lg:gap-y-7 lg:grid-cols-3 lg:my-0 my-10 md:grid-cols-2'> 
               <div className='h-70 lg:w-330  justify-between border flex items-center rounded-md'>
-                  <div className='flex flex-col w-127 h-50 ml-4'>
+                  <div className='flex flex-col w-135 h-50 ml-4'>
                     <span className='text-sm font-face-r font-normal h-22 text-color9'>Actual revenue</span>
-                    <span className='text-lg font-face-b font-bold h-26 text-color10'>{(((revenue.actual_revenue.toFixed(2))*100)/100)} KM</span>                    
+                    <span className='text-lg font-face-b font-bold h-26 text-color10'>{(((revenue.actual_revenue.toFixed(2))*100)/100).toLocaleString()} KM</span>                    
                   </div>
                    
                   <div className='pr-4'>
@@ -273,7 +275,7 @@ export default function Home ({ticks}) {
               <div className='h-70 lg:w-330   lg:w-auto justify-between border flex items-center rounded-md'>
                   <div className='flex flex-col w-139 h-50 ml-4'>
                       <span className='text-sm font-face-r font-normal h-22 text-color9'>Planned direct costs</span>
-                      <span className='text-lg font-face-b font-bold h-26 text-color10'>{(((revenue.planned_direct_cost.toFixed(2))*100)/100)} KM</span>
+                      <span className='text-lg font-face-b font-bold h-26 text-color10'>{(((revenue.planned_direct_cost.toFixed(2))*100)/100).toLocaleString()} KM</span>
                   </div>
 
                   <div className='pr-4'>
@@ -289,7 +291,7 @@ export default function Home ({ticks}) {
               <div className='h-170 lg:w-330 row-span-2 justify-center bg-color7 flex items-center rounded-md'>
                   <div className='flex flex-col w-212 h-76 justify-center items-center'>
                       <span className='text-lg font-face-m font-medium h-7 w-150 text-center text-color9'>Actual gross profit</span>
-                      <span className='text-3xl font-face-gsb font-semibold h-10 w-212 text-center text-color10'>{(((revenue.actual_gross_profit.toFixed(2))*100)/100)}KM</span>
+                      <span className='text-3xl font-face-gsb font-semibold h-10 w-212 text-center text-color10'>{(((revenue.actual_gross_profit.toFixed(2))*100)/100).toLocaleString()}KM</span>
                   </div>                    
               </div>
 
