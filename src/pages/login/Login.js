@@ -3,6 +3,7 @@ import '../../App.css';
 import LoginBgImg from "./components/LoginBgImg";
 import AxiosInstance from '../../AxiosInstance.js';
 import { useNavigate } from 'react-router-dom'
+import api from "../../Api";
 
 export default function Login({ setUser }) {
   const navigate = useNavigate();
@@ -14,7 +15,7 @@ export default function Login({ setUser }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    AxiosInstance.post('/api/token/', { username: userLoginData.username, password: userLoginData.password })
+    api.post('/api/token/', { username: userLoginData.username, password: userLoginData.password })
       .then(res => {
         localStorage.setItem('access_token', res.data.access);
         localStorage.setItem('refresh_token', res.data.refresh);

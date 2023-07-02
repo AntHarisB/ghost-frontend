@@ -11,13 +11,13 @@ import { useEffect, useState } from 'react';
 export default function App() {
 const [user, setUser]=useState([]);
 const navigate=useNavigate();
-{/*useEffect(()=>{
+useEffect(()=>{
   if (!localStorage.getItem("user")){
     navigate("/login");
   }else {
     navigate("/home");
   }
-},[])*/}
+},[])
 
   return (
     <>

@@ -38,19 +38,11 @@ export default function Home ({user}) {
   
 
   useEffect(() => {
-    api.get(`/api/project-statistics/${selectedYear}/`, {
-      headers: {
-        'Authorization': `Bearer ${getAccessToken()}`
-      }
-    })
+    api.get(`/api/project-statistics/${selectedYear}/` )
       .then(response => setData(response.data))
       .catch(error => console.error(error));
     
-    api.get(`/api/project-hours/${selectedYear}/`, {
-      headers: {
-        'Authorization': `Bearer ${getAccessToken()}`
-      }
-    })
+    api.get(`/api/project-hours/${selectedYear}/`)
       .then(response => {
         setProjectHours([]);
         setProjectHours(response.data);

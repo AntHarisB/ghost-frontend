@@ -93,29 +93,17 @@ export default function Home ({ticks}) {
   
   
   useEffect(() => {
-    api.get(`/api/actual_costs_revenue/${selectedYear}/`, {
-      headers: {
-        'Authorization': `Bearer ${getAccessToken()}`
-      }
-    })
+    api.get(`/api/actual_costs_revenue/${selectedYear}/`)
     .then(response => {
       const responseData = response.data;
       const totalProjectValue = responseData.reduce((sum, item) => sum + item.project_value, 0);
       setData({ ...data, project_value: totalProjectValue });
     })
     .catch(error => console.error(error));
-    api.get(`/api/actual_planned_costs_revenue/${selectedYear}/`, {
-      headers: {
-        'Authorization': `Bearer ${getAccessToken()}`
-      }
-    })
+    api.get(`/api/actual_planned_costs_revenue/${selectedYear}/`)
     .then(response => setPlanedCost(response.data[0]))
     .catch(error => console.error(error));
-    api.get(`/api/stats_revenue_costs/${selectedYear}/`, {
-      headers: {
-        'Authorization': `Bearer ${getAccessToken()}`
-      }
-    })
+    api.get(`/api/stats_revenue_costs/${selectedYear}/`)
     .then(response => setRevenue(response.data[0]))
     .catch(error => console.error(error));
   }, [selectedYear]);
@@ -132,11 +120,7 @@ export default function Home ({ticks}) {
    
 
   useEffect(() => {
-    api.get(`/api/actual_costs_revenue/${selectedYear}/`, {
-      headers: {
-        'Authorization': `Bearer ${getAccessToken()}`
-      }
-    })
+    api.get(`/api/actual_costs_revenue/${selectedYear}/`)
       .then(response => {
         const apiData = response.data;
         const chartData = apiData.map(project => ({

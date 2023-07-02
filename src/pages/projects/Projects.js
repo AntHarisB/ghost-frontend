@@ -4,6 +4,9 @@ import api from '../../Api';
 import { getAccessToken } from '../../Api';
 import 'react-datepicker/dist/react-datepicker.css';
 
+const range = 3; 
+const halfRange = Math.floor(range / 2);
+const numbers = ['1','2','3', '4', '5','6','7','8','9','10'];
 
 
 export default function Projects(){
@@ -30,9 +33,6 @@ export default function Projects(){
       setSelectedNumber(e.target.value);
       console.log('Odabran broj:', e.target.value);
     };
-    
-    const range = 3; 
-    const halfRange = Math.floor(range / 2);
 
     let startPage = Math.max(currentPage - halfRange, 1);
     let endPage = Math.min(startPage + range - 1, pages);
@@ -40,8 +40,6 @@ export default function Projects(){
 
     const [selectedValueNum, setSelectedValueNum] = useState('10');
     const [isDropdownOpen, setIsDropdownOpen] = useState(false); 
-  
-    const numbers = ['1','2','3', '4', '5','6','7','8','9','10'];
   
     const handleRowChange = (number,e) => {
       e.preventDefault();
@@ -54,11 +52,7 @@ export default function Projects(){
     };
   
     const fetchProjects=()=>{
-      api.get(`http://127.0.0.1:8000/api/projects/${rows}/?page=${currentPage}`, {
-        headers: {
-          'Authorization': `Bearer ${getAccessToken()}`
-        }
-      })
+      api.get(`/api/projects/${rows}/?page=${currentPage}`)
       .then(response => {console.log(response.data); setProjects(response.data)})
       .catch(error => console.error(error));
     }
@@ -89,11 +83,7 @@ export default function Projects(){
       }
 
       const fetchAllProjects=()=>{
-        api.get(`http://127.0.0.1:8000/api/projects/`, {
-          headers: {
-            'Authorization': `Bearer ${getAccessToken()}`
-          }
-        })
+        api.get(`/api/projects/`)
         .then(response => {setAllProjects(response.data)})
         .catch(error => console.error(error));
       }
@@ -122,31 +112,19 @@ export default function Projects(){
       };
 
       const fetchCompleted=()=>{
-        api.get(`http://127.0.0.1:8000/api/onhold_projects/${rows}`, {
-      headers: {
-        'Authorization': `Bearer ${getAccessToken()}`
-      }
-      })
+        api.get(`/api/onhold_projects/${rows}`)
       .then(response => {setProjects(response.data); setAllProjects(response.data.results)})
       .catch(error => console.error(error));
       }
 
       const fetchActive=()=>{
-        api.get(`http://127.0.0.1:8000/api/active_projects/${rows}`, {
-      headers: {
-        'Authorization': `Bearer ${getAccessToken()}`
-      }
-      })
+        api.get(`/api/active_projects/${rows}`)
       .then(response => {setProjects(response.data); setAllProjects(response.data.results)})
       .catch(error => console.error(error));
       }
 
       const fetchInactive=()=>{
-        api.get(`http://127.0.0.1:8000/api/inactive_projects/${rows}`, {
-      headers: {
-        'Authorization': `Bearer ${getAccessToken()}`
-      }
-      })
+        api.get(`/api/inactive_projects/${rows}`)
       .then(response => {setProjects(response.data); setAllProjects(response.data.results)})
       .catch(error => console.error(error));
       }

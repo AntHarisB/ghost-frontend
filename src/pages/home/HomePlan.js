@@ -25,11 +25,7 @@ export default function HomePlan(){
   });
 
   useEffect(()=>{
-     api.get(`/api/plan`, {
-     headers: {
-       'Authorization': `Bearer ${getAccessToken()}`
-     }
-     })
+     api.get(`/api/plan`)
      .then(response => setPlanData(response.data))
      .catch(error => console.error(error));
 }, []);
