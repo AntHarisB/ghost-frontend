@@ -2,17 +2,19 @@ import React ,{useState,useEffect, useRef} from 'react';
 import Sidebar from '../../components/Sidebar'
 import api from '../../Api';
 import { getAccessToken } from '../../Api';
-import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import Myimg from '../../image/Upload_picture.png';
+import { all } from 'axios';
 
 
 
-export default function Employees(){
+export default function Invoicing(){
    const [selected, setSelected] = useState(null);
    const [rows, setRows]=useState(10);
    const [pages, setPages]=useState(0);
-   const [projects, setProjects]=useState([])
+   const [invoicing, setInvoicing]=useState([])
+   const [emptySearch, setEmptySearch]=useState(false);
+   const [allInvoicing, setAllInvoicing]=useState([])
+   const [currentPage, setCurrentPage]=useState(1);
    const [filteredProjects, setFilteredProjects] = useState([]);
    const handleItemClick = (item) => {
       if (selected === item) {
@@ -21,6 +23,12 @@ export default function Employees(){
         setSelected(item); 
       }
     };
+
+    const range = 3; 
+    const halfRange = Math.floor(range / 2);
+    
+    let startPage = Math.max(currentPage - halfRange, 1);
+    let endPage = Math.min(startPage + range - 1, pages);
 
     const [selectedValueNum, setSelectedValueNum] = useState('10');
     const [isDropdownOpen, setIsDropdownOpen] = useState(false); 
@@ -35,11 +43,46 @@ export default function Employees(){
     const toggleDropdown = () => {
       setIsDropdownOpen((prevState) => !prevState);
     };
+
+    const fetchInvoicing=()=>{
+      api.get(`http://127.0.0.1:8000/api/invoicing/${rows}/?page=${currentPage}`)
+      .then(response => {console.log(response.data); setInvoicing(response.data)})
+      .catch(error => console.error(error));
+    }
+
+    const fetchAllInvoices=()=>{
+      api.get(`http://127.0.0.1:8000/api/invoicing/`)
+      .then(response => {console.log(response.data); setAllInvoicing(response.data)})
+      .catch(error => console.error(error));
+    }
   
+    useEffect(()=>{
+     fetchAllInvoices();
+     fetchInvoicing();
+},[rows, currentPage])
 
+const handleKeyPress = (e) => {
+  if (e.key === 'Enter') {
+    filterInvoices(e);
+  }
+};
 
-
-
+const filterInvoices = (e) => {
+  const searchValue = e.target.value.toLowerCase();
+  const filteredInvoices = allInvoicing.filter((item) =>
+    item.client.toLowerCase().includes(searchValue)
+  );
+  setInvoicing({ results: filteredInvoices, count: filteredInvoices.length });
+  if (!filteredInvoices) {
+    setEmptySearch(true);
+  }else{
+    setEmptySearch(false);
+  }
+};
+    
+if (endPage - startPage + 1 < range) {
+  startPage = Math.max(endPage - range + 1, 1);
+}
   
 
    return(
@@ -54,19 +97,18 @@ export default function Employees(){
             Create New Invoice
          </button>
         </div>                  
-          
+          {console.log(allInvoicing)}
           <div className='block space-y-10 lg:space-y-0 lg:flex lg:flex-row lg:justify-between lg:items-center'> 
             <div className='flex  mb-3 '>
               <div className={`flex items-center justify-center text-center py-5  lg:py-0 lg:px-0 w-full border-y border-l  border-color11 h-10 lg:w-110 rounded-l-md lg:rounded-l-md cursor-pointer ' ${
                 selected === 1 ? 'bg-color14' : ''}`}
-                  onClick={() => handleItemClick(1)}
+                  onClick={() => {handleItemClick(1); fetchInvoicing(); fetchAllInvoices()}}
                     >
                     <span className={`text-sm font-normal text-color12 font-link cursor-pointer ${
                         selected === 1 ? 'color' : ''}`}
                           onClick={() => handleItemClick(1)}>All Invoices
                     </span>
               </div>
-                      {console.log(projects)}
               <div className={`flex items-center justify-center border-color11 py-5 lg:py-0 w-full border-t border-r border-b border-l  lg:rounded-none h-10 lg:w-63 cursor-pointer ' ${
                 selected === 2 ? 'bg-color14' : ''}`}
                   onClick={() => handleItemClick(2)}
@@ -93,7 +135,7 @@ export default function Employees(){
                <div className='border w-1050  h-72  flex items-center justify-between rounded-t-md'>
                  <div className='ml-4 flex h-30 w-177 justify-between'>
                   <span className='text-lg w-91 h-26 font-medium font-face-m'>All Invoices</span>
-                     <span className='text-sm py-1 font-medium w-70 bg-color14 text-center rounded-md font-face-m text-color13'>45 total </span>
+                     <span className='text-sm py-1 font-medium w-70 bg-color14 text-center rounded-md font-face-m text-color13'>{allInvoicing.length} total </span>
                  </div>
                  <div className="pr-4 relative flex items-center">
                      <button className="absolute left-0 ml-2">
@@ -103,6 +145,7 @@ export default function Employees(){
 
                      </button>
                      <input
+                     onKeyDown={handleKeyPress}
                      type="text"
                      placeholder="Search"
                      className="w-64 pl-10 pr-4 py-2 border placeholder-color6 border-color17 text-color6 text-sm font-link font-normal rounded-md focus:outline-none focus:ring-1 focus:ring-gray-400"
@@ -130,29 +173,29 @@ export default function Employees(){
                           <span className='text-sm font-medium font-face-m text-color18'>Actions</span>
                         </div>
                      </div>
-
+                        {console.log("dsad",invoicing.results)}
                      {/* Div s informacijama i popup-om */}
-                    <div
-                        className='flex flex-row h-60 border-x border-b items-center'
-                       
-                      >
+                    {invoicing.results?.map((invoic, index)=>(
+                      <div className='flex flex-row h-60 border-x border-b items-center'>
                         <div className='w-263 h-10 py-1.5 pl-4'>
-                          <span className='text-sm font-normal font-face-r text-color18'>Gerlach - Mills</span>
+                          <span className='text-sm font-normal font-face-r text-color18'>{invoic?.client}</span>
                         </div>
                         <div className='w-180 h-10 py-1.5 pl-3'>
-                          <span className='text-sm font-normal font-face-r text-color18'>Tools</span>
+                          <span className='text-sm font-normal font-face-r text-color18'>{invoic?.industry}</span>
                         </div>
                         <div className='w-142 h-10 py-1.5 pl-4'>
-                          <span className='text-sm font-normal font-face-r text-color18'>1863</span>
+                          <span className='text-sm font-normal font-face-r text-color18'>{invoic?.total_hours_billed}</span>
                         </div>   
                         <div className='w-180 h-10 py-1.5 pl-6'>
-                          <span className='text-sm font-normal font-face-r text-color18'>126000.45</span>
+                          <span className='text-sm font-normal font-face-r text-color18'>{invoic?.amount_billed}</span>
                         </div>
                         <div className='w-101 h-10 py-1.5 pl-4'>
                         <span className="flex items-center block w-400 h-6 text-color18 font-face-r font-normal text-sm">
-                                      <span className="flex h-1.5 w-1.5 bg-color22 rounded-full mr-1.5 flex-shrink-0"></span>
-                                        Paid
-                                    </span>
+                        <span className={invoic?.status=="paid" ? "flex h-1.5 w-1.5 bg-color22 rounded-full mr-1.5 flex-shrink-0" : 
+                            invoic?.status=="sent" ? "flex h-1.5 w-1.5 bg-color23 rounded-full mr-1.5 flex-shrink-0" : 
+                            "flex h-1.5 w-1.5 bg-color24 rounded-full mr-1.5 flex-shrink-0" }>
+                            </span>{invoic?.status}
+                            </span>
                         </div>
                         <div className='w-184 h-10 py-1.5 pl-3 flex items-center'>
                           <div className='flex space-x-2'>
@@ -179,7 +222,7 @@ export default function Employees(){
                           </button> 
                           </div>
                           </div>
-                          </div>
+                          </div>)) }
                           </div>
                           </div>     
 
@@ -245,27 +288,90 @@ export default function Employees(){
                   </div>
                 </div>
                 <div className='py-1.5 px-4'>
-                  <span className='text-color21 text-sm font-link-os'>1 - {rows} of {projects[0]?.total_projects} Invoices</span>
+                  <span className='text-color21 text-sm font-link-os'>{((currentPage-1)*rows)+1} - {rows*currentPage>invoicing.count ? invoicing.count : rows*currentPage} of {invoicing.count} Invoices</span>
                 </div>
             </div>
-            <div className='flex lg:w-332 w-full h-8 mt-2 lg:mt-0 md:mr-0 md:justify-end space-x-2'>
-              <div className='flex w-272 h-full space-x-2'> 
-              <a href="#" class="inline-flex items-center justify-center w-75 h-full text-sm font-link-os text-[rgba(0,0,0,0.45)] bg-white border border-color25 rounded hover:bg-color26 hover:text-color27  hover:border-color28">Previous
-              </a>  
-                <a href="#" class="inline-flex items-center justify-center w-8 h-full text-sm font-link-os text-[rgba(0,0,0,0.45)] bg-white border border-color25 rounded hover:bg-color26 hover:text-color27  hover:border-color28">1
+            <div className='flex w-386 h-8 space-x-2'>
+            <button
+      disabled={invoicing.previous == null}
+      onClick={() => setCurrentPage(currentPage - 1)}
+      className="inline-flex items-center justify-center w-59 px-2 h-full text-sm font-link-os text-[rgba(0,0,0,0.45)] bg-white border border-color25 rounded hover:bg-color26 hover:text-color27 hover:border-color28">Previous</button>
+              {pages>3 ?
+              <>
+                  {Array.from({ length: endPage - startPage + 1 }, (_, index) => {
+              const pageNumber = startPage + index;
+              return (
+                <a
+                  onClick={() => setCurrentPage(pageNumber)}
+                  href="#"
+                  className={`inline-flex items-center justify-center w-8 h-full text-sm font-link-os ${
+                    pageNumber === currentPage
+                      ? 'text-color27 bg-color26 border-color28 hover:text-color27 hover:bg-color26 hover:border-color28'
+                      : 'text-[rgba(0,0,0,0.45)] bg-white border border-color25 hover:bg-color26 hover:text-color27 hover:border-color28'
+                  }`}
+                >
+                  {pageNumber}
                 </a>
-                <a href="#" class="inline-flex items-center justify-center w-8 h-full text-sm font-link-os text-[rgba(0,0,0,0.45)] bg-white border border-color25 rounded hover:bg-color26 hover:text-color27  hover:border-color28">2
+              );
+            })}
+              {endPage < pages && ( 
+                <>
+                  <p>...</p>
+                  <a
+                    onClick={() => setCurrentPage(pages)}
+                    href="#"
+                    className={`inline-flex items-center justify-center w-8 h-full text-sm font-link-os text-[rgba(0,0,0,0.45)] bg-white border border-color25 rounded hover:bg-color26 hover:text-color27  hover:border-color28`}>
+                    {pages}
+                  </a>
+                </>
+              )}
+              <button
+                disabled={invoicing.next == null}
+                onClick={() => setCurrentPage(currentPage + 1)}
+                className={`inline-flex items-center justify-center w-49 h-full text-sm font-link-os text-[rgba(0,0,0,0.45)] bg-white border border-color25 rounded hover:bg-color26 hover:text-color27  hover:border-color28`}>Next</button>
+              </>
+              :
+              <>
+              <div className="flex w-272 h-full space-x-2">
+              {pages <= 3 ? (
+              <>
+                {Array.from({ length: pages }, (_, index) => {
+                  const pageNumber = index + 1;
+                  return (
+                  <a
+                  onClick={() => setCurrentPage(pageNumber)}
+                  href="#"
+                  className={`inline-flex items-center justify-center w-8 h-full text-sm font-link-os ${
+                    pageNumber === currentPage
+                      ? 'text-color27 bg-color26 border-color28 hover:text-color27 hover:bg-color26 hover:border-color28'
+                      : 'text-[rgba(0,0,0,0.45)] bg-white border border-color25 hover:bg-color26 hover:text-color27 hover:border-color28'
+                  }`}>
+                  {pageNumber}
                 </a>
-                <a href="#" class="inline-flex items-center justify-center w-8 h-full text-sm font-link-os text-[rgba(0,0,0,0.45)] bg-white border border-color25 rounded hover:bg-color26 hover:text-color27  hover:border-color28">3
-                </a>
-                <a href="#" class="inline-flex items-center justify-center w-8 h-full text-sm pb-2 font-link-os text-[rgba(0,0,0,0.45)] bg-white  hover:bg-color26 hover:text-color27  hover:border-color28">. . .
-                </a>
-                <a href="#" class="inline-flex items-center justify-center w-8 h-full text-sm font-link-os text-[rgba(0,0,0,0.45)] bg-white border border-color25 rounded hover:bg-color26 hover:text-color27  hover:border-color28">45
-                </a>
-              </div>
-              <a href="#" class="inline-flex items-center justify-center w-49 h-full text-sm font-link-os text-[rgba(0,0,0,0.45)] bg-white border border-color25 rounded hover:bg-color26 hover:text-color27  hover:border-color28">Next
-              </a>
-              
+              );
+            })}
+          </>
+  ) : (
+    <>
+      <a
+        onClick={() => setCurrentPage(currentPage)}
+        href="#"
+        className="inline-flex items-center justify-center w-8 h-full text-sm font-link-os text-[rgba(0,0,0,0.45)] bg-white border border-color25 rounded hover:bg-color26 hover:text-color27 hover:border-color28">{currentPage}</a>
+      <a
+        onClick={() => setCurrentPage(currentPage + 1)}
+        href="#"
+        className="inline-flex items-center justify-center w-8 h-full text-sm font-link-os text-[rgba(0,0,0,0.45)] bg-white border border-color25 rounded hover:bg-color26 hover:text-color27 hover:border-color28">{currentPage + 1}</a>
+      <a
+        onClick={() => setCurrentPage(currentPage + 2)}
+        href="#"
+        className="inline-flex items-center justify-center w-8 h-full text-sm font-link-os text-[rgba(0,0,0,0.45)] bg-white border border-color25 rounded hover:bg-color26 hover:text-color27 hover:border-color28">{currentPage + 2}</a>
+        </>
+      )}
+      </div>
+      <button
+      disabled={invoicing.next == null}
+      onClick={() => setCurrentPage(currentPage + 1)}
+      className="inline-flex items-center justify-center w-49 h-full text-sm font-link-os text-[rgba(0,0,0,0.45)] bg-white border border-color25 rounded hover:bg-color26 hover:text-color27 hover:border-color28">Next</button></>}
             </div>
           </div> 
       
