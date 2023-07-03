@@ -25,11 +25,7 @@ export default function HomePlan(){
   });
 
   useEffect(()=>{
-     api.get(`/api/plan`, {
-     headers: {
-       'Authorization': `Bearer ${getAccessToken()}`
-     }
-     })
+     api.get(`/api/plan`)
      .then(response => setPlanData(response.data))
      .catch(error => console.error(error));
 }, []);
@@ -119,6 +115,7 @@ export default function HomePlan(){
                      <div className='flex h-10  px-5 h-49 justify-between items-center'>
                         <span className='text-xl font-face-gsb font-semibold  w-155 text-customColor'>NET PROFIT 2023</span>
                         <span className='text-xl font-face-b font-bold h-6 w-167 text-customColor text-end'>{planData[0]?.neto ? planData[0].neto.toLocaleString() : ''} KM</span>
+
                      </div>
                   </div>
                </div>     
@@ -168,6 +165,7 @@ export default function HomePlan(){
                   <div className='flex h-10  px-5 h-49 justify-between items-center'>
                      <span className='text-xl font-face-gsb font-semibold  w-155 text-customColor'>TOTAL EXPENSES</span>
                      <span className='text-xl font-face-b font-bold h-6 w-167 text-customColor text-end'>{planData[0]?.expenses ? planData[0].expenses.toLocaleString() : ''}KM</span>
+
                   </div>
                </div>
             </div>     
