@@ -44,6 +44,16 @@ export default function Invoicing(){
       setIsDropdownOpen((prevState) => !prevState);
     };
 
+    useEffect(()=>{
+      let num=0;
+      num=invoicing?.count/rows;
+      if(num%2==0){
+        setPages(Math.floor(num))
+      }else{
+        setPages(Math.floor(num)+1);
+      }
+    },[invoicing])
+
     const fetchInvoicing=()=>{
       api.get(`http://127.0.0.1:8000/api/invoicing/${rows}/?page=${currentPage}`)
       .then(response => {console.log(response.data); setInvoicing(response.data)})
@@ -79,6 +89,26 @@ const filterInvoices = (e) => {
     setEmptySearch(false);
   }
 };
+
+const fetchPaid=()=>{
+  api.get(`http://127.0.0.1:8000/api/paid_invoicing/${rows}`, {
+headers: {
+  'Authorization': `Bearer ${getAccessToken()}`
+}
+})
+.then(response => {setInvoicing(response.data); setAllInvoicing(response.data.results)})
+.catch(error => console.error(error));
+}
+
+const fetchSent=()=>{
+  api.get(`http://127.0.0.1:8000/api/sent_invoicing/${rows}`, {
+headers: {
+  'Authorization': `Bearer ${getAccessToken()}`
+}
+})
+.then(response => {setInvoicing(response.data); setAllInvoicing(response.data.results)})
+.catch(error => console.error(error));
+}
     
 if (endPage - startPage + 1 < range) {
   startPage = Math.max(endPage - range + 1, 1);
@@ -111,7 +141,7 @@ if (endPage - startPage + 1 < range) {
               </div>
               <div className={`flex items-center justify-center border-color11 py-5 lg:py-0 w-full border-t border-r border-b border-l  lg:rounded-none h-10 lg:w-63 cursor-pointer ' ${
                 selected === 2 ? 'bg-color14' : ''}`}
-                  onClick={() => handleItemClick(2)}
+                  onClick={() => {handleItemClick(2); fetchSent()}}
                     >
                     <span className ={`text-sm font-normal text-center text-color12 font-link cursor-pointer ${
                         selected === 2 ? 'color' : ''}`}
@@ -121,7 +151,7 @@ if (endPage - startPage + 1 < range) {
 
               <div className={`flex items-center justify-center border-color11 py-5 lg:py-0  w-full rounded-r-md lg:border-t border-y border-r  lg:rounded-r-md  h-10 lg:w-63 cursor-pointer' ${
                 selected === 4 ? 'bg-color14' : ''}`}
-                   onClick={() => handleItemClick(4)}
+                   onClick={() => {handleItemClick(4); fetchPaid()}}
                     >
                       <span className={`text-sm font-normal text-color12 font-link cursor-pointer ${
                           selected === 4 ? 'color' : ''}`}
