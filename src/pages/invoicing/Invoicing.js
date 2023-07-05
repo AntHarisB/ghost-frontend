@@ -15,6 +15,7 @@ export default function Invoicing(){
    const [emptySearch, setEmptySearch]=useState(false);
    const [allInvoicing, setAllInvoicing]=useState([])
    const [currentPage, setCurrentPage]=useState(1);
+   const [currentInvoice, setCurrentInvoice]=useState();
    const [filteredProjects, setFilteredProjects] = useState([]);
    const handleItemClick = (item) => {
       if (selected === item) {
@@ -54,6 +55,20 @@ export default function Invoicing(){
       }
     },[invoicing])
 
+    const pdfInvoices = (id) => {
+      api.get(`http://127.0.0.1:8000/api/invoices_pdf/${id}/`, { responseType: 'blob' })
+        .then(response => {
+          const url = window.URL.createObjectURL(new Blob([response.data]));
+          const link = document.createElement('a');
+          link.href = url;
+          link.setAttribute('download', 'invoice.pdf');
+          document.body.appendChild(link);
+          link.click();
+        })
+        .catch(error => console.error(error));
+    };
+    
+
     const fetchInvoicing=()=>{
       api.get(`http://127.0.0.1:8000/api/invoicing/${rows}/?page=${currentPage}`)
       .then(response => {console.log(response.data); setInvoicing(response.data)})
@@ -90,8 +105,15 @@ const filterInvoices = (e) => {
   }
 };
 
+const deleteInvoice=(id)=>{
+  console.log(id)
+  api.delete(`http://127.0.0.1:8000/api/delete_invoicing/${id}/`)
+.then(response => {console.log(response.data);fetchInvoicing()})
+.catch(error => console.error(error));
+}
+
 const fetchPaid=()=>{
-  api.get(`http://127.0.0.1:8000/api/paid_invoicing/${rows}`, {
+  api.get(`http://127.0.0.1:8000/api/paid_invoicing/${rows}/`, {
 headers: {
   'Authorization': `Bearer ${getAccessToken()}`
 }
@@ -101,7 +123,7 @@ headers: {
 }
 
 const fetchSent=()=>{
-  api.get(`http://127.0.0.1:8000/api/sent_invoicing/${rows}`, {
+  api.get(`http://127.0.0.1:8000/api/sent_invoicing/${rows}/`, {
 headers: {
   'Authorization': `Bearer ${getAccessToken()}`
 }
@@ -113,10 +135,44 @@ headers: {
 if (endPage - startPage + 1 < range) {
   startPage = Math.max(endPage - range + 1, 1);
 }
+
+const paidInvoice=(id)=>{
+  api.put(`http://127.0.0.1:8000/api/invoice_status/${id}/`, {
+    client: currentInvoice?.client,
+    industry: currentInvoice?.industry,
+    total_hours_billed: currentInvoice?.total_hours_billed,
+    amount_billed: currentInvoice?.amount_billed,
+    status: currentInvoice?.status,
+    paid: "paid",
+    sent: currentInvoice?.sent
+  })
+.then(response => {console.log(response.data);fetchInvoicing()})
+.catch(error => console.error(error));
+}
+
+const sentInvoice=(id)=>{
+  api.put(`http://127.0.0.1:8000/api/invoice_status/${id}/`, {
+    client: currentInvoice?.client,
+    industry: currentInvoice?.industry,
+    total_hours_billed: currentInvoice?.total_hours_billed,
+    amount_billed: currentInvoice?.amount_billed,
+    status: currentInvoice?.status,
+    paid: currentInvoice?.paid,
+    sent: "sent"
+  })
+.then(response => {console.log(response.data);fetchInvoicing()})
+.catch(error => console.error(error));
+}
+
+const getCurrentInvoice=(id)=>{
+  const newInvoice=allInvoicing.find(invoice=>invoice.id===id);
+  setCurrentInvoice(newInvoice);
+}
   
 
    return(
    <div className='flex h-full'>
+    {console.log(currentInvoice)}
       <div className='basis-[12% h-984'>
         <Sidebar />
       </div>
@@ -127,7 +183,6 @@ if (endPage - startPage + 1 < range) {
             Create New Invoice
          </button>
         </div>                  
-          {console.log(allInvoicing)}
           <div className='block space-y-10 lg:space-y-0 lg:flex lg:flex-row lg:justify-between lg:items-center'> 
             <div className='flex  mb-3 '>
               <div className={`flex items-center justify-center text-center py-5  lg:py-0 lg:px-0 w-full border-y border-l  border-color11 h-10 lg:w-110 rounded-l-md lg:rounded-l-md cursor-pointer ' ${
@@ -203,11 +258,10 @@ if (endPage - startPage + 1 < range) {
                           <span className='text-sm font-medium font-face-m text-color18'>Actions</span>
                         </div>
                      </div>
-                        {console.log("dsad",invoicing.results)}
                      {/* Div s informacijama i popup-om */}
                     {invoicing.results?.map((invoic, index)=>(
-                      <div className='flex flex-row h-60 border-x border-b items-center'>
-                        <div className='w-263 h-10 py-1.5 pl-4'>
+                      <div className='flex flex-row h-60 border-x border-b items-center' onClick={()=>getCurrentInvoice(invoic.id)}>
+                        <div className='w-263 h-10 py-1.5 pl-4' >
                           <span className='text-sm font-normal font-face-r text-color18'>{invoic?.client}</span>
                         </div>
                         <div className='w-180 h-10 py-1.5 pl-3'>
@@ -229,23 +283,23 @@ if (endPage - startPage + 1 < range) {
                         </div>
                         <div className='w-184 h-10 py-1.5 pl-3 flex items-center'>
                           <div className='flex space-x-2'>
-                          <button className='w-8 h-8 rounded border border-color17 items-center justify-center px-2'>
+                          <button className='w-8 h-8 rounded border border-color17 items-center justify-center px-2' onClick={()=>pdfInvoices(invoic.id)}>
                             <svg width="14" height="16" viewBox="0 0 14 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M11.375 11.5V13.25H2.625V11.5H1.75V13.25C1.75 13.4821 1.84219 13.7046 2.00628 13.8687C2.17038 14.0328 2.39294 14.125 2.625 14.125H11.375C11.6071 14.125 11.8296 14.0328 11.9937 13.8687C12.1578 13.7046 12.25 13.4821 12.25 13.25V11.5H11.375Z" fill="#6C6D75"/>
                                 <path d="M11.375 7.125L10.7581 6.50813L7.4375 9.82438V1.875H6.5625V9.82438L3.24187 6.50813L2.625 7.125L7 11.5L11.375 7.125Z" fill="#6C6D75"/>
                               </svg>
                           </button>
-                          <button className='w-8 h-8 rounded border border-color17 items-center justify-center px-2'>
+                          <button className='w-8 h-8 rounded border border-color17 items-center justify-center px-2' onClick={()=>paidInvoice(invoic.id)} disabled={invoic.status=='paid'}>
                             <svg width="14" height="16" viewBox="0 0 14 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                               <path d="M10.233 9.97536C10.233 7.95621 8.57925 7.72612 7.25052 7.54154C5.80239 7.3399 4.983 7.16529 4.983 5.91842C4.983 4.87148 6.07985 4.5 7.01903 4.5C7.48714 4.48486 7.95214 4.58121 8.37569 4.78111C8.79924 4.981 9.16921 5.27872 9.45508 5.64971L10.1359 5.10029C9.82976 4.70663 9.44882 4.37736 9.01499 4.13141C8.58116 3.88545 8.103 3.72765 7.608 3.66709V2.3125H6.733V3.63462C5.15135 3.73052 4.108 4.62337 4.108 5.91837C4.108 7.98775 5.78362 8.22081 7.13003 8.40775C8.553 8.60585 9.358 8.7763 9.358 9.97536C9.358 11.302 7.98748 11.5 7.1705 11.5C5.67013 11.5 5.03628 11.0783 4.44842 10.3503L3.76758 10.8997C4.11442 11.3567 4.56302 11.7267 5.07778 11.9801C5.59253 12.2335 6.15926 12.3634 6.733 12.3596V13.6875H7.608V12.3554C9.23795 12.2223 10.233 11.3372 10.233 9.97536Z" fill="#6C6D75"/>
                             </svg>
                           </button>
-                          <button className='w-8 h-8 rounded border border-color17 items-center justify-center px-2'>
+                          <button className='w-8 h-8 rounded border border-color17 items-center justify-center px-2' disabled={invoic.status=='sent' || invoic.status=='paid'} onClick={()=> sentInvoice(invoic.id)}> 
                             <svg width="14" height="16" viewBox="0 0 14 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                               <path d="M12.25 3.625H1.75C1.51794 3.625 1.29538 3.71719 1.13128 3.88128C0.967187 4.04538 0.875 4.26794 0.875 4.5V11.5C0.875 11.7321 0.967187 11.9546 1.13128 12.1187C1.29538 12.2828 1.51794 12.375 1.75 12.375H12.25C12.4821 12.375 12.7046 12.2828 12.8687 12.1187C13.0328 11.9546 13.125 11.7321 13.125 11.5V4.5C13.125 4.26794 13.0328 4.04538 12.8687 3.88128C12.7046 3.71719 12.4821 3.625 12.25 3.625ZM11.2875 4.5L7 7.46625L2.7125 4.5H11.2875ZM1.75 11.5V4.89812L6.75063 8.35875C6.82386 8.40956 6.91087 8.43678 7 8.43678C7.08913 8.43678 7.17614 8.40956 7.24937 8.35875L12.25 4.89812V11.5H1.75Z" fill="#6C6D75"/>
                             </svg>
                           </button>
-                          <button className='w-8 h-8 rounded border border-color17 items-center justify-center px-2'>
+                          <button className='w-8 h-8 rounded border border-color17 items-center justify-center px-2' onClick={()=>deleteInvoice(invoic.id)}>
                             <svg width="14" height="16" viewBox="0 0 14 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                               <path d="M4.625 2.875H4.5C4.56875 2.875 4.625 2.81875 4.625 2.75V2.875H9.375V2.75C9.375 2.81875 9.43125 2.875 9.5 2.875H9.375V4H10.5V2.75C10.5 2.19844 10.0516 1.75 9.5 1.75H4.5C3.94844 1.75 3.5 2.19844 3.5 2.75V4H4.625V2.875ZM12.5 4H1.5C1.22344 4 1 4.22344 1 4.5V5C1 5.06875 1.05625 5.125 1.125 5.125H2.06875L2.45469 13.2969C2.47969 13.8297 2.92031 14.25 3.45313 14.25H10.5469C11.0813 14.25 11.5203 13.8313 11.5453 13.2969L11.9313 5.125H12.875C12.9438 5.125 13 5.06875 13 5V4.5C13 4.22344 12.7766 4 12.5 4ZM10.4266 13.125H3.57344L3.19531 5.125H10.8047L10.4266 13.125Z" fill="#6C6D75"/>
                             </svg>
