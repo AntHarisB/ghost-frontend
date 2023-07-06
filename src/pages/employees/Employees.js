@@ -640,7 +640,7 @@ document.addEventListener('click', function(event) {
                         </div>
                      </div>
                      {/* Div s informacijama i popup-om */}
-                   {/*{employees.results?.map((employee,index)=>(
+                   {employees.results?.map((employee,index)=>(
                    <div className='flex flex-row h-60 border-x border-b items-center' onClick={()=>{handleClick(); addCurrentEmployee(employee.id)}}>
                         <div className='w-174.4 l h-10 py-1.5 pl-4'>
                           <span className='text-sm font-normal font-face-r text-color18'>{employee?.first_name}</span>
@@ -656,7 +656,7 @@ document.addEventListener('click', function(event) {
                         </div>
                         <div className='w-174.4 h-10 py-1.5 pl-5'>
                           <span className='text-sm font-normal font-face-r text-color18'>{employee?.tech_stack}</span>
-                   </div>*/}
+                        </div>
 
                     <div className='flex flex-row h-60 border-x border-b items-center' onClick={handleClick}>
                         <div className='w-174.4 l h-10 py-1.5 pl-4'>
@@ -1150,7 +1150,9 @@ document.addEventListener('click', function(event) {
                           
                         )}
                       </div> 
+                     
                </div>
+                ))}
          </div>      
 
 
@@ -1300,6 +1302,7 @@ document.addEventListener('click', function(event) {
             </div>
           </div> 
        </div>
+    </div>
     </div>
   )
 }
