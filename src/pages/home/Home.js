@@ -172,7 +172,7 @@ export default function Home ({user}) {
               <div className='h-70 lg:w-60  justify-between border flex items-center rounded-md'>
                   <div className='flex flex-col w-122 h-50 ml-4'>
                     <span className='text-sm font-face-r font-normal h-22 text-color9'>Number of projects</span>
-                    <span className='text-lg font-face-b font-bold h-26 text-color10'>{data.total_projects}</span>                    
+                    <span className='text-lg font-face-b font-bold h-26 text-color10'>{data?.total_projects}</span>                    
                   </div>
                    
                   <div className='pr-4'>
@@ -187,7 +187,7 @@ export default function Home ({user}) {
               <div className='h-70 lg:w-60  lg:w-auto justify-between border flex items-center rounded-md'>
                   <div className='flex flex-col w-136 h-50 ml-4'>
                       <span className='text-sm font-face-r font-normal h-22 text-color9'>Total project value</span>
-                      <span className='text-lg font-face-b font-bold h-26 text-color10'>{(((data.total_value.toFixed(2))*100)/100).toLocaleString()} KM</span>
+                      <span className='text-lg font-face-b font-bold h-26 text-color10'>{((((data?.total_value?.toFixed(2))*100)/100)).toLocaleString()} KM</span>
                   </div>
 
                   <div className='pr-4'>
@@ -209,7 +209,7 @@ export default function Home ({user}) {
               <div className='h-70 lg:w-60   lg:w-auto justify-between border flex items-center rounded-md'>
                   <div className='flex flex-col w-130 h-50 ml-4'>
                       <span className='text-sm font-face-r font-normal h-22 text-color9'>Avg. project value</span>
-                      <span className='text-lg font-face-b font-bold h-26 text-color10'>{(((data.avg_value.toFixed(2))*100)/100).toLocaleString()} KM</span>
+                      <span className='text-lg font-face-b font-bold h-26 text-color10'>{(((data?.avg_value?.toFixed(2))*100)/100).toLocaleString()} KM</span>
                   </div>
 
                   <div className='pr-4'>
@@ -224,7 +224,7 @@ export default function Home ({user}) {
               <div className='h-70 lg:w-60   lg:w-auto justify-between border flex items-center rounded-md'>
                   <div className='flex flex-col w-129 h-50 ml-4'>
                       <span className='text-sm font-face-r font-normal h-22 text-color9'>Avg. lead closing (d)</span>
-                      <span className='text-lg font-face-b font-bold h-26 text-color10'>{(((data.avg_lead_closing.toFixed(2))*100)/100).toFixed(2)}</span>
+                      <span className='text-lg font-face-b font-bold h-26 text-color10'>{(((data?.avg_lead_closing?.toFixed(2))*100)/100).toFixed(2)}</span>
                   </div>
 
                   <div className='pr-4'>
@@ -239,7 +239,7 @@ export default function Home ({user}) {
               <div className='h-70 lg:w-60  lg:w-auto justify-between border flex items-center rounded-md'>
                   <div className='flex flex-col w-92 h-50 ml-4'>
                       <span className='text-sm font-face-r font-normal h-22 text-color9'>Avg. team size</span>
-                      <span className='text-lg font-face-b font-bold h-26 text-color10'>{(((data.avg_team_size.toFixed(2))*100)/100)}</span>
+                      <span className='text-lg font-face-b font-bold h-26 text-color10'>{(((data?.avg_team_size?.toFixed(2))*100)/100)}</span>
                   </div>
 
                   <div className='pr-4'>
@@ -254,7 +254,7 @@ export default function Home ({user}) {
               <div className='h-70 lg:w-60   lg:w-auto justify-between border flex items-center rounded-md'>
                   <div className='flex flex-col w-81 h-50 ml-4'>
                       <span className='text-sm font-face-r font-normal h-22 text-color9'>Avg.velocity</span>
-                      <span className='text-lg font-face-b font-bold h-26 text-color10'>{((data.avg_velocity.toFixed(2))*100)/100}</span>
+                      <span className='text-lg font-face-b font-bold h-26 text-color10'>{((data?.avg_velocity?.toFixed(2))*100)/100}</span>
                   </div>
 
                   <div className='pr-4'>
@@ -269,7 +269,7 @@ export default function Home ({user}) {
               <div className='h-70 lg:w-60   lg:w-auto justify-between border flex items-center rounded-md'>
                   <div className='flex flex-col w-134 h-50 ml-4'>
                       <span className='text-sm font-face-r font-normal h-22 text-color9'>Weeks over deadline</span>
-                      <span className='text-lg font-face-b font-bold h-26 text-color10'>{((data.weeks_over_ddl.toFixed(2))*100)/100}</span>
+                      <span className='text-lg font-face-b font-bold h-26 text-color10'>{((data?.weeks_over_ddl?.toFixed(2))*100)/100}</span>
                   </div>
 
                   <div className='pr-4'>
@@ -285,7 +285,7 @@ export default function Home ({user}) {
               <div className='h-70 lg:w-60  lg:w-auto justify-between border flex items-center rounded-md'>
                   <div className='flex flex-col w-106 h-50 ml-4'>
                       <span className='text-sm font-face-r font-normal h-22 text-color9'>Avg. hourly price</span>
-                      <span className='text-lg font-face-b font-bold h-26 text-color10'>${((data.avg_hourly_price.toFixed(2))*100)/100}</span>
+                      <span className='text-lg font-face-b font-bold h-26 text-color10'>${((data?.avg_hourly_price?.toFixed(2))*100)/100}</span>
                   </div>
 
                   <div className='pr-4'>

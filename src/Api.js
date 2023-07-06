@@ -25,6 +25,7 @@ export const getNewRefreshToken = async () => {
 
   try {
     const response = await api.post("/api/token/refresh/", {
+
       refresh: refreshToken,
     });
 
