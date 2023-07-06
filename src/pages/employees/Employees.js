@@ -98,6 +98,17 @@ const toggleModal = () => {
   setIsOpen(!isOpen);
 };
 
+const [isOpenEdit, setIsOpenEdit] = useState(false);
+
+const toggleModalEdit = () => {
+  setIsOpenEdit(!isOpenEdit);
+};
+
+const closetoggleModalEdit = () => {
+  setIsOpenEdit(false);
+};
+
+
 //datapicker
 const [startDate, setStartDate] = useState(null);
 const [endDate, setEndDate] = useState(null);
@@ -127,6 +138,14 @@ useEffect(() => {
     };
   }
 }, []);
+
+document.addEventListener('click', function(event) {
+  // Check if the clicked element is inside the dropdown
+  if (!event.target.closest('#dropdownDefaultCheckbox')) {
+    // Prevent the default behavior of closing the dropdown
+    event.preventDefault();
+  }
+});
 
  //dropdown with radio btn
  const [selectedOption, setSelectedOption] = useState('');
@@ -240,7 +259,7 @@ useEffect(() => {
                         <h1 className='my-3 mx-6 text-[21px] font-face-b font-bold text-primary'>Add New Employee</h1>
                       </div>
 
-                      <div className='bg-white h-815 lg:w-448 rounded-lg justify-center p-6 space-y-5'>
+                      <div className='bg-white h-815 lg:w-448 rounded-lg justify-center p-6 space-y-6'>
                       <div className="mb-4 w-400 h-66">
                           <label className="block text-primary font-face-m font-medium text-base  mb-2" >
                             First Name
@@ -292,11 +311,12 @@ useEffect(() => {
       <button
         id="dropdownCheckboxButton"
         data-dropdown-toggle="dropdownDefaultCheckbox"
-        className="appearance-none font-face-r font-normal text-sm border  border-color20 border-1 rounded-md  py-2  text-secondary placeholder-color18 leading-tight focus:outline-none focus:shadow-outline  pl-3 w-400 h-10   inline-flex items-center "
+        className="appearance-none font-face-r font-normal text-sm border  border-color20 border-1 rounded-md  py-2 px-3 text-secondary placeholder-color18 leading-tight focus:outline-none focus:shadow-outline  pl-3 w-400 h-10   inline-flex items-center "
         type="button"
       >
-        Select employee department
-        <div className='ml-40 pl-2'>
+        <div className='flex justify-between w-full items-center'>
+                    <span className='font-face-r font-normal text-sm text-color18'>Select employee department</span>
+       
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M8 11L3 6.00005L3.7 5.30005L8 9.60005L12.3 5.30005L13 6.00005L8 11Z" fill="#6C6D75"/>
         </svg>
@@ -306,7 +326,7 @@ useEffect(() => {
       {/* Dropdown menu */}
       <div
         id="dropdownDefaultCheckbox"
-        className="z-10 hidden w-400  h-32 bg-white divide-y divide-gray-100 border border-color20 border-1 rounded-md shadow dark:bg-gray-700 dark:divide-gray-600"
+        className="z-10 w-400  h-32 bg-white divide-y divide-gray-100 border border-color20 border-1 rounded-md shadow dark:bg-gray-700 dark:divide-gray-600"
       >
         <ul className="p-3 space-y-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownCheckboxButton">
           <li>
@@ -386,12 +406,13 @@ useEffect(() => {
                   <button
                     id="dropdownDefaultButton"
                     data-dropdown-toggle="dropdown"
-                    className="font-face-r font-normal text-sm px-4 mt-9 text-center text-color18 flex items-center border border-color20 h-10 w-84 rounded-md"
+                    className="font-face-r font-normal text-sm px-3 mt-9 text-center text-color18 flex items-center justify-center border border-color20 h-10 w-84 rounded-md"
                     type="button"
                     onClick={toggleDropdownValute} 
                   >
-                    {selectedValute}
-                    <div className='ml-2'>
+                   <div className='ml-1 flex justify-between w-full items-center'>
+                    <span className='font-face-r font-normal text-sm text-color18'>{selectedValute}</span>
+                     
                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M8 11L3 6.00005L3.7 5.30005L8 9.60005L12.3 5.30005L13 6.00005L8 11Z" fill="#6C6D75"/>
                     </svg>
@@ -443,11 +464,12 @@ useEffect(() => {
       <button
         id="dropdownCheckboxButton"
         data-dropdown-toggle="dropdownDefaultCheckbox"
-        className="appearance-none font-face-r font-normal text-sm border border-color20 border-1 rounded-md  py-2  text-secondary placeholder-color18 leading-tight focus:outline-none focus:shadow-outline  pl-3 w-400 h-10   inline-flex items-center "
+        className="appearance-none font-face-r font-normal text-sm border border-color20 border-1 rounded-md  py-2 px-3 text-secondary placeholder-color18 leading-tight focus:outline-none focus:shadow-outline  pl-3 w-400 h-10   inline-flex items-center "
         type="button"
       >
-        Select stack
-        <div className='ml-64 pl-5'>
+        <div className='flex justify-between w-full items-center'>
+                    <span className='font-face-r font-normal text-sm text-color18'>Select stack</span>
+        
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M8 11L3 6.00005L3.7 5.30005L8 9.60005L12.3 5.30005L13 6.00005L8 11Z" fill="#6C6D75"/>
         </svg>
@@ -521,7 +543,7 @@ useEffect(() => {
                       
                       <div className='w-496 h-88 bg-white items-center justify-end flex space-x-4 pr-6'>
                         
-                      <button class="relative  items-center justify-center  w-85 h-10 border border-customColor overflow-hidden  rounded-md ">
+                      <button class="relative  items-center justify-center  w-85 h-10 border border-customColor overflow-hidden  rounded-md " onClick={closeModal}>
                       <span class="relative text-base font-link font-semibold  text-customColor  ">
                           Cancel
                       </span>
@@ -618,7 +640,7 @@ useEffect(() => {
                         </div>
                      </div>
                      {/* Div s informacijama i popup-om */}
-                   {employees.results?.map((employee,index)=>(
+                   {/*{employees.results?.map((employee,index)=>(
                    <div className='flex flex-row h-60 border-x border-b items-center' onClick={()=>{handleClick(); addCurrentEmployee(employee.id)}}>
                         <div className='w-174.4 l h-10 py-1.5 pl-4'>
                           <span className='text-sm font-normal font-face-r text-color18'>{employee?.first_name}</span>
@@ -634,7 +656,26 @@ useEffect(() => {
                         </div>
                         <div className='w-174.4 h-10 py-1.5 pl-5'>
                           <span className='text-sm font-normal font-face-r text-color18'>{employee?.tech_stack}</span>
+                   </div>*/}
+
+                    <div className='flex flex-row h-60 border-x border-b items-center' onClick={handleClick}>
+                        <div className='w-174.4 l h-10 py-1.5 pl-4'>
+                          <span className='text-sm font-normal font-face-r text-color18'>Cale</span>
                         </div>
+                        <div className='w-174.4 h-10 py-1.5 pl-4'>
+                          <span className='text-sm font-normal font-face-r text-color18'>Barton</span>
+                        </div>
+                        <div className='w-174.4 h-10 py-1.5 pl-4'>
+                          <span className='text-sm font-normal font-face-r text-color18'>Management</span>
+                        </div>   
+                        <div className='w-174.4 h-10 py-1.5 pl-6'>
+                          <span className='text-sm font-normal font-face-r text-color18'>9300.00</span>
+                        </div>
+                        <div className='w-174.4 h-10 py-1.5 pl-5'>
+                          <span className='text-sm font-normal font-face-r text-color18'>N/A</span>
+                   </div>
+
+
                         <div className='w-176 h-10 py-1.5 pl-5 flex items-center'>
                           <div className='flex w-63 h-22 items-center space-x-2 ml-1'>
                           <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -733,7 +774,7 @@ useEffect(() => {
                       </div>
                       </div> 
                       
-                      <div className='w-496 h-88 bg-white md:mt-29 items-center justify-end flex space-x-4 pr-6'>
+                      <div className='w-496 h-88 bg-white md:mt-29 items-center justify-end flex space-x-4 pr-2'>
                         
                       <div>
       <button
@@ -788,14 +829,327 @@ useEffect(() => {
         </div>
       )}
     </div>
-                      <button type="button" class=" bg-customColor text-base font-link font-semibold h-10 w-139 text-white  rounded-md text-base ">Edit Employee</button>
+                      <button onClick={toggleModalEdit}  type="button" class=" bg-customColor text-base font-link font-semibold h-10 w-139 text-white  rounded-md text-base ">
+                        Edit Employee
+                      </button>
+ {/* Edit popup */}
+                      <div>
+              {isOpenEdit && (
+                <div className="fixed top-0 left-0 right-0 z-50 flex items-center h-full max-h-1024  overflow-y-auto  justify-end ">
+                  <div className="relative bg-color7 shadow-lg w-496 h-full overflow-y-auto overflow-x-hidden">
+                     <div className='flex items-center mt-27 ml-29 mb-4'>
+                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M5 8L10 3L10.7 3.7L6.4 8L10.7 12.3L10 13L5 8Z" fill="#142E2B"/>
+                      </svg>
+                      <span className='text-base font-semibold font-link text-color30'>Back</span>
+                     </div>
+
+                     <div className='flex flex-col space-y-4 px-6 mb-20'>
+                      <div className='bg-white h-14 w-448 rounded-lg'> 
+                        <h1 className='my-3 mx-6 text-[21px] font-face-b font-bold text-primary'>Edit Employee</h1>
+                      </div>
+
+                      <div className='bg-white h-815 lg:w-448 rounded-lg justify-center p-6 space-y-6'>
+                      <div className="mb-4 w-400 h-66">
+                          <label className="block text-primary font-face-m font-medium text-base  mb-2" >
+                            First Name
+                          </label>
+                            <input
+                              className="appearance-none font-face-r font-normal text-sm w-400 h-10 border border-color20 border-1 rounded-md  py-2 px-3 text-secondary placeholder-color18 leading-tight focus:outline-none focus:shadow-outline"
+                              id="username"
+                              name="username"
+                              type=""
+                              placeholder="Cale"
+                            
+                            />
+                        </div>
+
+                        <div className="mb-4 w-400 h-66">
+                          <label className="block text-primary font-face-m font-medium text-base  mb-2">
+                            Last Name
+                          </label>
+                            <input
+                              className="appearance-none font-face-r font-normal text-sm w-400 h-10 border border-color20 border-1 rounded-md  py-2 px-3 text-secondary placeholder-color18 leading-tight focus:outline-none focus:shadow-outline"
+                              id="username"
+                              name="username"
+                              type=""
+                              placeholder="Barton"
+                            
+                            />
+                        </div>
+                     
+                      <div className="mb-4 w-400 h-130">
+                        <label className="block text-primary font-face-m font-medium text-base w-400 h-22  mb-2">
+                          Profile Image
+                        </label>
+                        <div className='w-104 h-104 bg-color36 border  border-color17 border-dotted rounded-md '>
+                            <div className='flex flex-col items-center space-y-2 h-full justify-center'>
+                            <img src={Myimg} alt="My Image" className='w-104 h-104' />
+                            </div>
+                        </div>
+                     </div>
+                        
+                        
+    <div>
+    <label className="block text-primary font-face-m font-medium text-base  mb-2">
+                           Department
+                          </label>
+      {/* Dropdown button */}
+      <button
+        id="dropdownCheckboxButton"
+        data-dropdown-toggle="dropdownDefaultCheckbox"
+        className="appearance-none font-face-r font-normal text-sm border  border-color20 border-1 rounded-md  py-2 px-3 text-secondary placeholder-color18 leading-tight focus:outline-none focus:shadow-outline  pl-3 w-400 h-10   inline-flex items-center "
+        type="button"
+      >
+         <div className='flex justify-between w-full items-center'>
+        <span className='font-face-r font-normal text-sm text-color18'>Management</span>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M8 11L3 6.00005L3.7 5.30005L8 9.60005L12.3 5.30005L13 6.00005L8 11Z" fill="#6C6D75"/>
+        </svg>
+        </div>
+      </button>
+
+      {/* Dropdown menu */}
+      <div
+        id="dropdownDefaultCheckbox"
+        className="z-10 w-400 h-32 bg-white divide-y divide-gray-100 border border-color20 border-1 rounded-md shadow dark:bg-gray-700 dark:divide-gray-600"
+      >
+        <ul className="p-3 space-y-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownCheckboxButton">
+          <li>
+            <div className="flex items-center">
+            <input
+                checked
+                id="checkbox-item-1"
+                type="checkbox"
+                value=""
+                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
+              />
+              <label htmlFor="checkbox-item-1" className="ml-2 text-sm font-normal text-color18 font-face-r">
+               Management
+              </label>
+            </div>
+          </li>
+          <li>
+          <div className="flex items-center">
+              <input
+                id="checkbox-item-3"
+                type="checkbox"
+                value=""
+                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
+              />
+              <label htmlFor="checkbox-item-3" className="ml-2 text-sm font-normal text-color18 font-face-r">
+                Administration
+              </label>
+            </div>
+            
+          </li>
+          <li>
+            <div className="flex items-center">
+              <input
+                id="checkbox-item-2"
+                type="checkbox"
+                value=""
+                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
+              />
+              <label htmlFor="checkbox-item-3" className="ml-2 text-sm font-normal text-color18 font-face-r">
+                Design
+              </label>
+            </div>
+          </li>
+          <li>
+          <div className="flex items-center">
+          <input
+                id="checkbox-item-3"
+                type="checkbox"
+                value=""
+                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
+              />
+              <label htmlFor="checkbox-item-2" className="ml-2 text-sm font-normal text-color18 font-face-r">
+                Development
+              </label>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+
+   
+                      <div className='flex items-center'>
+                        <div className="w-400 h-66">
+                          <label className="block text-primary font-face-m font-medium text-base  mb-2" >
+                            Monthly Salary
+                          </label>
+                            <input
+                              className="appearance-none font-face-r font-normal text-sm w-308 h-10 border border-color20 border-1 rounded-md  py-2 px-3 text-secondary placeholder-color18 leading-tight focus:outline-none focus:shadow-outline"
+                              id="username"
+                              name="username"
+                              type=""
+                              placeholder="9300.00"
+                            />
+                        </div>
+
+                        <div className='relative'>
+                          <button
+                            id="dropdownDefaultButton"
+                            data-dropdown-toggle="dropdown"
+                            className="font-face-r font-normal text-sm px-3 mt-9 text-center text-color18 flex items-center border border-color20 h-10 w-84 rounded-md"
+                            type="button"
+                            onClick={toggleDropdownValute} 
+                          >
+                            <div className='ml-1 flex justify-between w-full items-center'>
+                              <span className='font-face-r font-normal text-sm text-color18'>{selectedValute}</span>
+                              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M8 11L3 6.00005L3.7 5.30005L8 9.60005L12.3 5.30005L13 6.00005L8 11Z" fill="#6C6D75"/>
+                              </svg>
+                            </div>
+                          </button>
+
+                          {isDropdownOpenV && (
+                            <ul className="absolute left-0  w-24 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+                              {valutes.map((valute) => (
+                                <li
+                                  key={valute}
+                                  className={`${
+                                    valute === selectedValute ? 'bg-color7 font-face-r font-normal text-sm text-color9' : 'text-color9 font-face-r font-normal text-sm border-b border-color17'
+                                  } cursor-pointer select-none relative py-2 pl-3 pr-9`}
+                                  onClick={() => handleValuteChange(valute)}
+                                >
+                                  <span className="block truncate">{valute}</span>
+                                  {valute === selectedValute && (
+                                    <span className="absolute inset-y-0 right-0 flex items-center pr-4">
+                                      <svg
+                                        className="w-5 h-5"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 0 20 20"
+                                        fill="currentColor"
+                                        aria-hidden="true"
+                                      >
+                                        <path
+                                          fillRule="evenodd"
+                                          clipRule="evenodd"
+                                        />
+                                      </svg>
+                                    </span>
+                                  )}
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                        </div>
+                      </div>
+
+                       
+
+                        
+    <div>
+    <label className="block text-primary font-face-m font-medium text-base  mb-2">
+                           Tech Stack
+                          </label>
+      {/* Dropdown button */}
+      <button
+        id="dropdownCheckboxButton"
+        data-dropdown-toggle="dropdownDefaultCheckbox"
+        className="appearance-none font-face-r font-normal text-sm border border-color20 border-1 rounded-md  py-2 px-3 text-secondary placeholder-color18 leading-tight focus:outline-none focus:shadow-outline  pl-3 w-400 h-10   inline-flex items-center "
+        type="button"
+      >
+        <div className='flex justify-between w-full items-center'>
+          <span className='font-face-r font-normal text-sm text-color18'>N/A</span>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M8 11L3 6.00005L3.7 5.30005L8 9.60005L12.3 5.30005L13 6.00005L8 11Z" fill="#6C6D75"/>
+          </svg>
+        </div>
+      </button>
+
+      {/* Dropdown menu */}
+      <div
+        id="dropdownDefaultCheckbox"
+        className="z-10 hidden w-400  h-32 bg-white divide-y divide-gray-100 border border-color20 border-1 rounded-md shadow dark:bg-gray-700 dark:divide-gray-600"
+      >
+        <ul className="p-3 space-y-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownCheckboxButton">
+          <li>
+            <div className="flex items-center">
+              <input
+                id="checkbox-item-1"
+                type="checkbox"
+                value=""
+                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
+              />
+              <label htmlFor="checkbox-item-1" className="ml-2 text-sm font-normal text-color18 font-face-r">
+               Full Stack
+              </label>
+            </div>
+          </li>
+          <li>
+            <div className="flex items-center">
+              <input
+                checked
+                id="checkbox-item-2"
+                type="checkbox"
+                value=""
+                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
+              />
+              <label htmlFor="checkbox-item-2" className="ml-2 text-sm font-normal text-color18 font-face-r">
+                Front End
+              </label>
+            </div>
+          </li>
+          <li>
+            <div className="flex items-center">
+              <input
+                id="checkbox-item-3"
+                type="checkbox"
+                value=""
+                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
+              />
+              <label htmlFor="checkbox-item-3" className="ml-2 text-sm font-normal text-color18 font-face-r">
+                Back End
+              </label>
+            </div>
+          </li>
+          <li>
+            <div className="flex items-center">
+              <input
+                id="checkbox-item-3"
+                type="checkbox"
+                value=""
+                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
+              />
+              <label htmlFor="checkbox-item-3" className="ml-2 text-sm font-normal text-color18 font-face-r">
+                N/A
+              </label>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+                      </div>
+                      </div> 
+                      
+                      <div className='w-496 h-88 bg-white items-center justify-end flex space-x-4 pr-6'>
+                        
+                      <button class="relative  items-center justify-center  w-85 h-10 border border-customColor overflow-hidden  rounded-md " onClick={closetoggleModalEdit}>
+                      <span class="relative text-base font-link font-semibold  text-customColor  ">
+                          Cancel
+                      </span>
+                    </button>
+                    <button type="button" class=" bg-customColor text-base font-link font-semibold h-10 w-90 text-white  rounded-md text-base ">
+                      Submit
+                    </button>
+                    </div>
+                      </div>
+
+                  </div>
+              
+              )}
+            </div>
                       </div>
                       </div>
 
                   </div>
                           
                         )}
-                      </div> ))}
+                      </div> 
                </div>
          </div>      
 
