@@ -640,7 +640,7 @@ document.addEventListener('click', function(event) {
                         </div>
                      </div>
                      {/* Div s informacijama i popup-om */}
-                   {/*{employees.results?.map((employee,index)=>(
+                   {employees.results?.map((employee,index)=>(
                    <div className='flex flex-row h-60 border-x border-b items-center' onClick={()=>{handleClick(); addCurrentEmployee(employee.id)}}>
                         <div className='w-174.4 l h-10 py-1.5 pl-4'>
                           <span className='text-sm font-normal font-face-r text-color18'>{employee?.first_name}</span>
@@ -656,25 +656,9 @@ document.addEventListener('click', function(event) {
                         </div>
                         <div className='w-174.4 h-10 py-1.5 pl-5'>
                           <span className='text-sm font-normal font-face-r text-color18'>{employee?.tech_stack}</span>
-                   </div>*/}
-
-                    <div className='flex flex-row h-60 border-x border-b items-center' onClick={handleClick}>
-                        <div className='w-174.4 l h-10 py-1.5 pl-4'>
-                          <span className='text-sm font-normal font-face-r text-color18'>Cale</span>
-                        </div>
-                        <div className='w-174.4 h-10 py-1.5 pl-4'>
-                          <span className='text-sm font-normal font-face-r text-color18'>Barton</span>
-                        </div>
-                        <div className='w-174.4 h-10 py-1.5 pl-4'>
-                          <span className='text-sm font-normal font-face-r text-color18'>Management</span>
-                        </div>   
-                        <div className='w-174.4 h-10 py-1.5 pl-6'>
-                          <span className='text-sm font-normal font-face-r text-color18'>9300.00</span>
-                        </div>
-                        <div className='w-174.4 h-10 py-1.5 pl-5'>
-                          <span className='text-sm font-normal font-face-r text-color18'>N/A</span>
                    </div>
 
+                    
 
                         <div className='w-176 h-10 py-1.5 pl-5 flex items-center'>
                           <div className='flex w-63 h-22 items-center space-x-2 ml-1'>
@@ -827,7 +811,7 @@ document.addEventListener('click', function(event) {
             </div>
           </div>
         </div>
-      )}
+      ))}
     </div>
                       <button onClick={toggleModalEdit}  type="button" class=" bg-customColor text-base font-link font-semibold h-10 w-139 text-white  rounded-md text-base ">
                         Edit Employee
