@@ -15,6 +15,7 @@ export default function Employees(){
    const [employees, setEmployees]=useState([]);
    const [currentPage, setCurrentPage]=useState(1);
    const [emptySearch, setEmptySearch]=useState(false);
+   const [allEmployees, setAllEmployees]=useState()
    const [currentEmployee, setCurrentEmployee]=useState()
    const handleItemClick = (item) => {
       if (selected === item) {
@@ -61,8 +62,20 @@ let endPage = Math.min(startPage + range - 1, pages);
       .then(response => {console.log(response.data); setEmployees(response.data)})
       .catch(error => console.error(error));
     }
+
+    const fetchAllEmployees=()=>{
+      api.get(`/api/employees_list/`, {
+        headers: {
+          'Authorization': `Bearer ${getAccessToken()}`
+        }
+      })
+      .then(response => {console.log(response.data); setAllEmployees(response.data)})
+      .catch(error => console.error(error));
+    }
+
      useEffect(()=>{
       fetchEmployees();
+      fetchAllEmployees();
  }, [rows,currentPage]);
 
  if (endPage - startPage + 1 < range) {
@@ -98,17 +111,6 @@ const toggleModal = () => {
   setIsOpen(!isOpen);
 };
 
-const [isOpenEdit, setIsOpenEdit] = useState(false);
-
-const toggleModalEdit = () => {
-  setIsOpenEdit(!isOpenEdit);
-};
-
-const closetoggleModalEdit = () => {
-  setIsOpenEdit(false);
-};
-
-
 //datapicker
 const [startDate, setStartDate] = useState(null);
 const [endDate, setEndDate] = useState(null);
@@ -138,14 +140,6 @@ useEffect(() => {
     };
   }
 }, []);
-
-document.addEventListener('click', function(event) {
-  // Check if the clicked element is inside the dropdown
-  if (!event.target.closest('#dropdownDefaultCheckbox')) {
-    // Prevent the default behavior of closing the dropdown
-    event.preventDefault();
-  }
-});
 
  //dropdown with radio btn
  const [selectedOption, setSelectedOption] = useState('');
@@ -230,6 +224,35 @@ document.addEventListener('click', function(event) {
     closeModal();
   };
 
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      filterEmployees(e);
+    }
+  };
+
+  const filterEmployees = (e) => {
+    const searchValue = e.target.value.toLowerCase();
+    const filteredEmployees = allEmployees.filter((item) =>
+      item.first_name.toLowerCase().includes(searchValue)
+    );
+    setEmployees({ results: filteredEmployees, count: filteredEmployees.length });
+    if (!filteredEmployees) {
+      setEmptySearch(true);
+    }else{
+      setEmptySearch(false);
+    }
+  };
+
+  const [isOpenEdit, setIsOpenEdit] = useState(false);
+
+const toggleModalEdit = () => {
+  setIsOpenEdit(!isOpenEdit);
+};
+
+const closetoggleModalEdit = () => {
+  setIsOpenEdit(false);
+};
+
    return(
    <div className='flex h-full'>
       <div className='basis-[12% h-984'>
@@ -242,7 +265,6 @@ document.addEventListener('click', function(event) {
             Add new Employee
          </button>
         </div>      
-                  
         <div>
               {isOpen && (
                 <div className="fixed top-0 left-0 right-0 z-50 flex items-center h-full max-h-1024  overflow-y-auto  justify-end bg-black bg-opacity-50">
@@ -259,7 +281,7 @@ document.addEventListener('click', function(event) {
                         <h1 className='my-3 mx-6 text-[21px] font-face-b font-bold text-primary'>Add New Employee</h1>
                       </div>
 
-                      <div className='bg-white h-815 lg:w-448 rounded-lg justify-center p-6 space-y-6'>
+                      <div className='bg-white h-815 lg:w-448 rounded-lg justify-center p-6 space-y-5'>
                       <div className="mb-4 w-400 h-66">
                           <label className="block text-primary font-face-m font-medium text-base  mb-2" >
                             First Name
@@ -311,12 +333,11 @@ document.addEventListener('click', function(event) {
       <button
         id="dropdownCheckboxButton"
         data-dropdown-toggle="dropdownDefaultCheckbox"
-        className="appearance-none font-face-r font-normal text-sm border  border-color20 border-1 rounded-md  py-2 px-3 text-secondary placeholder-color18 leading-tight focus:outline-none focus:shadow-outline  pl-3 w-400 h-10   inline-flex items-center "
+        className="appearance-none font-face-r font-normal text-sm border  border-color20 border-1 rounded-md  py-2  text-secondary placeholder-color18 leading-tight focus:outline-none focus:shadow-outline  pl-3 w-400 h-10   inline-flex items-center "
         type="button"
       >
-        <div className='flex justify-between w-full items-center'>
-                    <span className='font-face-r font-normal text-sm text-color18'>Select employee department</span>
-       
+        Select employee department
+        <div className='ml-40 pl-2'>
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M8 11L3 6.00005L3.7 5.30005L8 9.60005L12.3 5.30005L13 6.00005L8 11Z" fill="#6C6D75"/>
         </svg>
@@ -326,7 +347,7 @@ document.addEventListener('click', function(event) {
       {/* Dropdown menu */}
       <div
         id="dropdownDefaultCheckbox"
-        className="z-10 w-400  h-32 bg-white divide-y divide-gray-100 border border-color20 border-1 rounded-md shadow dark:bg-gray-700 dark:divide-gray-600"
+        className="z-10 hidden w-400  h-32 bg-white divide-y divide-gray-100 border border-color20 border-1 rounded-md shadow dark:bg-gray-700 dark:divide-gray-600"
       >
         <ul className="p-3 space-y-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownCheckboxButton">
           <li>
@@ -406,13 +427,12 @@ document.addEventListener('click', function(event) {
                   <button
                     id="dropdownDefaultButton"
                     data-dropdown-toggle="dropdown"
-                    className="font-face-r font-normal text-sm px-3 mt-9 text-center text-color18 flex items-center justify-center border border-color20 h-10 w-84 rounded-md"
+                    className="font-face-r font-normal text-sm px-4 mt-9 text-center text-color18 flex items-center border border-color20 h-10 w-84 rounded-md"
                     type="button"
                     onClick={toggleDropdownValute} 
                   >
-                   <div className='ml-1 flex justify-between w-full items-center'>
-                    <span className='font-face-r font-normal text-sm text-color18'>{selectedValute}</span>
-                     
+                    {selectedValute}
+                    <div className='ml-2'>
                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M8 11L3 6.00005L3.7 5.30005L8 9.60005L12.3 5.30005L13 6.00005L8 11Z" fill="#6C6D75"/>
                     </svg>
@@ -464,12 +484,11 @@ document.addEventListener('click', function(event) {
       <button
         id="dropdownCheckboxButton"
         data-dropdown-toggle="dropdownDefaultCheckbox"
-        className="appearance-none font-face-r font-normal text-sm border border-color20 border-1 rounded-md  py-2 px-3 text-secondary placeholder-color18 leading-tight focus:outline-none focus:shadow-outline  pl-3 w-400 h-10   inline-flex items-center "
+        className="appearance-none font-face-r font-normal text-sm border border-color20 border-1 rounded-md  py-2  text-secondary placeholder-color18 leading-tight focus:outline-none focus:shadow-outline  pl-3 w-400 h-10   inline-flex items-center "
         type="button"
       >
-        <div className='flex justify-between w-full items-center'>
-                    <span className='font-face-r font-normal text-sm text-color18'>Select stack</span>
-        
+        Select stack
+        <div className='ml-64 pl-5'>
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M8 11L3 6.00005L3.7 5.30005L8 9.60005L12.3 5.30005L13 6.00005L8 11Z" fill="#6C6D75"/>
         </svg>
@@ -543,7 +562,7 @@ document.addEventListener('click', function(event) {
                       
                       <div className='w-496 h-88 bg-white items-center justify-end flex space-x-4 pr-6'>
                         
-                      <button class="relative  items-center justify-center  w-85 h-10 border border-customColor overflow-hidden  rounded-md " onClick={closeModal}>
+                      <button class="relative  items-center justify-center  w-85 h-10 border border-customColor overflow-hidden  rounded-md ">
                       <span class="relative text-base font-link font-semibold  text-customColor  ">
                           Cancel
                       </span>
@@ -568,7 +587,7 @@ document.addEventListener('click', function(event) {
             <div className='flex  mb-3 '>
               <div className={`flex items-center justify-center text-center py-5  lg:py-0 lg:px-0 w-full border-y border-l  border-color11 h-10 lg:w-127 rounded-l-md lg:rounded-l-md cursor-pointer ' ${
                 selected === 1 ? 'bg-color14' : ''}`}
-                  onClick={() => handleItemClick(1)}
+                  onClick={() => {handleItemClick(1); fetchEmployees(); fetchAllEmployees()}}
                     >
                     <span className={`text-sm font-normal text-color12 font-link cursor-pointer ${
                         selected === 1 ? 'color' : ''}`}
@@ -612,6 +631,7 @@ document.addEventListener('click', function(event) {
 
                      </button>
                      <input
+                     onKeyDown={handleKeyPress}
                      type="text"
                      placeholder="Search"
                      className="w-64 pl-10 pr-4 py-2 border placeholder-color6 border-color17 text-color6 text-sm font-link font-normal rounded-md focus:outline-none focus:ring-1 focus:ring-gray-400"
@@ -656,10 +676,7 @@ document.addEventListener('click', function(event) {
                         </div>
                         <div className='w-174.4 h-10 py-1.5 pl-5'>
                           <span className='text-sm font-normal font-face-r text-color18'>{employee?.tech_stack}</span>
-                   </div>
-
-                    
-
+                        </div>
                         <div className='w-176 h-10 py-1.5 pl-5 flex items-center'>
                           <div className='flex w-63 h-22 items-center space-x-2 ml-1'>
                           <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -683,6 +700,7 @@ document.addEventListener('click', function(event) {
                            <span className='font-normal font-face-r text-sm text-color18'>Delete</span>                         
                           </div>
                         </div>
+
 
                         {showModal && (
                          
@@ -758,7 +776,7 @@ document.addEventListener('click', function(event) {
                       </div>
                       </div> 
                       
-                      <div className='w-496 h-88 bg-white md:mt-29 items-center justify-end flex space-x-4 pr-2'>
+                      <div className='w-496 h-88 bg-white md:mt-29 items-center justify-end flex space-x-4 pr-6'>
                         
                       <div>
       <button
@@ -811,12 +829,10 @@ document.addEventListener('click', function(event) {
             </div>
           </div>
         </div>
-      ))}
+      )}
     </div>
-                      <button onClick={toggleModalEdit}  type="button" class=" bg-customColor text-base font-link font-semibold h-10 w-139 text-white  rounded-md text-base ">
-                        Edit Employee
-                      </button>
- {/* Edit popup */}
+                      <button type="button" class=" bg-customColor text-base font-link font-semibold h-10 w-139 text-white  rounded-md text-base " onClick={toggleModalEdit}>Edit Employee</button>
+
                       <div>
               {isOpenEdit && (
                 <div className="fixed top-0 left-0 right-0 z-50 flex items-center h-full max-h-1024  overflow-y-auto  justify-end ">
@@ -1133,7 +1149,7 @@ document.addEventListener('click', function(event) {
                   </div>
                           
                         )}
-                      </div> 
+                      </div> ))}
                </div>
          </div>      
 
