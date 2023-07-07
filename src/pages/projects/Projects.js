@@ -4,7 +4,7 @@ import api from '../../Api';
 import { getAccessToken } from '../../Api';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-
+import moment from 'moment/moment';
 
 
 export default function Projects(){
@@ -16,16 +16,18 @@ export default function Projects(){
    const [allProjects, setAllProjects]=useState([]);
    const [emptySearch, setEmptySearch]=useState(false);
    const [currentProject, setCurrentProject]=useState();
+   const [employees, setEmployees]=useState();
+   const [selectedEmployees, setSelectedEmployees]=useState([]);
    const [newProject, setNewProject]=useState({
     project_name: "",
     description: "",
-    start: "",
-    end:"",
+    date_start: "",
+    date_end:"",
     team_s: 0,
     project_value: 0,
     status: "",
     hourly_price:0,
-    users: []
+    members: []
 });
 
 
@@ -75,8 +77,16 @@ export default function Projects(){
       .then(response => {console.log(response.data); setProjects(response.data)})
       .catch(error => console.error(error));
     }
+
+    const fetchEmployees=()=>{
+      api.get(`/api/employees_list/`)
+      .then(response => setEmployees(response.data))
+      .catch(error => console.error(error));
+    }
+
      useEffect(()=>{
       fetchProjects();
+      fetchEmployees();
  }, [rows, currentPage]);
     
       useEffect(()=>{
@@ -116,7 +126,6 @@ export default function Projects(){
 
       const filterProjects = (e) => {
         const searchValue = e.target.value.toLowerCase();
-        let countOfProjects;
         const filteredProjects = allProjects.filter((item) =>
           item.project_name.toLowerCase().includes(searchValue)
         );
@@ -168,15 +177,33 @@ export default function Projects(){
         if (projects && projects.results) {
           let temp = projects.results.find((e) => e.project_name === name);
           setCurrentProject(temp);
-          console.log(temp)
         }
       };
       
-      const deleteProject=(id)=>{
-        api.delete(`/api/delete_projects/${id}`)
+      const [index, setIndex]=useState();
+
+       const deleteProject=()=>{
+         api.delete(`/api/delete_project/${index}/`)
+         .then(response => {console.log(response); })
+         .catch(error => console.error(error));
+       }
+
+       const addProject=()=>{
+        const formattedStartDate = moment(startDate).format('YYYY-MM-DD');
+        const formattedEndDate = moment(endDate).format('YYYY-MM-DD');
+        api.post(`/api/add_project/`,{...newProject, 
+          date_start: formattedStartDate,
+          date_end:formattedEndDate,
+          team_s:selectedEmployees.length,
+          members:selectedEmployees,
+          status:selectedOption})
         .then(response => {console.log(response)})
         .catch(error => console.error(error));
       }
+      
+       const handleNewProject = (e) => {
+        setNewProject((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+      };
      
 
 const [isOpen, setIsOpen] = useState(false);
@@ -287,6 +314,24 @@ const handleOptionChange = (event) => {
     closeModal();
   };
 
+  const handleEmployeeSelection = (event, employee) => {
+    const { checked } = event.target;
+  
+    if (checked) {
+      setSelectedEmployees((prevSelectedEmployees) => [
+        ...prevSelectedEmployees,
+        {...employee, user_id:employee.id, employment_type:selectedTime},
+      ]);
+    } else {
+      setSelectedEmployees((prevSelectedEmployees) =>
+        prevSelectedEmployees.filter(
+          (selectedEmployee) => selectedEmployee.user_id !== employee.id
+        )
+      );
+    }
+  };
+  
+
    return(
    <div className='flex h-full'>
       <div className='basis-[12%] h-984'>
@@ -298,12 +343,8 @@ const handleOptionChange = (event) => {
          <button  onClick={toggleModal} data-modal-target="addnewproject-modal" data-modal-toggle="addnewproject-modal" className="bg-customColor hover:bg-gray-500 text-white h-10 w-44 mt-4 lg:mt-0 md:mt-0 md:mr-0 mr-4 text-base font-link font-semibold rounded-md"  type="button">
             Create new project
          </button>
-
-        </div>     
-
-            
-                  
-        <div>
+        </div>              
+       <div> {console.log("sadfas")}
               {isOpen && (
                 <div className="fixed top-0 left-0 right-0 z-50 flex items-center h-full max-h-1024  overflow-y-auto  justify-end bg-black bg-opacity-50">
                   <div className="relative bg-color7 shadow-lg w-496 h-full overflow-y-auto overflow-x-hidden">
@@ -313,7 +354,7 @@ const handleOptionChange = (event) => {
                       </svg>
                       <span className='text-base font-semibold font-link text-color30'>Back</span>
                      </div>
-
+                    
                      <div className='flex flex-col space-y-4 px-6 mb-20'>
                       <div className='bg-white h-14 w-448 rounded-lg'> 
                         <h1 className='my-3 mx-6 text-[21px] font-face-b font-bold text-primary'>Add New Project</h1>
@@ -330,7 +371,7 @@ const handleOptionChange = (event) => {
                               name="project_name"
                               type=""
                               placeholder="Project name"
-                            
+                              onChange={handleNewProject}
                             />
                         </div>
 
@@ -344,7 +385,7 @@ const handleOptionChange = (event) => {
                               name="description"
                               type=""
                               placeholder="Project description"
-                            
+                              onChange={handleNewProject}
                             />
                         </div>
                         <div>
@@ -404,70 +445,33 @@ const handleOptionChange = (event) => {
       </button>
       <div
         id="dropdownDefaultCheckbox"
-        className="z-10 hidden w-400  h-32 bg-white divide-y divide-gray-100 border border-color20 border-1 rounded-md shadow dark:bg-gray-700 dark:divide-gray-600"
+        className="z-10 hidden w-400  h-32 bg-white divide-y divide-gray-100 border border-color20 border-1 rounded-md shadow dark:bg-gray-700 dark:divide-gray-600 overflow-y-scroll"
       >
         <ul className="p-3 space-y-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownCheckboxButton">
-          <li>
+          {employees?.length>0 && employees?.map((employee)=>(
+            <li>
             <div className="flex items-center">
               <input
                 id="checkbox-item-1"
                 type="checkbox"
-                value=""
+                onChange={(event) => handleEmployeeSelection(event, employee)}
                 className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
-              />
+                />
               <label htmlFor="checkbox-item-1" className="ml-2 text-sm font-normal text-color18 font-face-r">
-               Kristhoper Skiles
+               {employee?.first_name} {employee?.last_name}
               </label>
             </div>
           </li>
-          <li>
-            <div className="flex items-center">
-              <input
-                checked
-                id="checkbox-item-2"
-                type="checkbox"
-                value=""
-                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
-              />
-              <label htmlFor="checkbox-item-2" className="ml-2 text-sm font-normal text-color18 font-face-r">
-                Joanne Wunsch
-              </label>
-            </div>
-          </li>
-          <li>
-            <div className="flex items-center">
-              <input
-                id="checkbox-item-3"
-                type="checkbox"
-                value=""
-                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
-              />
-              <label htmlFor="checkbox-item-3" className="ml-2 text-sm font-normal text-color18 font-face-r">
-                Dawn Parker
-              </label>
-            </div>
-          </li>
-          <li>
-            <div className="flex items-center">
-              <input
-                id="checkbox-item-3"
-                type="checkbox"
-                value=""
-                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
-              />
-              <label htmlFor="checkbox-item-3" className="ml-2 text-sm font-normal text-color18 font-face-r">
-                Mabel Lueilwitz
-              </label>
-            </div>
-          </li>
+            ))}
         </ul>
       </div>
     </div>
 
 
     <div class=" w-400 h-154 grid  grid-cols-1 divide-y">
-      <div className='flex -mt-4 justify-between '>
-        <span className='p-4 text-sm font-normal text-color16 font-face-r'>Gustavo Hayes</span>
+      {selectedEmployees?.length>0 && selectedEmployees?.map((selectedEmployee)=>(
+        <div className='flex -mt-4 justify-between '>
+        <span className='p-4 text-sm font-normal text-color16 font-face-r'>{selectedEmployee?.first_name} {selectedEmployee?.last_name}</span>
         <div className='flex items-center pr-2 space-x-2'>
         <div className='relative'>
                   <button
@@ -476,7 +480,7 @@ const handleOptionChange = (event) => {
                     className="text-xs px-2 font-normal text-color30 font-face-r   text-center  flex items-center border h-6 w-90 rounded-md"
                     type="button"
                     onClick={toggleDropdownTime} 
-                  >
+                    >
                     {selectedTime}
                     <div className='ml-1'>
                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -489,11 +493,11 @@ const handleOptionChange = (event) => {
                     <ul className="absolute left-0  w-24 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
                       {times.map((time) => (
                         <li
-                          key={time}
-                          className={`${
-                            time === selectedTime ? 'bg-color7 font-face-r font-normal text-xs text-color30' : 'text-color30 font-face-r font-normal text-xs border-b border-color17'
-                          } cursor-pointer select-none relative py-2 pl-3 pr-9`}
-                          onClick={() => handleTimeChange(time)}
+                        key={time}
+                        className={`${
+                          time === selectedTime ? 'bg-color7 font-face-r font-normal text-xs text-color30' : 'text-color30 font-face-r font-normal text-xs border-b border-color17'
+                        } cursor-pointer select-none relative py-2 pl-3 pr-9`}
+                        onClick={() => handleTimeChange(time)}
                         >
                           <span className="block truncate">{time}</span>
                           {time === selectedTime && (
@@ -504,11 +508,11 @@ const handleOptionChange = (event) => {
                                 viewBox="0 0 20 20"
                                 fill="currentColor"
                                 aria-hidden="true"
-                              >
+                                >
                                 <path
                                   fillRule="evenodd"
                                   clipRule="evenodd"
-                                />
+                                  />
                               </svg>
                             </span>
                           )}
@@ -522,123 +526,7 @@ const handleOptionChange = (event) => {
 </svg>
 
         </div>
-      </div>
-      
-      <div className='flex justify-between '>
-        <span className='my-4 pl-4  text-sm font-normal text-color16 font-face-r'>Greg Jerde</span>
-        <div className='flex items-center pr-2 space-x-2'>
-        <div className='relative'>
-                  <button
-                    id="dropdownDefaultButton"
-                    data-dropdown-toggle="dropdown"
-                    className="text-xs px-2 font-normal text-color30 font-face-r   text-center  flex items-center border h-6 w-90 rounded-md"
-                    type="button"
-                    onClick={toggleDropdownTime} 
-                  >
-                    {selectedTime}
-                    <div className='ml-1'>
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M8 11L3 6.00005L3.7 5.30005L8 9.60005L12.3 5.30005L13 6.00005L8 11Z" fill="#6C6D75"/>
-                    </svg>
-                    </div>
-                  </button>
-
-                  {isDropdownOpen && (
-                    <ul className="absolute left-0  w-24 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
-                      {times.map((time) => (
-                        <li
-                          key={time}
-                          className={`${
-                            time === selectedTime ? 'bg-color7 font-face-r font-normal text-xs text-color30' : 'text-color30 font-face-r font-normal text-xs border-b border-color17'
-                          } cursor-pointer select-none relative py-2 pl-3 pr-9`}
-                          onClick={() => handleTimeChange(time)}
-                        >
-                          <span className="block truncate">{time}</span>
-                          {time === selectedTime && (
-                            <span className="absolute inset-y-0 right-0 flex items-center pr-4">
-                              <svg
-                                className="w-5 h-5"
-                                xmlns="http://www.w3.org/2000/svg"
-                                viewBox="0 0 20 20"
-                                fill="currentColor"
-                                aria-hidden="true"
-                              >
-                                <path
-                                  fillRule="evenodd"
-                                  clipRule="evenodd"
-                                />
-                              </svg>
-                            </span>
-                          )}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M7.8095 6.99927L11.9111 2.11021C11.9798 2.02896 11.922 1.90552 11.8158 1.90552H10.5689C10.4954 1.90552 10.4251 1.93833 10.3767 1.99458L6.99388 6.02739L3.61106 1.99458C3.56419 1.93833 3.49388 1.90552 3.41888 1.90552H2.172C2.06575 1.90552 2.00794 2.02896 2.07669 2.11021L6.17825 6.99927L2.07669 11.8883C2.06129 11.9064 2.05141 11.9286 2.04822 11.9521C2.04503 11.9757 2.04867 11.9997 2.05871 12.0212C2.06874 12.0428 2.08475 12.061 2.10483 12.0737C2.12492 12.0865 2.14823 12.0931 2.172 12.093H3.41888C3.49231 12.093 3.56263 12.0602 3.61106 12.004L6.99388 7.97114L10.3767 12.004C10.4236 12.0602 10.4939 12.093 10.5689 12.093H11.8158C11.922 12.093 11.9798 11.9696 11.9111 11.8883L7.8095 6.99927Z" fill="#A30000"/>
-</svg>
-
-        </div>
-      </div>
-
-      <div className='flex justify-between '>
-        <span className='py-4 pl-4 text-sm font-normal text-color16 font-face-r'>Norman Kirlin</span>
-        <div className='flex items-center pr-2 space-x-2'>
-        <div className='relative'>
-                  <button
-                    id="dropdownDefaultButton"
-                    data-dropdown-toggle="dropdown"
-                    className="text-xs px-2 font-normal text-color30 font-face-r   text-center  flex items-center border h-6 w-90 rounded-md"
-                    type="button"
-                    onClick={toggleDropdownTime} 
-                  >
-                    {selectedTime}
-                    <div className='ml-1'>
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M8 11L3 6.00005L3.7 5.30005L8 9.60005L12.3 5.30005L13 6.00005L8 11Z" fill="#6C6D75"/>
-                    </svg>
-                    </div>
-                  </button>
-
-                  {isDropdownOpen && (
-                    <ul className="absolute left-0 w-90 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
-                      {times.map((time) => (
-                        <li
-                          key={time}
-                          className={`${
-                            time === selectedTime ? 'bg-color7 font-face-r font-normal text-xs text-color30' : 'text-color30 font-face-r font-normal text-xs border-b border-color17'
-                          } cursor-pointer select-none relative py-2 pl-3 pr-9`}
-                          onClick={() => handleTimeChange(time)}
-                        >
-                          <span className="block truncate">{time}</span>
-                          {time === selectedTime && (
-                            <span className="absolute inset-y-0 right-0 flex items-center pr-4">
-                              <svg
-                                className="w-5 h-5"
-                                xmlns="http://www.w3.org/2000/svg"
-                                viewBox="0 0 20 20"
-                                fill="currentColor"
-                                aria-hidden="true"
-                              >
-                                <path
-                                  fillRule="evenodd"
-                                  clipRule="evenodd"
-                                />
-                              </svg>
-                            </span>
-                          )}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M7.8095 6.99927L11.9111 2.11021C11.9798 2.02896 11.922 1.90552 11.8158 1.90552H10.5689C10.4954 1.90552 10.4251 1.93833 10.3767 1.99458L6.99388 6.02739L3.61106 1.99458C3.56419 1.93833 3.49388 1.90552 3.41888 1.90552H2.172C2.06575 1.90552 2.00794 2.02896 2.07669 2.11021L6.17825 6.99927L2.07669 11.8883C2.06129 11.9064 2.05141 11.9286 2.04822 11.9521C2.04503 11.9757 2.04867 11.9997 2.05871 12.0212C2.06874 12.0428 2.08475 12.061 2.10483 12.0737C2.12492 12.0865 2.14823 12.0931 2.172 12.093H3.41888C3.49231 12.093 3.56263 12.0602 3.61106 12.004L6.99388 7.97114L10.3767 12.004C10.4236 12.0602 10.4939 12.093 10.5689 12.093H11.8158C11.922 12.093 11.9798 11.9696 11.9111 11.8883L7.8095 6.99927Z" fill="#A30000"/>
-              </svg>
-
-        </div>
-      </div>
+      </div> ))}
       
     </div>
                       <div className='flex items-center'>
@@ -648,10 +536,11 @@ const handleOptionChange = (event) => {
                           </label>
                             <input
                               className="appearance-none font-face-r font-normal text-sm w-308 h-10 border border-color20 border-1 rounded-md  py-2 px-3 text-secondary placeholder-color18 leading-tight focus:outline-none focus:shadow-outline"
-                              id="username"
-                              name="username"
+                              id="hourly_price"
+                              name="hourly_price"
                               type=""
                               placeholder="Enter the amount"
+                              onChange={handleNewProject}
                             />
                         </div>
 
@@ -711,11 +600,11 @@ const handleOptionChange = (event) => {
                           </label>
                             <input
                               className="appearance-none font-face-r font-normal text-sm w-400 h-10 border border-color20 border-1 rounded-md  py-2 px-3 text-secondary placeholder-color18 leading-tight focus:outline-none focus:shadow-outline"
-                              id="username"
-                              name="username"
+                              id="project_value"
+                              name="project_value"
                               type=""
                               placeholder="Enter the amount in BAM"
-                            
+                              onChange={handleNewProject}
                             />
                         </div>
                        
@@ -752,8 +641,8 @@ const handleOptionChange = (event) => {
                 id="radio-item-1"
                 type="radio"
                 name="radioGroup"
-                value="option1"
-                checked={selectedOption === 'option1'}
+                value="Active"
+                checked={selectedOption === 'Active'}
                 onChange={handleOptionChange}
                 className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2"
               />
@@ -768,8 +657,8 @@ const handleOptionChange = (event) => {
                 id="radio-item-2"
                 type="radio"
                 name="radioGroup"
-                value="option2"
-                checked={selectedOption === 'option2'}
+                value="On hold"
+                checked={selectedOption === 'On hold'}
                 onChange={handleOptionChange}
                 className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2"
               />
@@ -784,8 +673,8 @@ const handleOptionChange = (event) => {
                 id="radio-item-3"
                 type="radio"
                 name="radioGroup"
-                value="option3"
-                checked={selectedOption === 'option3'}
+                value="Inactive"
+                checked={selectedOption === 'Inactive'}
                 onChange={handleOptionChange}
                 className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2"
               />
@@ -800,8 +689,8 @@ const handleOptionChange = (event) => {
                 id="radio-item-3"
                 type="radio"
                 name="radioGroup"
-                value="option3"
-                checked={selectedOption === 'option3'}
+                value="Completed"
+                checked={selectedOption === 'Completed'}
                 onChange={handleOptionChange}
                 className="w-4 h-4 text-blue-600 border-color32 rounded focus:ring-color32 dark:focus:ring-color32 dark:ring-offset-color32 dark:focus:ring-offset-color32 focus:ring-2"
               />
@@ -825,7 +714,7 @@ const handleOptionChange = (event) => {
                           Cancel
                       </span>
                     </button>
-                    <button type="button" class=" bg-customColor text-base font-link font-semibold h-10 w-121 text-white  rounded-md text-base ">Add project</button>
+                    <button type="button" onClick={addProject} class=" bg-customColor text-base font-link font-semibold h-10 w-121 text-white  rounded-md text-base ">Add project</button>
                     </div>
                       </div>
 
@@ -931,7 +820,7 @@ const handleOptionChange = (event) => {
                      </div> 
 
                     {!emptySearch ? projects.results?.map((project,index)=>(
-                      <div key={index} className='flex flex-row h-60 border-x border-b items-center'  onClick={()=>{handleClick(); addCurrentProject(project.project_name); deleteProject(index)}}>
+                      <div key={index} className='flex flex-row h-60 border-x border-b items-center'  onClick={()=>{handleClick(); addCurrentProject(project.project_name); setIndex(project.id)}}>
                         <div className='w-157 h-10 py-1.5 pl-4 '>
                           <span className='text-sm font-medium font-face-m text-color18'>{project?.project_name}</span>
                         </div>
@@ -1008,7 +897,7 @@ const handleOptionChange = (event) => {
                           Team members
                           </label>
                           <div className='flex'>
-                          {currentProject?.users.map(user=>(<span className='block w-400 h-6 text-color18 font-face-r font-normal text-base'>{/*{`${user.first_name} ${user.last_name}`}*/}Nejra Rizvic</span>))}
+                          {currentProject?.users.map(user=>(<span className='block w-400 h-6 text-color18 font-face-r font-normal text-base'>{`${user.first_name} ${user.last_name}`}</span>))}
                           </div>
                       </div>
 
@@ -1049,11 +938,10 @@ const handleOptionChange = (event) => {
                       </div> 
                       
                       <div className='w-496 h-88 bg-white md:mt-29 items-center justify-end flex space-x-4 pr-6'>
-                        
                       <div>
       <button
         className="relative items-center justify-center w-139 h-10 border border-color34 overflow-hidden rounded-md"
-        onClick={openModal}
+        onClick={deleteProject}
       >
         <span className="relative text-base font-link font-semibold text-color34">
           Delete Project
