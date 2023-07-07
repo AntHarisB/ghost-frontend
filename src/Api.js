@@ -24,7 +24,8 @@ export const getNewRefreshToken = async () => {
   const refreshToken = getRefreshToken();
 
   try {
-    const response = await api.post("http://127.0.0.1:8000/api/token/refresh/", {
+    const response = await api.post("/api/token/refresh/", {
+
       refresh: refreshToken,
     });
 
