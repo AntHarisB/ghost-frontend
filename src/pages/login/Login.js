@@ -15,7 +15,7 @@ export default function Login({ setUser }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    api.post("http://127.0.0.1:8000/api/token/", {
+    api.post("/api/token/", {
         username: userLoginData.username,
         password: userLoginData.password,
       })
@@ -23,7 +23,7 @@ export default function Login({ setUser }) {
         localStorage.setItem("access_token", res.data.access);
         localStorage.setItem("refresh_token", res.data.refresh);
         api
-          .get("http://127.0.0.1:8000/user/", {
+          .get("/user/", {
             headers: {
               Authorization: `Bearer ${res.data.access}`,
             },
