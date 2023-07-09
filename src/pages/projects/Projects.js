@@ -184,7 +184,7 @@ export default function Projects(){
 
        const deleteProject=()=>{
          api.delete(`/api/delete_project/${index}/`)
-         .then(response => {console.log(response); fetchProjects()})
+         .then(response => {console.log(response); fetchProjects();})
          .catch(error => console.error(error));
        }
 
@@ -197,7 +197,7 @@ export default function Projects(){
           team_s:selectedEmployees.length,
           members:selectedEmployees,
           status:selectedOption})
-        .then(response => {console.log(response); fetchProjects()})
+        .then(response => {console.log(response); fetchProjects(); toggleModal()})
         .catch(error => console.error(error));
       }
       
@@ -362,7 +362,7 @@ const toggleModalCheckBox = () => {
 
   const editProject=()=>{
     api.put(`/api/update_project/${index}/`,currentProject)
-    .then(response=>{console.log(response);fetchProjects()})
+    .then(response=>{console.log(response);fetchProjects(); closeModalEdit()})
     .catch(err=>console.log(err));
     console.log(currentProject)
   }
@@ -380,7 +380,7 @@ const toggleModalCheckBox = () => {
             Create new project
          </button>
         </div>              
-       <div>
+       <div>{console.log("ewsad")}
               {isOpen && (
                 <div className="fixed top-0 left-0 right-0 z-50 flex items-center h-full max-h-1024  overflow-y-auto  justify-end bg-black bg-opacity-50">
                   <div className="relative bg-color7 shadow-lg w-496 h-full overflow-y-auto overflow-x-hidden">
@@ -390,7 +390,7 @@ const toggleModalCheckBox = () => {
                       </svg>
                       <span className='text-base font-semibold font-link text-color30'>Back</span>
                      </div>
-                    
+                    {console.log("dsd")}
                      <div className='flex flex-col space-y-4 px-6 mb-20'>
                       <div className='bg-white h-14 w-448 rounded-lg'> 
                         <h1 className='my-3 mx-6 text-[21px] font-face-b font-bold text-primary'>Add New Project</h1>

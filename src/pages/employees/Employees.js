@@ -15,8 +15,16 @@ export default function Employees(){
    const [employees, setEmployees]=useState([]);
    const [currentPage, setCurrentPage]=useState(1);
    const [emptySearch, setEmptySearch]=useState(false);
+   const [index, setIndex]=useState();
+   const [editOptionChange, setEditOptionChange]=useState();
    const [allEmployees, setAllEmployees]=useState()
    const [currentEmployee, setCurrentEmployee]=useState()
+   const [newEmployee, setNewEmployee]=useState({
+        first_name: "",
+        last_name: "",
+        monthly_salary: 0,
+        profile_photo: ""
+   });
    const handleItemClick = (item) => {
       if (selected === item) {
         setSelected(null);
@@ -93,15 +101,17 @@ let endPage = Math.min(startPage + range - 1, pages);
       },[employees])
 
       const addCurrentEmployee=(id)=>{
-        let temp=employees?.results.find((emp)=>emp.id===id);
-        setCurrentEmployee(temp);
-        console.log(temp)
+        api.get(`/api/employees_id/${id}/`)
+        .then(response=>setCurrentEmployee(response.data))
+        .catch(err=>console.log(err));
+        console.log(id)
       }
 
       const handleDeleteEmployee=()=>{
-        api.delete(`/api/delete_employee/${currentEmployee.id}/`)
-      .then(response => console.log(response.data))
+        api.delete(`/api/delete_employee/${index}/`)
+      .then(response => {console.log(response.data); fetchEmployees()})
       .catch(error => console.error(error));
+      console.log(currentEmployee)
       }
 
 
@@ -142,7 +152,8 @@ useEffect(() => {
 }, []);
 
  //dropdown with radio btn
- const [selectedOption, setSelectedOption] = useState('');
+ const [selectedOption, setSelectedOption] = useState('Full Stack');
+ const [selectedDepartmentOption, setSelectedDepartmentOption] = useState('');
 
  useEffect(() => {
    const dropdownToggleButton = document.getElementById('dropdownRadioButtonButton');
@@ -172,6 +183,14 @@ useEffect(() => {
  const handleOptionChange = (event) => {
    setSelectedOption(event.target.value);
  };
+
+ const handleEditOptionChange = (event) => {
+  setCurrentEmployee(prev=>({...prev, [event.target.name]:event.target.value}));
+};
+
+ const handleDepartmentChange = (event) => {
+  setSelectedDepartmentOption(event.target.value);
+};
 
 
   //dropdown of valutes
@@ -253,6 +272,33 @@ const closetoggleModalEdit = () => {
   setIsOpenEdit(false);
 };
 
+const editEmplyeeValue=(e)=>{
+  setNewEmployee((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+}
+
+const editCurrentEmplyeeValue=(e)=>{
+  setCurrentEmployee((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+}
+
+const addEmployee=()=>{
+  api.post(`/api/add_employee/`,{
+    ...newEmployee, 
+    department:selectedDepartmentOption, 
+    tech_stack:selectedOption, 
+    profile_photo:"https://randomuser.me/api/portraits/men/92.jpg"
+  })
+  .then(response=>{console.log(response.data); fetchEmployees(); toggleModal()})
+  .catch(err=>console.log(err))
+  //console.log({...newEmployee, department:selectedDepartmentOption, tech_stack:selectedOption, profile_photo:"https://randomuser.me/api/portraits/men/92.jpg"});
+}
+
+const editEmployee=(id)=>{
+  api.put(`/api/employees/edit/${id}/`,currentEmployee)
+  .then(response=>{console.log(response.data); fetchEmployees(); toggleModalEdit()})
+  .catch(err=>console.log(err));
+  console.log(currentEmployee);
+}
+
    return(
    <div className='flex h-full'>
       <div className='basis-[12% h-984'>
@@ -265,7 +311,7 @@ const closetoggleModalEdit = () => {
             Add new Employee
          </button>
         </div>      
-        <div>
+        <div>{console.log("ewsad")}
               {isOpen && (
                 <div className="fixed top-0 left-0 right-0 z-50 flex items-center h-full max-h-1024  overflow-y-auto  justify-end bg-black bg-opacity-50">
                   <div className="relative bg-color7 shadow-lg w-496 h-full overflow-y-auto overflow-x-hidden">
@@ -288,11 +334,11 @@ const closetoggleModalEdit = () => {
                           </label>
                             <input
                               className="appearance-none font-face-r font-normal text-sm w-400 h-10 border border-color20 border-1 rounded-md  py-2 px-3 text-secondary placeholder-color18 leading-tight focus:outline-none focus:shadow-outline"
-                              id="username"
-                              name="username"
+                              id="first_name"
+                              name="first_name"
                               type=""
                               placeholder="First Name"
-                            
+                              onChange={editEmplyeeValue}
                             />
                         </div>
 
@@ -302,11 +348,11 @@ const closetoggleModalEdit = () => {
                           </label>
                             <input
                               className="appearance-none font-face-r font-normal text-sm w-400 h-10 border border-color20 border-1 rounded-md  py-2 px-3 text-secondary placeholder-color18 leading-tight focus:outline-none focus:shadow-outline"
-                              id="username"
-                              name="username"
+                              id="last_name"
+                              name="last_name"
                               type=""
                               placeholder="Last Name"
-                            
+                              onChange={editEmplyeeValue}
                             />
                         </div>
                      
@@ -355,7 +401,9 @@ const closetoggleModalEdit = () => {
               <input
                 id="checkbox-item-1"
                 type="checkbox"
-                value=""
+                value="Management"
+                checked={selectedDepartmentOption === 'Management'}
+                onChange={handleDepartmentChange}
                 className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
               />
               <label htmlFor="checkbox-item-1" className="ml-2 text-sm font-normal text-color18 font-face-r">
@@ -366,10 +414,11 @@ const closetoggleModalEdit = () => {
           <li>
             <div className="flex items-center">
               <input
-                checked
                 id="checkbox-item-2"
                 type="checkbox"
-                value=""
+                value="Administration"
+                checked={selectedDepartmentOption === 'Administration'}
+                onChange={handleDepartmentChange}
                 className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
               />
               <label htmlFor="checkbox-item-2" className="ml-2 text-sm font-normal text-color18 font-face-r">
@@ -382,7 +431,9 @@ const closetoggleModalEdit = () => {
               <input
                 id="checkbox-item-3"
                 type="checkbox"
-                value=""
+                value="Design"
+                checked={selectedDepartmentOption === 'Design'}
+                onChange={handleDepartmentChange}
                 className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
               />
               <label htmlFor="checkbox-item-3" className="ml-2 text-sm font-normal text-color18 font-face-r">
@@ -395,7 +446,9 @@ const closetoggleModalEdit = () => {
               <input
                 id="checkbox-item-3"
                 type="checkbox"
-                value=""
+                value="Development"
+                checked={selectedDepartmentOption === 'Development'}
+                onChange={handleDepartmentChange}
                 className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
               />
               <label htmlFor="checkbox-item-3" className="ml-2 text-sm font-normal text-color18 font-face-r">
@@ -406,8 +459,6 @@ const closetoggleModalEdit = () => {
         </ul>
       </div>
     </div>
-
-
    
                       <div className='flex items-center'>
                         <div className="w-400 h-66">
@@ -416,10 +467,11 @@ const closetoggleModalEdit = () => {
                           </label>
                             <input
                               className="appearance-none font-face-r font-normal text-sm w-308 h-10 border border-color20 border-1 rounded-md  py-2 px-3 text-secondary placeholder-color18 leading-tight focus:outline-none focus:shadow-outline"
-                              id="username"
-                              name="username"
+                              id="monthly_salary"
+                              name="monthly_salary"
                               type=""
                               placeholder="Enter the amount"
+                              onChange={editEmplyeeValue}
                             />
                         </div>
 
@@ -506,7 +558,9 @@ const closetoggleModalEdit = () => {
               <input
                 id="checkbox-item-1"
                 type="checkbox"
-                value=""
+                value="Full Stack"
+                checked={selectedOption === 'Full Stack'}
+                onChange={handleOptionChange}
                 className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
               />
               <label htmlFor="checkbox-item-1" className="ml-2 text-sm font-normal text-color18 font-face-r">
@@ -517,10 +571,11 @@ const closetoggleModalEdit = () => {
           <li>
             <div className="flex items-center">
               <input
-                checked
                 id="checkbox-item-2"
                 type="checkbox"
-                value=""
+                value="Front End"
+                checked={selectedOption === 'Front End'}
+                onChange={handleOptionChange}
                 className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
               />
               <label htmlFor="checkbox-item-2" className="ml-2 text-sm font-normal text-color18 font-face-r">
@@ -533,7 +588,9 @@ const closetoggleModalEdit = () => {
               <input
                 id="checkbox-item-3"
                 type="checkbox"
-                value=""
+                value="Back End"
+                checked={selectedOption === 'Back End'}
+                onChange={handleOptionChange}
                 className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
               />
               <label htmlFor="checkbox-item-3" className="ml-2 text-sm font-normal text-color18 font-face-r">
@@ -546,7 +603,9 @@ const closetoggleModalEdit = () => {
               <input
                 id="checkbox-item-3"
                 type="checkbox"
-                value=""
+                value="N/A"
+                checked={selectedOption === 'N/A'}
+                onChange={handleOptionChange}
                 className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
               />
               <label htmlFor="checkbox-item-3" className="ml-2 text-sm font-normal text-color18 font-face-r">
@@ -567,7 +626,7 @@ const closetoggleModalEdit = () => {
                           Cancel
                       </span>
                     </button>
-                    <button type="button" class=" bg-customColor text-base font-link font-semibold h-10 w-141 text-white  rounded-md text-base ">Add Employee</button>
+                    <button type="button" class=" bg-customColor text-base font-link font-semibold h-10 w-141 text-white  rounded-md text-base " onClick={addEmployee}>Add Employee</button>
                     </div>
                       </div>
 
@@ -616,7 +675,6 @@ const closetoggleModalEdit = () => {
               </div>
             </div>
           </div>
-           
           <div className='w-screen md:w-full overflow-x-auto md:overflow-x-auto lg:overflow-x-hidden '>
                <div className='border w-1050  h-72  flex  items-center justify-between rounded-t-md'>
                  <div className='ml-4 flex h-30 w-199 justify-between'>
@@ -661,7 +719,7 @@ const closetoggleModalEdit = () => {
                      </div>
                      {/* Div s informacijama i popup-om */}
                    {employees.results?.map((employee,index)=>(
-                   <div className='flex flex-row h-60 border-x border-b items-center' onClick={()=>{handleClick(); addCurrentEmployee(employee.id)}}>
+                   <div key={index} className='flex flex-row h-60 border-x border-b items-center' onClick={()=>{handleClick(); addCurrentEmployee(employee.id); setIndex(employee.id)}}>
                         <div className='w-174.4 l h-10 py-1.5 pl-4'>
                           <span className='text-sm font-normal font-face-r text-color18'>{employee?.first_name}</span>
                         </div>
@@ -689,7 +747,7 @@ const closetoggleModalEdit = () => {
                               </clipPath>
                               </defs>
                            </svg>
-                           <span className='font-normal font-face-r text-sm text-color18'>Edit</span>
+                           <span className='font-normal font-face-r text-sm text-color18' >Edit</span>
                            
                           </div>
                           <div className='h-3 w-0 border mr-1'></div>
@@ -701,10 +759,10 @@ const closetoggleModalEdit = () => {
                           </div>
                         </div>
 
-
+                        </div> ))}
                         {showModal && (
                          
-                              <div className="fixed top-0 left-0 right-0 z-50 flex items-center h-full max-h-1440  overflow-y-auto  justify-end bg-black bg-opacity-10"  onClick={() => setShowModal(false)}>
+                              <div className="fixed top-0 left-0 right-0 z-50 flex items-center h-full max-h-1440  overflow-y-auto  justify-end bg-black bg-opacity-10" >
                   <div className="relative bg-color7 shadow-lg w-496 h-full overflow-y-auto overflow-x-hidden">
                      <div className='flex items-center mt-27 ml-29 mb-4'>
                       <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -715,7 +773,7 @@ const closetoggleModalEdit = () => {
                      <div className='flex flex-col space-y-4 px-6 mb-20 '>
                       <div className='bg-white h-14 w-448 h-32 rounded-lg items-center'> 
                         <div className="flex m-6 ">
-                        <img src={Myimg} alt="My Image" className='h-20 w-20' />
+                        <img src={currentEmployee?.profile_photo} alt="My Image" className='h-20 w-20' />
                         <div className='m-4'>
                           <h1 className='font-face-b font-bold text-primary text-21'>{currentEmployee?.first_name} {currentEmployee?.last_name}</h1>
                           <span className='font-face-r font-normal text-base text-color18'>{currentEmployee?.department}</span>
@@ -749,30 +807,15 @@ const closetoggleModalEdit = () => {
                           <span className='block w-400 h-6 text-primary font-face-m font-medium text-base'>Assigned to projects</span>
                         </div>
                     
-                        <div className='flex w-400 h-10 justify-between items-center -mt-5  border-b'>
-                            <span className='text-sm font-normal text-color16 font-face-r'>Gutkowski LLC</span>
-                             <div className='w-68 h-4 bg-color8 rounded-xl text-center font-face-r font-normal text-xs text-white'>
-                              Full time
-                             </div>
+                        {currentEmployee?.projects && currentEmployee?.projects.map((project, index) => (
+                          <div key={index} className='flex w-400 h-10 justify-between items-center -mt-5  border-b'>
+                            <span className='text-sm font-normal text-color16 font-face-r'>{project.project_name}</span>
+                            <div className='w-68 h-4 bg-color8 rounded-xl text-center font-face-r font-normal text-xs text-white'>
+                              {project.employment_type}
+                            </div>
+                          </div>
+                        ))}
                         </div>
-
-
-                        <div className='flex w-400 h-10  justify-between items-center border-b'>
-                            <span className='text-sm font-normal text-color16 font-face-r'>Gutkowski LLC</span>
-                             <div className='w-68 h-4 bg-color8 rounded-xl text-center font-face-r font-normal text-xs text-white'>
-                              Full time
-                             </div>
-                        </div>
-
-                        <div className='flex w-400 h-10  justify-between items-center -'>
-                            <span className='text-sm font-normal text-color16 font-face-r'>Gutkowski LLC</span>
-                             <div className='w-68 h-4 bg-color37 rounded-xl text-center font-face-r font-normal text-xs text-white'>
-                              Part time
-                             </div>
-                        </div>
-                        </div>
-                         
-
                       </div>
                       </div> 
                       
@@ -808,8 +851,8 @@ const closetoggleModalEdit = () => {
             </div>
 
               <div className='space-y-1 '>
-              <h2 className="text-base font-bold font-face-b text-color35 w-336">Are you sure you want to delete Cale Barton?</h2>
-            <p className="text-color35 font-face-r font-normal text-sm">This will permanently delete Cale Barton and all associated data. You cannot undo this action.</p>
+              <h2 className="text-base font-bold font-face-b text-color35 w-336">Are you sure you want to delete {currentEmployee.first_name} {currentEmployee.last_name}?</h2>
+            <p className="text-color35 font-face-r font-normal text-sm">This will permanently delete {currentEmployee.first_name} {currentEmployee.last_name} and all associated data. You cannot undo this action.</p>
               </div>
             </div>
             
@@ -856,11 +899,11 @@ const closetoggleModalEdit = () => {
                           </label>
                             <input
                               className="appearance-none font-face-r font-normal text-sm w-400 h-10 border border-color20 border-1 rounded-md  py-2 px-3 text-secondary placeholder-color18 leading-tight focus:outline-none focus:shadow-outline"
-                              id="username"
-                              name="username"
+                              id="first_name"
+                              name="first_name"
                               type=""
-                              placeholder="Cale"
-                            
+                              value={currentEmployee.first_name}
+                              onChange={editCurrentEmplyeeValue}
                             />
                         </div>
 
@@ -870,11 +913,11 @@ const closetoggleModalEdit = () => {
                           </label>
                             <input
                               className="appearance-none font-face-r font-normal text-sm w-400 h-10 border border-color20 border-1 rounded-md  py-2 px-3 text-secondary placeholder-color18 leading-tight focus:outline-none focus:shadow-outline"
-                              id="username"
-                              name="username"
+                              id="last_name"
+                              name="last_name"
                               type=""
-                              placeholder="Barton"
-                            
+                              value={currentEmployee.last_name}
+                              onChange={editCurrentEmplyeeValue}
                             />
                         </div>
                      
@@ -884,7 +927,7 @@ const closetoggleModalEdit = () => {
                         </label>
                         <div className='w-104 h-104 bg-color36 border  border-color17 border-dotted rounded-md '>
                             <div className='flex flex-col items-center space-y-2 h-full justify-center'>
-                            <img src={Myimg} alt="My Image" className='w-104 h-104' />
+                            <img src={currentEmployee?.profile_photo} alt="My Image" className='w-104 h-104' />
                             </div>
                         </div>
                      </div>
@@ -902,7 +945,7 @@ const closetoggleModalEdit = () => {
         type="button"
       >
          <div className='flex justify-between w-full items-center'>
-        <span className='font-face-r font-normal text-sm text-color18'>Management</span>
+        <span className='font-face-r font-normal text-sm text-color18'>{currentEmployee.department}</span>
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M8 11L3 6.00005L3.7 5.30005L8 9.60005L12.3 5.30005L13 6.00005L8 11Z" fill="#6C6D75"/>
         </svg>
@@ -918,10 +961,12 @@ const closetoggleModalEdit = () => {
           <li>
             <div className="flex items-center">
             <input
-                checked
+                name='department'
                 id="checkbox-item-1"
                 type="checkbox"
-                value=""
+                value="Management"
+                onChange={handleEditOptionChange}
+                checked={currentEmployee.department=="Management"}
                 className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
               />
               <label htmlFor="checkbox-item-1" className="ml-2 text-sm font-normal text-color18 font-face-r">
@@ -932,9 +977,12 @@ const closetoggleModalEdit = () => {
           <li>
           <div className="flex items-center">
               <input
+                name='department'
                 id="checkbox-item-3"
                 type="checkbox"
-                value=""
+                value="Administration"
+                onChange={handleEditOptionChange}
+                checked={currentEmployee.department=="Administration"}
                 className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
               />
               <label htmlFor="checkbox-item-3" className="ml-2 text-sm font-normal text-color18 font-face-r">
@@ -946,9 +994,12 @@ const closetoggleModalEdit = () => {
           <li>
             <div className="flex items-center">
               <input
+                name='department'
                 id="checkbox-item-2"
                 type="checkbox"
-                value=""
+                value="Design"
+                onChange={handleEditOptionChange}
+                checked={currentEmployee.department=="Design"}
                 className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
               />
               <label htmlFor="checkbox-item-3" className="ml-2 text-sm font-normal text-color18 font-face-r">
@@ -959,9 +1010,12 @@ const closetoggleModalEdit = () => {
           <li>
           <div className="flex items-center">
           <input
+                name='department'
                 id="checkbox-item-3"
                 type="checkbox"
-                value=""
+                value="Development"
+                onChange={handleEditOptionChange}
+                checked={currentEmployee.department=="Development"}
                 className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
               />
               <label htmlFor="checkbox-item-2" className="ml-2 text-sm font-normal text-color18 font-face-r">
@@ -982,10 +1036,11 @@ const closetoggleModalEdit = () => {
                           </label>
                             <input
                               className="appearance-none font-face-r font-normal text-sm w-308 h-10 border border-color20 border-1 rounded-md  py-2 px-3 text-secondary placeholder-color18 leading-tight focus:outline-none focus:shadow-outline"
-                              id="username"
-                              name="username"
+                              id="monthly_salary"
+                              name="monthly_salary"
                               type=""
-                              placeholder="9300.00"
+                              value={currentEmployee.monthly_salary}
+                              onChange={editCurrentEmplyeeValue}
                             />
                         </div>
 
@@ -1054,7 +1109,7 @@ const closetoggleModalEdit = () => {
         type="button"
       >
         <div className='flex justify-between w-full items-center'>
-          <span className='font-face-r font-normal text-sm text-color18'>N/A</span>
+          <span className='font-face-r font-normal text-sm text-color18'>{currentEmployee.tech_stack}</span>
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M8 11L3 6.00005L3.7 5.30005L8 9.60005L12.3 5.30005L13 6.00005L8 11Z" fill="#6C6D75"/>
           </svg>
@@ -1070,9 +1125,12 @@ const closetoggleModalEdit = () => {
           <li>
             <div className="flex items-center">
               <input
+                name='tech_stack'
                 id="checkbox-item-1"
                 type="checkbox"
-                value=""
+                value="Full Stack"
+                onChange={handleEditOptionChange}
+                checked={currentEmployee.tech_stack=="Full Stack"}
                 className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
               />
               <label htmlFor="checkbox-item-1" className="ml-2 text-sm font-normal text-color18 font-face-r">
@@ -1083,10 +1141,12 @@ const closetoggleModalEdit = () => {
           <li>
             <div className="flex items-center">
               <input
-                checked
+                name='tech_stack'
                 id="checkbox-item-2"
                 type="checkbox"
-                value=""
+                value="Front End"
+                onChange={handleEditOptionChange}
+                checked={currentEmployee.tech_stack=="Front End"}
                 className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
               />
               <label htmlFor="checkbox-item-2" className="ml-2 text-sm font-normal text-color18 font-face-r">
@@ -1097,9 +1157,12 @@ const closetoggleModalEdit = () => {
           <li>
             <div className="flex items-center">
               <input
+                name='tech_stack'
                 id="checkbox-item-3"
                 type="checkbox"
-                value=""
+                value="Back End"
+                onChange={handleEditOptionChange}
+                checked={currentEmployee.tech_stack=="Back End"}
                 className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
               />
               <label htmlFor="checkbox-item-3" className="ml-2 text-sm font-normal text-color18 font-face-r">
@@ -1110,9 +1173,12 @@ const closetoggleModalEdit = () => {
           <li>
             <div className="flex items-center">
               <input
+                name='tech_stack'
                 id="checkbox-item-3"
                 type="checkbox"
-                value=""
+                value="N/A"
+                onChange={handleEditOptionChange}
+                checked={currentEmployee.tech_stack=="N/A"}
                 className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
               />
               <label htmlFor="checkbox-item-3" className="ml-2 text-sm font-normal text-color18 font-face-r">
@@ -1133,7 +1199,7 @@ const closetoggleModalEdit = () => {
                           Cancel
                       </span>
                     </button>
-                    <button type="button" class=" bg-customColor text-base font-link font-semibold h-10 w-90 text-white  rounded-md text-base ">
+                    <button type="button" class=" bg-customColor text-base font-link font-semibold h-10 w-90 text-white  rounded-md text-base " onClick={()=>editEmployee(currentEmployee.id)}>
                       Submit
                     </button>
                     </div>
@@ -1149,7 +1215,7 @@ const closetoggleModalEdit = () => {
                   </div>
                           
                         )}
-                      </div> ))}
+                      
                </div>
          </div>      
 

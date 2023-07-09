@@ -15,7 +15,6 @@ const [user, setUser]=useState([]);
 
   return (
     <>
-        {console.log(user)}
     <Routes>
         <Route path="/login" element={<Login setUser={setUser}/>} />
         <Route path="/home" element={<Home user={user}/>} />
