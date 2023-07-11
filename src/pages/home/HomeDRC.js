@@ -151,7 +151,6 @@ export default function Home ({ticks}) {
         }else{
         setHighestValue(highestCost);
         }
-        console.log(highestAvaliable)
         setData(chartData);
       })
       .catch(error => {

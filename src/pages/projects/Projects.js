@@ -43,7 +43,6 @@ export default function Projects(){
 
     const handleChange = (e) => {
       setSelectedNumber(e.target.value);
-      console.log('Odabran broj:', e.target.value);
     };
     
     const range = 3; 
@@ -310,7 +309,6 @@ const handleOptionChange = (event) => {
   };
 
   const handleDeleteProject = () => {
-    console.log('Brisanje projekta');
     closeModal();
   };
 
@@ -364,7 +362,6 @@ const toggleModalCheckBox = () => {
     api.put(`/api/update_project/${index}/`,currentProject)
     .then(response=>{console.log(response);fetchProjects(); closeModalEdit()})
     .catch(err=>console.log(err));
-    console.log(currentProject)
   }
   
 
@@ -380,7 +377,7 @@ const toggleModalCheckBox = () => {
             Create new project
          </button>
         </div>              
-       <div>{console.log("ewsad")}
+       <div>
               {isOpen && (
                 <div className="fixed top-0 left-0 right-0 z-50 flex items-center h-full max-h-1024  overflow-y-auto  justify-end bg-black bg-opacity-50">
                   <div className="relative bg-color7 shadow-lg w-496 h-full overflow-y-auto overflow-x-hidden">
@@ -390,7 +387,6 @@ const toggleModalCheckBox = () => {
                       </svg>
                       <span className='text-base font-semibold font-link text-color30'>Back</span>
                      </div>
-                    {console.log("dsd")}
                      <div className='flex flex-col space-y-4 px-6 mb-20'>
                       <div className='bg-white h-14 w-448 rounded-lg'> 
                         <h1 className='my-3 mx-6 text-[21px] font-face-b font-bold text-primary'>Add New Project</h1>
@@ -846,7 +842,7 @@ const toggleModalCheckBox = () => {
                         <div className='w-150 h-10 py-1.5 pl-8 '>
                           <span className='text-sm font-medium font-face-m text-color18'>Status</span>
                         </div>
-                     </div> {console.log(currentProject)}
+                     </div> 
                     {!emptySearch ? projects.results?.map((project,index)=>(
                       <div key={index} className='flex flex-row h-60 border-x border-b items-center'  onClick={()=>{handleClick(); addCurrentProject(project.project_name); setIndex(project.id)}}>
                         <div className='w-157 h-10 py-1.5 pl-4 '>
@@ -1121,7 +1117,6 @@ const toggleModalCheckBox = () => {
                                             <path d="M8 11L3 6.00005L3.7 5.30005L8 9.60005L12.3 5.30005L13 6.00005L8 11Z" fill="#6C6D75"/>
                                           </svg>
                                       </div>
-                                      {console.log("edsad")}
                                       </button>
                                       {isOpenCheckBox && <div
                                         id="dropdownDefaultCheckbox"

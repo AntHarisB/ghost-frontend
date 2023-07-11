@@ -1,11 +1,12 @@
-import React ,{useState,useEffect, useRef} from 'react';
+import React ,{useState,useEffect} from 'react';
 import Sidebar from '../../components/Sidebar'
 import api from '../../Api';
 import { getAccessToken } from '../../Api';
-import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import Myimg from '../../image/Upload_picture.png';
-
+import { addDoc, collection, getDocs, serverTimestamp, orderBy, query, doc, deleteDoc } from 'firebase/firestore'
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
+import { storage, db } from '../../firebase/Firebase'
+import { async } from 'q';
 
 
 export default function Employees(){
@@ -19,6 +20,8 @@ export default function Employees(){
    const [editOptionChange, setEditOptionChange]=useState();
    const [allEmployees, setAllEmployees]=useState()
    const [currentEmployee, setCurrentEmployee]=useState()
+   const [profileImage, setProfileImage]=useState();
+   const [pastEmployees, setPastEmployees]=useState();
    const [newEmployee, setNewEmployee]=useState({
         first_name: "",
         last_name: "",
@@ -37,7 +40,6 @@ export default function Employees(){
 
     const handleChange = (e) => {
       setSelectedNumber(e.target.value);
-      console.log('Odabran broj:', e.target.value);
     };
 
     const range = 3; 
@@ -67,7 +69,7 @@ let endPage = Math.min(startPage + range - 1, pages);
           'Authorization': `Bearer ${getAccessToken()}`
         }
       })
-      .then(response => {console.log(response.data); setEmployees(response.data)})
+      .then(response => setEmployees(response.data))
       .catch(error => console.error(error));
     }
 
@@ -77,7 +79,7 @@ let endPage = Math.min(startPage + range - 1, pages);
           'Authorization': `Bearer ${getAccessToken()}`
         }
       })
-      .then(response => {console.log(response.data); setAllEmployees(response.data)})
+      .then(response => setAllEmployees(response.data))
       .catch(error => console.error(error));
     }
 
@@ -104,14 +106,18 @@ let endPage = Math.min(startPage + range - 1, pages);
         api.get(`/api/employees_id/${id}/`)
         .then(response=>setCurrentEmployee(response.data))
         .catch(err=>console.log(err));
-        console.log(id)
       }
 
       const handleDeleteEmployee=()=>{
         api.delete(`/api/delete_employee/${index}/`)
       .then(response => {console.log(response.data); fetchEmployees()})
       .catch(error => console.error(error));
-      console.log(currentEmployee)
+      }
+
+      const fetchPastEmployees=()=>{
+        api.get(`/api/past_employees/${rows}/`)
+      .then(response => {setEmployees(response.data)})
+      .catch(error => console.error(error));
       }
 
 
@@ -239,7 +245,6 @@ useEffect(() => {
   };
 
   const handleDeleteProject = () => {
-    console.log('Brisanje projekta');
     closeModal();
   };
 
@@ -280,23 +285,35 @@ const editCurrentEmplyeeValue=(e)=>{
   setCurrentEmployee((prev) => ({ ...prev, [e.target.name]: e.target.value }));
 }
 
-const addEmployee=()=>{
-  api.post(`/api/add_employee/`,{
+const addEmployee=async()=>{
+  const imageRef = ref(storage,`images/${profileImage?.name}`)
+  await uploadBytes(imageRef, profileImage)
+  const imagePath=await getDownloadURL(imageRef);
+  await api.post(`/api/add_employee/`,{
     ...newEmployee, 
     department:selectedDepartmentOption, 
     tech_stack:selectedOption, 
-    profile_photo:"https://randomuser.me/api/portraits/men/92.jpg"
+    profile_photo:imagePath
   })
   .then(response=>{console.log(response.data); fetchEmployees(); toggleModal()})
   .catch(err=>console.log(err))
-  //console.log({...newEmployee, department:selectedDepartmentOption, tech_stack:selectedOption, profile_photo:"https://randomuser.me/api/portraits/men/92.jpg"});
 }
 
-const editEmployee=(id)=>{
-  api.put(`/api/employees/edit/${id}/`,currentEmployee)
+const editEmployee=async(id)=>{
+  console.log(currentEmployee,"1")
+  const imageRef = ref(storage,`images/${profileImage?.name}`)
+  await uploadBytes(imageRef, profileImage)
+  const imagePath=await getDownloadURL(imageRef);
+  setCurrentEmployee((prev) => ({ ...prev, profile_photo: imagePath }));
+  await api.put(`/api/employees/edit/${id}/`,currentEmployee)
   .then(response=>{console.log(response.data); fetchEmployees(); toggleModalEdit()})
   .catch(err=>console.log(err));
-  console.log(currentEmployee);
+  console.log(currentEmployee,"2")
+}
+
+const onFileChange = async (e) => {
+  const image = e.target.files[0]
+  setProfileImage(image)
 }
 
    return(
@@ -311,7 +328,7 @@ const editEmployee=(id)=>{
             Add new Employee
          </button>
         </div>      
-        <div>{console.log("ewsad")}
+        <div>
               {isOpen && (
                 <div className="fixed top-0 left-0 right-0 z-50 flex items-center h-full max-h-1024  overflow-y-auto  justify-end bg-black bg-opacity-50">
                   <div className="relative bg-color7 shadow-lg w-496 h-full overflow-y-auto overflow-x-hidden">
@@ -357,17 +374,18 @@ const editEmployee=(id)=>{
                         </div>
                      
                       <div className="mb-4 w-400 h-130">
-                        <label className="block text-primary font-face-m font-medium text-base w-400 h-22  mb-2">
+                        <label htmlFor='image-input' className="block text-primary font-face-m font-medium text-base w-400 h-22  mb-2">
                           Profile Image
-                        </label>
-                        <div className='w-104 h-104 bg-color36 border  border-color17 border-dotted rounded-md '>
+                        <div className='w-104 h-104 bg-color36 border  border-color17 border-dotted rounded-md cursor-pointer'>
                             <div className='flex flex-col items-center space-y-2 h-full justify-center'>
                             <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M7.46838 1.37573H6.53088C6.44755 1.37573 6.40588 1.4174 6.40588 1.50073V6.40698H1.75C1.66667 6.40698 1.625 6.44865 1.625 6.53198V7.46948C1.625 7.55282 1.66667 7.59448 1.75 7.59448H6.40588V12.5007C6.40588 12.5841 6.44755 12.6257 6.53088 12.6257H7.46838C7.55172 12.6257 7.59338 12.5841 7.59338 12.5007V7.59448H12.25C12.3333 7.59448 12.375 7.55282 12.375 7.46948V6.53198C12.375 6.44865 12.3333 6.40698 12.25 6.40698H7.59338V1.50073C7.59338 1.4174 7.55172 1.37573 7.46838 1.37573Z" fill="#142E2B"/>
                             </svg>
                             <span>Upload</span>
                             </div>
+                            <input onChange={onFileChange} className='hidden' id='image-input' type='file' accept='image/*' />
                         </div>
+                        </label>
                      </div>
                         
                         
@@ -656,7 +674,7 @@ const editEmployee=(id)=>{
 
               <div className={`flex items-center justify-center border-color11 py-5 lg:py-0 w-full border-t border-r border-b border-l  lg:rounded-none h-10 lg:w-82 cursor-pointer ' ${
                 selected === 2 ? 'bg-color14' : ''}`}
-                  onClick={() => handleItemClick(2)}
+                  onClick={() => {handleItemClick(2); fetchEmployees(); fetchAllEmployees()}}
                     >
                     <span className ={`text-sm font-normal text-center text-color12 font-link cursor-pointer ${
                         selected === 2 ? 'color' : ''}`}
@@ -666,7 +684,7 @@ const editEmployee=(id)=>{
 
               <div className={`flex items-center justify-center border-color11 py-5 lg:py-0  w-full rounded-r-md lg:border-t border-y border-r  lg:rounded-r-md  h-10 lg:w-62 cursor-pointer' ${
                 selected === 4 ? 'bg-color14' : ''}`}
-                   onClick={() => handleItemClick(4)}
+                   onClick={() => {handleItemClick(4); fetchPastEmployees()}}
                     >
                       <span className={`text-sm font-normal text-color12 font-link cursor-pointer ${
                           selected === 4 ? 'color' : ''}`}
@@ -865,7 +883,7 @@ const editEmployee=(id)=>{
               </button>
               <button
                 className="w-28 h-10 bg-color34 text-white rounded-md font-link font-semibold text-base"
-                onClick={()=>{closeModal(); handleDeleteEmployee()}}
+                onClick={()=>{closeModal(); handleDeleteEmployee(); setShowModal(false)}}
               >
                 Delete
               </button>
@@ -922,14 +940,15 @@ const editEmployee=(id)=>{
                         </div>
                      
                       <div className="mb-4 w-400 h-130">
-                        <label className="block text-primary font-face-m font-medium text-base w-400 h-22  mb-2">
+                        <label htmlFor='edit-image' className="block text-primary font-face-m font-medium text-base w-400 h-22  mb-2">
                           Profile Image
-                        </label>
                         <div className='w-104 h-104 bg-color36 border  border-color17 border-dotted rounded-md '>
                             <div className='flex flex-col items-center space-y-2 h-full justify-center'>
                             <img src={currentEmployee?.profile_photo} alt="My Image" className='w-104 h-104' />
                             </div>
+                            <input id='edit-image' className='hidden' type='file' accept='image/*' onChange={onFileChange} />
                         </div>
+                        </label>
                      </div>
                         
                         

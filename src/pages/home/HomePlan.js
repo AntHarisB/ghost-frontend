@@ -50,7 +50,6 @@ export default function HomePlan(){
       <div className='basis-[12%]'>
         <Sidebar />
       </div>
-      {console.log(planData[0]?.HRcost_total)}
       <div className='basis-[88%] space-y-5 md:space-y-5 pb-5 pt-14 px-3 lg:py-8 lg:space-y-5 lg:px-11 lg:overflow-x-hidden lg:overflow-y-hidden md:overflow-x-scroll '>
         <h1 className='text-3xl mb-10 text-color10 font-bold font-face-b'>Home</h1>       
           <div className='block space-y-10 lg:space-y-0 lg:flex lg:flex-row lg:justify-between lg:items-center'> 
@@ -64,7 +63,6 @@ export default function HomePlan(){
                           onClick={() => handleItemClick(1)}>2023 Performance
                     </span>
               </div>
-               {console.log(planData.HRcost_total)}
               <div className={`flex items-center justify-center border-color11 py-5 lg:py-0  w-1/3 border-y h-10 lg:w-236 cursor-pointer ' ${
                 selected === 2 ? 'bg-color14' : ''}`}
                   onClick={() => {handleItemClick(2); navigate('/homedrc')}}

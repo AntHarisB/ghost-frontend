@@ -49,7 +49,6 @@ export default function Login({ setUser }) {
     api.post(`http://127.0.0.1:8000/api/password_reset/`, { email: resetEmail })
       .then((response) => console.log(response.data))
       .catch((error) => console.error(error));
-    console.log(resetEmail);
   };
 
   const changeUserLoginData = (e) => {
