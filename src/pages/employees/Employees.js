@@ -3,10 +3,8 @@ import Sidebar from '../../components/Sidebar'
 import api from '../../Api';
 import { getAccessToken } from '../../Api';
 import 'react-datepicker/dist/react-datepicker.css';
-import { addDoc, collection, getDocs, serverTimestamp, orderBy, query, doc, deleteDoc } from 'firebase/firestore'
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
-import { storage, db } from '../../firebase/Firebase'
-import { async } from 'q';
+import { storage } from '../../firebase/Firebase'
 
 
 export default function Employees(){
@@ -17,11 +15,9 @@ export default function Employees(){
    const [currentPage, setCurrentPage]=useState(1);
    const [emptySearch, setEmptySearch]=useState(false);
    const [index, setIndex]=useState();
-   const [editOptionChange, setEditOptionChange]=useState();
    const [allEmployees, setAllEmployees]=useState()
    const [currentEmployee, setCurrentEmployee]=useState()
    const [profileImage, setProfileImage]=useState();
-   const [pastEmployees, setPastEmployees]=useState();
    const [newEmployee, setNewEmployee]=useState({
         first_name: "",
         last_name: "",
