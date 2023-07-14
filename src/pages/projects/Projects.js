@@ -328,7 +328,6 @@ const handleOptionChange = (event) => {
       );
     }
   };
-
   const [isOpenCheckBox, setIsOpenCheckBox] = useState(false);
 const toggleModalCheckBox = () => {
   setIsOpenCheckBox(!isOpenCheckBox);
