@@ -46,7 +46,7 @@ export default function Login({ setUser }) {
 
   const passwordReset = (e) => {
     e.preventDefault();
-    api.post(`http://127.0.0.1:8000/api/password_reset/`, { email: resetEmail })
+    api.post(`/api/password_reset/`, { email: resetEmail })
       .then((response) => console.log(response.data))
       .catch((error) => console.error(error));
   };
