@@ -15,15 +15,14 @@ export default function Login({ setUser }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    api.post("http://127.0.0.1:8000/api/token/", {
+    api.post("/api/token/", {
         username: userLoginData.username,
         password: userLoginData.password,
       })
       .then((res) => {
         localStorage.setItem("access_token", res.data.access);
         localStorage.setItem("refresh_token", res.data.refresh);
-        api
-          .get("http://127.0.0.1:8000/user/", {
+        api.get("/user/", {
             headers: {
               Authorization: `Bearer ${res.data.access}`,
             },
@@ -46,7 +45,7 @@ export default function Login({ setUser }) {
 
   const passwordReset = (e) => {
     e.preventDefault();
-    api.post(`http://127.0.0.1:8000/api/password_reset/`, { email: resetEmail })
+    api.post(`/api/password_reset/`, { email: resetEmail })
       .then((response) => console.log(response.data))
       .catch((error) => console.error(error));
     console.log(resetEmail);
@@ -65,7 +64,9 @@ export default function Login({ setUser }) {
   const handleClosePopup = () => {
     setShowPopup(false);
   };
-
+  const handleCancelClick = () => {
+    handleClosePopup();
+  };
   return (
     <div className="flex flex-col lg:flex-row min-h-screen ">
       <LoginBgImg />
@@ -180,6 +181,7 @@ export default function Login({ setUser }) {
                         <button
                           className="relative  items-center justify-center  w-85 h-10 border border-customColor overflow-hidden  rounded-md "
                           onClose={handleClosePopup}
+                          onClick={handleCancelClick}
                         >
                           <span className="relative text-base font-link font-semibold  text-customColor  ">
                             Cancel

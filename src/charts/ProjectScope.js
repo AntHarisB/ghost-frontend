@@ -4,6 +4,7 @@ import {BarChart,Bar,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,} fro
 
 
 export default function ProjectScope({projectHours}) {
+  const [highestNumber,setHighestNumber]=useState(0);
   const [totalHours,setTotalHours]=useState({
     hours_a:0,
     hours_b:0
@@ -20,10 +21,17 @@ export default function ProjectScope({projectHours}) {
       hours_a: availableHoursSum,
       hours_b: billedHoursSum
     }));
+    if(availableHoursSum>billedHoursSum){
+      setHighestNumber(availableHoursSum);
+    }else{
+      setHighestNumber(billedHoursSum)
+    }
   };
   useEffect(()=>{
-    totalHoursSum()
+    totalHoursSum();
   },[projectHours])
+
+  
   
   
   const data = [
@@ -76,7 +84,7 @@ export default function ProjectScope({projectHours}) {
                 />
                 <XAxis
                   type='number'
-                  ticks={[0, (totalHours.hours_a*0.25), (totalHours.hours_a*0.50), (totalHours.hours_a*0.75), totalHours.hours_a]}
+                  ticks={[0, (highestNumber*0.25), (highestNumber*0.50), (highestNumber*0.75), highestNumber]}
                   domain={[0, 5]}
                   axisLine={false}
                   tickLine={false} 
@@ -113,6 +121,3 @@ export default function ProjectScope({projectHours}) {
     </div>
   );
 }
-
-
-
