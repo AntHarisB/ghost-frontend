@@ -38,7 +38,7 @@ export default function Home ({user}) {
   
 
   useEffect(() => {
-    api.get(`http://127.0.0.1:8000/project-statistics/${selectedYear}/`, {
+    api.get(`http://127.0.0.1:8000/api/project-statistics/${selectedYear}/`, {
       headers: {
         'Authorization': `Bearer ${getAccessToken()}`
       }
