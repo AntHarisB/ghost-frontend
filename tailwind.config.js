@@ -154,6 +154,8 @@ module.exports = {
         180:"180px",
         142:"142px",
         184:"184px",
+        343:"343px",
+        332:"332px",
       },
 
       spacing: {
@@ -230,4 +232,3 @@ module.exports = {
   },
   plugins: [],
 }
-
