@@ -43,7 +43,6 @@ export default function Projects(){
 
     const handleChange = (e) => {
       setSelectedNumber(e.target.value);
-      console.log('Odabran broj:', e.target.value);
     };
     
     const range = 3; 
@@ -184,7 +183,7 @@ export default function Projects(){
 
        const deleteProject=()=>{
          api.delete(`/api/delete_project/${index}/`)
-         .then(response => {console.log(response); })
+         .then(response => {console.log(response); fetchProjects();})
          .catch(error => console.error(error));
        }
 
@@ -197,7 +196,7 @@ export default function Projects(){
           team_s:selectedEmployees.length,
           members:selectedEmployees,
           status:selectedOption})
-        .then(response => {console.log(response)})
+        .then(response => {console.log(response); fetchProjects(); toggleModal()})
         .catch(error => console.error(error));
       }
       
@@ -310,7 +309,6 @@ const handleOptionChange = (event) => {
   };
 
   const handleDeleteProject = () => {
-    console.log('Brisanje projekta');
     closeModal();
   };
 
@@ -330,6 +328,40 @@ const handleOptionChange = (event) => {
       );
     }
   };
+  const [isOpenCheckBox, setIsOpenCheckBox] = useState(false);
+const toggleModalCheckBox = () => {
+  setIsOpenCheckBox(!isOpenCheckBox);
+};
+
+  const [isOpenEdit, setIsOpenEdit] = useState(false);
+
+  const toggleModalEdit = () => {
+    setIsOpenEdit(!isOpenEdit);
+  };
+  
+  const closetoggleModalEdit = () => {
+    setIsOpenEdit(false);
+  };
+
+  const [isOpenEditModal, setIsOpenEditModal] = useState(false);
+
+  const openModalEdit = () => {
+    setIsOpenEditModal(true);
+  };
+
+  const closeModalEdit = () => {
+    setIsOpenEditModal(false);
+  };
+
+  const editProjectValue=(e)=>{
+    setCurrentProject((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  }
+
+  const editProject=()=>{
+    api.put(`/api/update_project/${index}/`,currentProject)
+    .then(response=>{console.log(response);fetchProjects(); closeModalEdit()})
+    .catch(err=>console.log(err));
+  }
   
 
    return(
@@ -344,7 +376,7 @@ const handleOptionChange = (event) => {
             Create new project
          </button>
         </div>              
-       <div> {console.log("sadfas")}
+       <div>
               {isOpen && (
                 <div className="fixed top-0 left-0 right-0 z-50 flex items-center h-full max-h-1024  overflow-y-auto  justify-end bg-black bg-opacity-50">
                   <div className="relative bg-color7 shadow-lg w-496 h-full overflow-y-auto overflow-x-hidden">
@@ -354,7 +386,6 @@ const handleOptionChange = (event) => {
                       </svg>
                       <span className='text-base font-semibold font-link text-color30'>Back</span>
                      </div>
-                    
                      <div className='flex flex-col space-y-4 px-6 mb-20'>
                       <div className='bg-white h-14 w-448 rounded-lg'> 
                         <h1 className='my-3 mx-6 text-[21px] font-face-b font-bold text-primary'>Add New Project</h1>
@@ -714,7 +745,7 @@ const handleOptionChange = (event) => {
                           Cancel
                       </span>
                     </button>
-                    <button type="button" onClick={addProject} class=" bg-customColor text-base font-link font-semibold h-10 w-121 text-white  rounded-md text-base ">Add project</button>
+                    <button type="button" onClick={()=>{addProject(); toggleModal()}} class=" bg-customColor text-base font-link font-semibold h-10 w-121 text-white  rounded-md text-base ">Add project</button>
                     </div>
                       </div>
 
@@ -722,13 +753,6 @@ const handleOptionChange = (event) => {
               
               )}
             </div> 
-                  
-          
-          
-          
-          
-          
-          
 
           <div className='block space-y-10 lg:space-y-0 lg:flex lg:flex-row lg:justify-between lg:items-center'> 
             <div className='lg:flex lg:flex-row mb-3 grid grid-cols-2'>
@@ -818,7 +842,6 @@ const handleOptionChange = (event) => {
                           <span className='text-sm font-medium font-face-m text-color18'>Status</span>
                         </div>
                      </div> 
-
                     {!emptySearch ? projects.results?.map((project,index)=>(
                       <div key={index} className='flex flex-row h-60 border-x border-b items-center'  onClick={()=>{handleClick(); addCurrentProject(project.project_name); setIndex(project.id)}}>
                         <div className='w-157 h-10 py-1.5 pl-4 '>
@@ -849,13 +872,13 @@ const handleOptionChange = (event) => {
                             "flex h-1.5 w-1.5 bg-color24 rounded-full mr-1.5 flex-shrink-0" }>
                             </span>{project?.status}
                           </span>
-                        </div>
+                        </div>  
                      </div>
                       )): <p className='flex justify-center items-center mt-10'>Not found</p>}
 
                         {showModal && (
                          
-                              <div className="fixed top-0 left-0 right-0 z-50 flex items-center h-full max-h-1024  overflow-y-auto  justify-end bg-black bg-opacity-50"  onClick={() => setShowModal(false)}>
+                              <div className="fixed top-0 left-0 right-0 z-50 flex items-center h-full max-h-1024  overflow-y-auto  justify-end bg-black bg-opacity-50"  >
                   <div className="relative bg-color7 shadow-lg w-496 h-full overflow-y-auto overflow-x-hidden">
                      <div className='flex items-center mt-27 ml-29 mb-4'>
                       <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -990,7 +1013,7 @@ const handleOptionChange = (event) => {
                       <div>
       <button
         className="relative items-center justify-center w-139 h-10 border border-color34 overflow-hidden rounded-md"
-        onClick={deleteProject}
+        onClick={()=>{deleteProject(); fetchProjects()}}
       >
         <span className="relative text-base font-link font-semibold text-color34">
           Delete Project
@@ -1040,7 +1063,427 @@ const handleOptionChange = (event) => {
         </div>
       )}
     </div>
-                      <button type="button" class=" bg-customColor text-base font-link font-semibold h-10 w-119 text-white  rounded-md text-base ">Edit project</button>
+                      <button type="button" class=" bg-customColor text-base font-link font-semibold h-10 w-119 text-white  rounded-md text-base " onClick={openModalEdit}>Edit project</button>
+                      <div>
+                          {isOpenEditModal && (
+                            <div className="fixed top-0 left-0 right-0 z-50 flex items-center h-full max-h-1024  overflow-y-auto  justify-end">
+                              <div className="relative bg-color7 shadow-lg w-496 h-full overflow-y-auto overflow-x-hidden">
+                                <div className='flex items-center mt-27 ml-29 mb-4'>
+                                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M5 8L10 3L10.7 3.7L6.4 8L10.7 12.3L10 13L5 8Z" fill="#142E2B"/>
+                                  </svg>
+                                  <span className='text-base font-semibold font-link text-color30'>Back</span>
+                                </div>
+
+                                <div className='flex flex-col space-y-4 px-6 mb-20'>
+                                  <div className='bg-white h-14 w-448 rounded-lg'> 
+                                    <h1 className='my-3 mx-6 text-[21px] font-face-b font-bold text-primary'>Edit Project</h1>
+                                  </div>
+
+                                  <div className='bg-white h-815 lg:w-448 rounded-lg justify-center p-6 space-y-5'>
+                                    <div className="mb-4 w-400 h-66">
+                                      <label className="block text-primary font-face-m font-medium text-base  mb-2" >
+                                        Name
+                                      </label>
+                                      <input
+                                        className="appearance-none font-face-r font-normal text-sm w-400 h-10 border border-color20 border-1 rounded-md  py-2 px-3 text-secondary placeholder-color18 leading-tight focus:outline-none focus:shadow-outline"
+                                        id="project_name"
+                                        name="project_name"
+                                        type=""
+                                        value={currentProject.project_name}
+                                        onChange={editProjectValue}
+                                      />
+                                    </div>
+
+                                    <div className="mb-4 w-400 h-66">
+                                      <label className="block text-primary font-face-m font-medium text-base  mb-2">
+                                        Description
+                                      </label>
+                                      <input
+                                        className="appearance-none font-face-r font-normal text-sm w-400 h-10 border border-color20 border-1 rounded-md  py-2 px-3 text-secondary placeholder-color18 leading-tight focus:outline-none focus:shadow-outline"
+                                        id="description"
+                                        name="description"
+                                        type=""
+                                        value={currentProject.description}
+                                        onChange={editProjectValue}
+                                      />
+                                    </div>
+
+                                    <div>
+                                      <label className="block text-primary font-face-m font-medium text-base  mb-2" >
+                                        Duration
+                                      </label>
+                                      <div date-rangepicker className="flex items-center">
+                                        <div className="relative">
+                                          <DatePicker
+                                            selected={startDate}
+                                            onChange={date => setStartDate(date)}
+                                            name="start"
+                                            className="bg-white border border-color20 border-1 px-3 text-color18 font-normal font-face-r text-sm rounded-lg focus:ring-blue-500  block w-179 h-38 "
+                                            value={currentProject.start}
+                                          />
+                                          <div className="absolute inset-y-0 ml-36 flex items-center  pointer-events-none">
+                                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                              <path d="M13 2H11V1H10V2H6V1H5V2H3C2.45 2 2 2.45 2 3V13C2 13.55 2.45 14 3 14H13C13.55 14 14 13.55 14 13V3C14 2.45 13.55 2 13 2ZM13 13H3V6H13V13ZM13 5H3V3H5V4H6V3H10V4H11V3H13V5Z" fill="#6C6D75" />
+                                            </svg>
+                                          </div>
+                                        </div>
+                                        <span className="mx-4 text-black font-normal font-face-r text-lg">to</span>
+                                        <div className="relative">
+                                          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                          </div>
+                                          <DatePicker
+                                            selected={endDate}
+                                            onChange={date => setEndDate(date)}
+                                            name="end"
+                                            className="bg-white border border-color20 border-1 px-3 text-color18 font-normal font-face-r text-sm rounded-lg focus:ring-blue-500  block w-179 h-38"
+                                            value={currentProject.end}
+                                          />
+                                          <div className="absolute inset-y-0 ml-36 flex items-center  pointer-events-none">
+                                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                              <path d="M13 2H11V1H10V2H6V1H5V2H3C2.45 2 2 2.45 2 3V13C2 13.55 2.45 14 3 14H13C13.55 14 14 13.55 14 13V3C14 2.45 13.55 2 13 2ZM13 13H3V6H13V13ZM13 5H3V3H5V4H6V3H10V4H11V3H13V5Z" fill="#6C6D75" />
+                                            </svg>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    
+                                    </div>               
+                                    <div className="relative">
+                                      <label className="block text-primary font-face-m font-medium text-base  mb-2">
+                                        Assign developers
+                                      </label>
+                                      <button
+                                        id="dropdownCheckboxButton"
+                                        data-dropdown-toggle="dropdownDefaultCheckbox"
+                                        className="appearance-none font-face-r font-normal text-sm w-400 h-10 border border-color20 border-1 rounded-md  py-2 px-3 text-secondary placeholder-color18 leading-tight focus:outline-none focus:shadow-outline  pl-3 w-400 h-10  inline-flex items-center "
+                                        type="button"
+                                        onClick={toggleModalCheckBox}
+                                      >
+                                      <div className='flex justify-between w-full items-center'>
+                                        <span className='font-face-r font-normal text-sm text-color18'>{currentProject?.users.map(user=>(`${user.first_name} ${user.last_name}, ` ))}</span> 
+                                          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M8 11L3 6.00005L3.7 5.30005L8 9.60005L12.3 5.30005L13 6.00005L8 11Z" fill="#6C6D75"/>
+                                          </svg>
+                                      </div>
+                                      </button>
+                                      {isOpenCheckBox && <div
+                                        id="dropdownDefaultCheckbox"
+                                        className={`z-10 w-400 h-32 bg-white divide-y divide-gray-100 border border-color20 border-1 rounded-md shadow dark:bg-gray-700 dark:divide-gray-600 ${isOpen ? '' : 'hidden'}`}
+                                        style={{ position: 'absolute', top: '100%', left: 0 }}
+                                      >
+                                          <ul className="p-3 space-y-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownCheckboxButton">
+                                            {employees?.map(employee=>(
+                                              <li>
+                                              <div className="flex items-center">
+                                                <input
+                                                  id={`checkbox-item-${employee.id}`}
+                                                  type="checkbox"
+                                                  value=""
+                                                  checked={currentProject.users.includes(employee)}
+                                                  //checked={currentProject?.users.map(user=>{user.})}
+                                                  className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
+                                                />
+                                                <label htmlFor="checkbox-item-1" className="ml-2 text-sm font-normal text-color18 font-face-r">
+                                                  {employee.first_name} {employee.last_name}
+                                                </label>
+                                              </div>
+                                            </li>))}
+
+                                            {/* <li>
+                                              <div className="flex items-center">
+                                                <input
+                                                  checked
+                                                  id="checkbox-item-2"
+                                                  type="checkbox"
+                                                  value=""
+                                                  className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
+                                                />
+                                                <label htmlFor="checkbox-item-2" className="ml-2 text-sm font-normal text-color18 font-face-r">
+                                                  Joanne Wunsch
+                                                </label>
+                                              </div>
+                                            </li>
+
+                                            <li>
+                                              <div className="flex items-center">
+                                                <input
+                                                  id="checkbox-item-3"
+                                                  type="checkbox"
+                                                  value=""
+                                                  className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
+                                                />
+                                                <label htmlFor="checkbox-item-3" className="ml-2 text-sm font-normal text-color18 font-face-r">
+                                                  Dawn Parker
+                                                </label>
+                                              </div>
+                                            </li>
+                                            
+                                            <li>
+                                              <div className="flex items-center">
+                                                <input
+                                                  id="checkbox-item-3"
+                                                  type="checkbox"
+                                                  value=""
+                                                  className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
+                                                />
+                                                <label htmlFor="checkbox-item-3" className="ml-2 text-sm font-normal text-color18 font-face-r">
+                                                  Mabel Lueilwitz
+                                                </label>
+                                              </div>
+                                            </li> */}
+                                          </ul>
+                                        </div>}
+                                    </div>
+
+                                   {currentProject?.users.map(user=>(
+                                    <div class=" w-400 h-154 grid  grid-cols-1 divide-y">
+                                      <div className='flex -mt-4 justify-between '>
+                                        <span className='p-4 text-sm font-normal text-color16 font-face-r'>
+                                              {user.first_name} {user.last_name}
+                                        </span>
+                                          <div className='flex items-center pr-2 space-x-2'>
+                                            <div className='relative'>
+                                                <button
+                                                  id="dropdownDefaultButton"
+                                                  data-dropdown-toggle="dropdown"
+                                                  className="text-xs px-2 font-normal text-color30 font-face-r   text-center  flex items-center border h-6 w-90 rounded-md"
+                                                  type="button"
+                                                  onClick={toggleDropdownTime} 
+                                                >
+                                                  <div className='flex w-full justify-between items-center'>
+                                                    <span>{selectedTime}</span>
+                                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                      <path d="M8 11L3 6.00005L3.7 5.30005L8 9.60005L12.3 5.30005L13 6.00005L8 11Z" fill="#6C6D75"/>
+                                                    </svg>
+                                                  </div>
+                                                </button>
+
+                                                {isDropdownOpen && (
+                                                  <ul className="absolute left-0  w-24 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+                                                    {times.map((time) => (
+                                                      <li
+                                                        key={time}
+                                                        className={`${
+                                                        time === selectedTime ? 'bg-color7 font-face-r font-normal text-xs text-color30' : 'text-color30 font-face-r font-normal text-xs border-b border-color17'
+                                                        } cursor-pointer select-none relative py-2 pl-3 pr-9`}
+                                                        onClick={() => handleTimeChange(time)}
+                                                      >
+                                                        <span className="block truncate">{time}</span>
+                                                        {time === selectedTime && (
+                                                          <span className="absolute inset-y-0 right-0 flex items-center pr-4">
+                                                              <svg
+                                                                className="w-5 h-5"
+                                                                xmlns="http://www.w3.org/2000/svg"
+                                                                viewBox="0 0 20 20"
+                                                                fill="currentColor"
+                                                                aria-hidden="true"
+                                                              >
+                                                                <path
+                                                                  fillRule="evenodd"
+                                                                  clipRule="evenodd"
+                                                                />
+                                                              </svg>
+                                                          </span>
+                                                        )}
+                                                      </li>
+                                                    ))}
+                                                  </ul>
+                                                )}
+                                            </div>
+                                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                              <path d="M7.8095 6.99927L11.9111 2.11021C11.9798 2.02896 11.922 1.90552 11.8158 1.90552H10.5689C10.4954 1.90552 10.4251 1.93833 10.3767 1.99458L6.99388 6.02739L3.61106 1.99458C3.56419 1.93833 3.49388 1.90552 3.41888 1.90552H2.172C2.06575 1.90552 2.00794 2.02896 2.07669 2.11021L6.17825 6.99927L2.07669 11.8883C2.06129 11.9064 2.05141 11.9286 2.04822 11.9521C2.04503 11.9757 2.04867 11.9997 2.05871 12.0212C2.06874 12.0428 2.08475 12.061 2.10483 12.0737C2.12492 12.0865 2.14823 12.0931 2.172 12.093H3.41888C3.49231 12.093 3.56263 12.0602 3.61106 12.004L6.99388 7.97114L10.3767 12.004C10.4236 12.0602 10.4939 12.093 10.5689 12.093H11.8158C11.922 12.093 11.9798 11.9696 11.9111 11.8883L7.8095 6.99927Z" fill="#A30000"/>
+                                            </svg>
+                                          </div>
+                                      </div>
+                                    </div>))}
+                                    <div className='flex items-center'>
+                                      <div className="w-400 h-66">
+                                        <label className="block text-primary font-face-m font-medium text-base  mb-2" >
+                                          Hourly Rate
+                                        </label>
+                                          <input
+                                            className="appearance-none font-face-r font-normal text-sm w-308 h-10 border border-color20 border-1 rounded-md  py-2 px-3 text-secondary placeholder-color18 leading-tight focus:outline-none focus:shadow-outline"
+                                            id="hourly_price"
+                                            name="hourly_price"
+                                            type=""
+                                            value={currentProject.hourly_price}
+                                            onChange={editProjectValue}
+                                          />
+                                      </div>
+
+                                      <div className='relative'>
+                                        <button
+                                          id="dropdownDefaultButton"
+                                          data-dropdown-toggle="dropdown"
+                                          className="font-face-r font-normal text-sm px-4 mt-9 text-center text-color18 flex items-center border border-color20 h-10 w-84 rounded-md"
+                                          type="button"
+                                          onClick={toggleDropdownValute} 
+                                        >
+                                        <div className='flex w-full justify-between items-center'>
+                                          <span>{selectedValute}</span>
+                                          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M8 11L3 6.00005L3.7 5.30005L8 9.60005L12.3 5.30005L13 6.00005L8 11Z" fill="#6C6D75"/>
+                                          </svg>
+                                        </div>
+                                        </button>
+
+                                        {isDropdownOpen && (
+                                          <ul className="absolute left-0  w-24 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+                                            {valutes.map((valute) => (
+                                              <li
+                                                key={valute}
+                                                className={`${
+                                                valute === selectedValute ? 'bg-color7 font-face-r font-normal text-sm text-color9' : 'text-color9 font-face-r font-normal text-sm border-b border-color17'
+                                                } cursor-pointer select-none relative py-2 pl-3 pr-9`}
+                                                onClick={() => handleValuteChange(valute)}
+                                              >
+                                              <span className="block truncate">{valute}</span>
+                                                {valute === selectedValute && (
+                                                  <span className="absolute inset-y-0 right-0 flex items-center pr-4">
+                                                    <svg
+                                                      className="w-5 h-5"
+                                                      xmlns="http://www.w3.org/2000/svg"
+                                                      viewBox="0 0 20 20"
+                                                      fill="currentColor"
+                                                      aria-hidden="true"
+                                                    >
+                                                      <path
+                                                        fillRule="evenodd"
+                                                        clipRule="evenodd"
+                                                      />
+                                                    </svg>
+                                                  </span>
+                                                )}
+                                              </li>
+                                            ))}
+                                          </ul>
+                                        )}
+                                      </div>
+                                    </div>
+
+                                    <div className="mb-4 w-400 h-66">
+                                      <label className="block text-primary font-face-m font-medium text-base  mb-2" >
+                                        Project Value (BAM) 
+                                      </label>
+                                        <input
+                                          className="appearance-none font-face-r font-normal text-sm w-400 h-10 border border-color20 border-1 rounded-md  py-2 px-3 text-secondary placeholder-color18 leading-tight focus:outline-none focus:shadow-outline"
+                                          id="project_value"
+                                          name="project_value"
+                                          type=""
+                                          value={currentProject.project_value}
+                                          onChange={editProjectValue}
+                                        />
+                                    </div>
+                
+                                    <div>
+                                      <label className="block text-primary font-face-m font-medium text-base  mb-2" >
+                                        Status
+                                      </label> 
+                                      <button
+                                        id="dropdownRadioButtonButton"
+                                        data-dropdown-toggle="dropdownDefaultRadioButton"
+                                        className="appearance-none font-face-r font-normal text-sm w-400 h-10 border border-color20 border-1 rounded-md  py-2 px-3 text-secondary placeholder-color18 leading-tight focus:outline-none focus:shadow-outline  pl-3  w-400 h-10  inline-flex items-center "
+                                        type="button"
+                                      >
+                                      <div className='flex w-full justify-between items-center'>
+                                        <span className='font-face-r font-normal text-sm text-color18'>{currentProject.status}</span>
+                                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                          <path d="M8 11L3 6.00005L3.7 5.30005L8 9.60005L12.3 5.30005L13 6.00005L8 11Z" fill="#6C6D75"/>
+                                        </svg>
+                                      </div>
+                                      </button> 
+
+                                      {/* Dropdown menu */}
+                                      <div id="dropdownDefaultRadioButton" className="z-10 hidden w-400 h-32 bg-white divide-y divide-gray-100 border border-color20 border-1 border-t-0 rounded-md shadow dark:bg-gray-700 dark:divide-gray-600">
+                                        <ul className="p-3 space-y-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownRadioButtonButton">
+                                          <li>
+                                            <div className="flex items-center">
+                                              <input
+                                                id="radio-item-1"
+                                                type="radio"
+                                                name="radioGroup"
+                                                value="Active"
+                                                checked={selectedOption === 'Active'}
+                                                onChange={handleOptionChange}
+                                                className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2"
+                                              />
+                                              <label htmlFor="radio-item-1" className=" font-face-r font-normal text-sm ml-2 text-color18">
+                                                Active
+                                              </label>
+                                            </div>
+                                          </li>
+
+                                          <li>
+                                            <div className="flex items-center">
+                                              <input
+                                                id="radio-item-2"
+                                                type="radio"
+                                                name="radioGroup"
+                                                value="On hold"
+                                                checked={selectedOption === 'On hold'}
+                                                onChange={handleOptionChange}
+                                                className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2"
+                                              />
+                                              <label htmlFor="radio-item-2" className="font-face-r font-normal text-sm ml-2 text-color18">
+                                                On hold
+                                              </label>
+                                            </div>
+                                          </li>
+
+                                          <li>
+                                            <div className="flex items-center">
+                                              <input
+                                                id="radio-item-3"
+                                                type="radio"
+                                                name="radioGroup"
+                                                value="Inactive"
+                                                checked={selectedOption === 'Inactive'}
+                                                onChange={handleOptionChange}
+                                                className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2"
+                                              />
+                                              <label htmlFor="radio-item-3" className="font-face-r font-normal text-sm ml-2 text-color18">
+                                                Inactive
+                                              </label>
+                                            </div>
+                                          </li>
+
+                                          <li>
+                                            <div className="flex items-center">
+                                              <input
+                                                id="radio-item-3"
+                                                type="radio"
+                                                name="radioGroup"
+                                                value="Completed"
+                                                checked={selectedOption === 'Completed'}
+                                                onChange={handleOptionChange}
+                                                className="w-4 h-4 text-blue-600 border-color32 rounded focus:ring-color32 dark:focus:ring-color32 dark:ring-offset-color32 dark:focus:ring-offset-color32 focus:ring-2"
+                                              />
+                                              <label htmlFor="radio-item-3" className="font-face-r font-normal text-sm ml-2 text-color18">
+                                                Completed
+                                              </label>
+                                            </div>
+                                          </li>
+                                        </ul>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div> 
+                      
+                                <div className='w-496 h-88 bg-white items-center justify-end flex space-x-4 pr-6'>                                
+                                  <button  onClick={closeModalEdit} class="relative  items-center justify-center  w-85 h-10 border border-customColor overflow-hidden  rounded-md ">
+                                    <span class="relative text-base font-link font-semibold  text-customColor  ">
+                                      Cancel
+                                    </span>
+                                  </button>
+                                  
+                                  <button type="button" class=" bg-customColor text-base font-link font-semibold h-10 w-121 text-white  rounded-md text-base " onClick={editProject}>
+                                    Submit
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                        </div>
                       </div>
                       </div>
 
