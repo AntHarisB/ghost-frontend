@@ -7,7 +7,8 @@ import Employees from './pages/employees/Employees'
 import Invoicing from './pages/invoicing/Invoicing'
 import ForgotPassword from './pages/login/ForgotPassword'
 import { Route, Routes, useNavigate } from "react-router-dom";
-import { useState,useEffect } from 'react';
+import { useState, useEffect } from 'react';
+
 
 
 
@@ -24,7 +25,6 @@ useEffect(()=>{
 
   return (
     <>
-        {console.log(user)}
     <Routes>
         <Route path="/login" element={<Login setUser={setUser}/>} />
         <Route path="/home" element={<Home user={user}/>} />

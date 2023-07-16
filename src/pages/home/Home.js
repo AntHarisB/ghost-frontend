@@ -41,7 +41,6 @@ export default function Home ({user}) {
     api.get(`/api/project-statistics/${selectedYear}/` )
       .then(response => setData(response.data))
       .catch(error => console.error(error));
-    
     api.get(`/api/project-hours/${selectedYear}/`)
       .then(response => {
         setProjectHours([]);
