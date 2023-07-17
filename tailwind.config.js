@@ -43,6 +43,7 @@ module.exports = {
         color35:"#1D2138",
         color36:"#EBF5F1",
         color37:"#A5B2B7",
+        
       },
 
       width:{
@@ -149,8 +150,14 @@ module.exports = {
         139:"139px",
         692:"692px",
         336:"336px",
+        177:"177px",
+        263:"263px",
+        180:"180px",
+        142:"142px",
+        184:"184px",
         343:"343px",
         332:"332px",
+        10:"10px",
       },
 
       spacing: {

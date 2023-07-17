@@ -22,8 +22,7 @@ export default function Login({ setUser }) {
       .then((res) => {
         localStorage.setItem("access_token", res.data.access);
         localStorage.setItem("refresh_token", res.data.refresh);
-        api
-          .get("/user/", {
+        api.get("/user/", {
             headers: {
               Authorization: `Bearer ${res.data.access}`,
             },
@@ -49,7 +48,6 @@ export default function Login({ setUser }) {
     api.post(`/api/password_reset/`, { email: resetEmail })
       .then((response) => console.log(response.data))
       .catch((error) => console.error(error));
-    console.log(resetEmail);
   };
 
   const changeUserLoginData = (e) => {
@@ -65,7 +63,6 @@ export default function Login({ setUser }) {
   const handleClosePopup = () => {
     setShowPopup(false);
   };
-
   const handleCancelClick = () => {
     handleClosePopup();
   };
@@ -182,6 +179,7 @@ export default function Login({ setUser }) {
                       <div className="flex justify-end mt-10 space-x-2 mx-5">
                         <button
                           className="relative  items-center justify-center  w-85 h-10 border border-customColor overflow-hidden  rounded-md "
+                          onClose={handleClosePopup}
                           onClick={handleCancelClick}
                         >
                           <span className="relative text-base font-link font-semibold  text-customColor  ">

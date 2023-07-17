@@ -4,8 +4,11 @@ import HomeDRC from './pages/home/HomeDRC'
 import HomePlan from './pages/home/HomePlan'
 import Projects from './pages/projects/Projects'
 import Employees from './pages/employees/Employees'
+import Invoicing from './pages/invoicing/Invoicing'
+import ForgotPassword from './pages/login/ForgotPassword'
 import { Route, Routes, useNavigate } from "react-router-dom";
-import { useState,useEffect } from 'react';
+import { useState, useEffect } from 'react';
+
 
 
 
@@ -22,7 +25,6 @@ useEffect(()=>{
 
   return (
     <>
-        {console.log(user)}
     <Routes>
         <Route path="/login" element={<Login setUser={setUser}/>} />
         <Route path="/home" element={<Home user={user}/>} />
@@ -30,6 +32,8 @@ useEffect(()=>{
         <Route path="/homeplan" element={<HomePlan/>} />
         <Route path="/projects" element={<Projects/>} />
         <Route path="/employees" element={<Employees/>} />
+        <Route path="/invoicing" element={<Invoicing/>} />
+        <Route path="/forgotPassword" element={<ForgotPassword/>} />
         <Route path='/*' component={<h1>404</h1>}/>
     </Routes>
     </>

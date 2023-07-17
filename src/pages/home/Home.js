@@ -41,7 +41,6 @@ export default function Home ({user}) {
     api.get(`/api/project-statistics/${selectedYear}/` )
       .then(response => setData(response.data))
       .catch(error => console.error(error));
-    
     api.get(`/api/project-hours/${selectedYear}/`)
       .then(response => {
         setProjectHours([]);
@@ -93,7 +92,7 @@ export default function Home ({user}) {
 
               <div className={`flex items-center justify-center border py-5 px-3 w-1/3 lg:px-0 lg:py-0 border-color11 h-10 lg:w-99 rounded-r-md cursor-pointer ' ${
                 selected === 3 ? 'bg-color14' : ''}`}
-                   onClick={() => {handleItemClick(2); navigate('/homeplan')}}
+                   onClick={() => {handleItemClick(3); navigate('/homeplan')}}
                     >
                       <span className={`text-sm font-normal text-color12 font-link cursor-pointer ${
                           selected === 3 ? 'color' : ''}`}

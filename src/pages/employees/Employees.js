@@ -1,11 +1,10 @@
-import React ,{useState,useEffect, useRef} from 'react';
+import React ,{useState,useEffect} from 'react';
 import Sidebar from '../../components/Sidebar'
 import api from '../../Api';
 import { getAccessToken } from '../../Api';
-import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import Myimg from '../../image/Upload_picture.png';
-
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
+import { storage } from '../../firebase/Firebase'
 
 
 export default function Employees(){
@@ -15,8 +14,16 @@ export default function Employees(){
    const [employees, setEmployees]=useState([]);
    const [currentPage, setCurrentPage]=useState(1);
    const [emptySearch, setEmptySearch]=useState(false);
+   const [index, setIndex]=useState();
    const [allEmployees, setAllEmployees]=useState()
    const [currentEmployee, setCurrentEmployee]=useState()
+   const [profileImage, setProfileImage]=useState();
+   const [newEmployee, setNewEmployee]=useState({
+        first_name: "",
+        last_name: "",
+        monthly_salary: 0,
+        profile_photo: ""
+   });
    const handleItemClick = (item) => {
       if (selected === item) {
         setSelected(null);
@@ -29,7 +36,6 @@ export default function Employees(){
 
     const handleChange = (e) => {
       setSelectedNumber(e.target.value);
-      console.log('Odabran broj:', e.target.value);
     };
 
     const range = 3; 
@@ -59,7 +65,7 @@ let endPage = Math.min(startPage + range - 1, pages);
           'Authorization': `Bearer ${getAccessToken()}`
         }
       })
-      .then(response => {console.log(response.data); setEmployees(response.data)})
+      .then(response => setEmployees(response.data))
       .catch(error => console.error(error));
     }
 
@@ -69,7 +75,7 @@ let endPage = Math.min(startPage + range - 1, pages);
           'Authorization': `Bearer ${getAccessToken()}`
         }
       })
-      .then(response => {console.log(response.data); setAllEmployees(response.data)})
+      .then(response => setAllEmployees(response.data))
       .catch(error => console.error(error));
     }
 
@@ -93,14 +99,20 @@ let endPage = Math.min(startPage + range - 1, pages);
       },[employees])
 
       const addCurrentEmployee=(id)=>{
-        let temp=employees?.results.find((emp)=>emp.id===id);
-        setCurrentEmployee(temp);
-        console.log(temp)
+        api.get(`/api/employees_id/${id}/`)
+        .then(response=>setCurrentEmployee(response.data))
+        .catch(err=>console.log(err));
       }
 
       const handleDeleteEmployee=()=>{
-        api.delete(`/api/delete_employee/${currentEmployee.id}/`)
-      .then(response => console.log(response.data))
+        api.delete(`/api/delete_employee/${index}/`)
+      .then(response => {console.log(response.data); fetchEmployees()})
+      .catch(error => console.error(error));
+      }
+
+      const fetchPastEmployees=()=>{
+        api.get(`/api/past_employees/${rows}/`)
+      .then(response => {setEmployees(response.data)})
       .catch(error => console.error(error));
       }
 
@@ -142,7 +154,8 @@ useEffect(() => {
 }, []);
 
  //dropdown with radio btn
- const [selectedOption, setSelectedOption] = useState('');
+ const [selectedOption, setSelectedOption] = useState('Full Stack');
+ const [selectedDepartmentOption, setSelectedDepartmentOption] = useState('');
 
  useEffect(() => {
    const dropdownToggleButton = document.getElementById('dropdownRadioButtonButton');
@@ -172,6 +185,14 @@ useEffect(() => {
  const handleOptionChange = (event) => {
    setSelectedOption(event.target.value);
  };
+
+ const handleEditOptionChange = (event) => {
+  setCurrentEmployee(prev=>({...prev, [event.target.name]:event.target.value}));
+};
+
+ const handleDepartmentChange = (event) => {
+  setSelectedDepartmentOption(event.target.value);
+};
 
 
   //dropdown of valutes
@@ -220,7 +241,6 @@ useEffect(() => {
   };
 
   const handleDeleteProject = () => {
-    console.log('Brisanje projekta');
     closeModal();
   };
 
@@ -243,6 +263,55 @@ useEffect(() => {
     }
   };
 
+  const [isOpenEdit, setIsOpenEdit] = useState(false);
+
+const toggleModalEdit = () => {
+  setIsOpenEdit(!isOpenEdit);
+};
+
+const closetoggleModalEdit = () => {
+  setIsOpenEdit(false);
+};
+
+const editEmplyeeValue=(e)=>{
+  setNewEmployee((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+}
+
+const editCurrentEmplyeeValue=(e)=>{
+  setCurrentEmployee((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+}
+
+const addEmployee=async()=>{
+  const imageRef = ref(storage,`images/${profileImage?.name}`)
+  await uploadBytes(imageRef, profileImage)
+  const imagePath=await getDownloadURL(imageRef);
+  await api.post(`/api/add_employee/`,{
+    ...newEmployee, 
+    department:selectedDepartmentOption, 
+    tech_stack:selectedOption, 
+    profile_photo:imagePath
+  })
+  .then(response=>{console.log(response.data); fetchEmployees(); toggleModal()})
+  .catch(err=>console.log(err))
+}
+
+const editEmployee=async(id)=>{
+  console.log(currentEmployee,"1")
+  const imageRef = ref(storage,`images/${profileImage?.name}`)
+  await uploadBytes(imageRef, profileImage)
+  const imagePath=await getDownloadURL(imageRef);
+  setCurrentEmployee((prev) => ({ ...prev, profile_photo: imagePath }));
+  await api.put(`/api/employees/edit/${id}/`,currentEmployee)
+  .then(response=>{console.log(response.data); fetchEmployees(); toggleModalEdit()})
+  .catch(err=>console.log(err));
+  console.log(currentEmployee,"2")
+}
+
+const onFileChange = async (e) => {
+  const image = e.target.files[0]
+  setProfileImage(image)
+}
+
    return(
    <div className='flex h-full'>
       <div className='basis-[12% h-984'>
@@ -252,7 +321,7 @@ useEffect(() => {
         <div className='lg:flex md:flex -mb-2 lg:justify-between md:justify-between'>
          <h1 className='text-3xl text-color10 font-bold font-face-b'>Employees</h1> 
          <button  onClick={toggleModal} data-modal-target="addnewproject-modal" data-modal-toggle="addnewproject-modal" className="bg-customColor hover:bg-gray-500 text-white h-10 w-44 mt-4 lg:mt-0 md:mt-0 md:mr-0 mr-4 text-base font-link font-semibold rounded-md"  type="button">
-            Add new Employee
+            Add New Employee
          </button>
         </div>      
         <div>
@@ -271,18 +340,18 @@ useEffect(() => {
                         <h1 className='my-3 mx-6 text-[21px] font-face-b font-bold text-primary'>Add New Employee</h1>
                       </div>
 
-                      <div className='bg-white h-815 lg:w-448 rounded-lg justify-center p-6 space-y-5'>
+                      <div className='bg-white h-auto lg:w-448 rounded-lg justify-center p-6 space-y-5'>
                       <div className="mb-4 w-400 h-66">
                           <label className="block text-primary font-face-m font-medium text-base  mb-2" >
                             First Name
                           </label>
                             <input
                               className="appearance-none font-face-r font-normal text-sm w-400 h-10 border border-color20 border-1 rounded-md  py-2 px-3 text-secondary placeholder-color18 leading-tight focus:outline-none focus:shadow-outline"
-                              id="username"
-                              name="username"
+                              id="first_name"
+                              name="first_name"
                               type=""
                               placeholder="First Name"
-                            
+                              onChange={editEmplyeeValue}
                             />
                         </div>
 
@@ -292,26 +361,27 @@ useEffect(() => {
                           </label>
                             <input
                               className="appearance-none font-face-r font-normal text-sm w-400 h-10 border border-color20 border-1 rounded-md  py-2 px-3 text-secondary placeholder-color18 leading-tight focus:outline-none focus:shadow-outline"
-                              id="username"
-                              name="username"
+                              id="last_name"
+                              name="last_name"
                               type=""
                               placeholder="Last Name"
-                            
+                              onChange={editEmplyeeValue}
                             />
                         </div>
                      
                       <div className="mb-4 w-400 h-130">
-                        <label className="block text-primary font-face-m font-medium text-base w-400 h-22  mb-2">
+                        <label htmlFor='image-input' className="block text-primary font-face-m font-medium text-base w-400 h-22  mb-2">
                           Profile Image
-                        </label>
-                        <div className='w-104 h-104 bg-color36 border  border-color17 border-dotted rounded-md '>
+                        <div className='w-104 h-104 bg-color36 border  border-color17 border-dotted rounded-md cursor-pointer'>
                             <div className='flex flex-col items-center space-y-2 h-full justify-center'>
                             <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M7.46838 1.37573H6.53088C6.44755 1.37573 6.40588 1.4174 6.40588 1.50073V6.40698H1.75C1.66667 6.40698 1.625 6.44865 1.625 6.53198V7.46948C1.625 7.55282 1.66667 7.59448 1.75 7.59448H6.40588V12.5007C6.40588 12.5841 6.44755 12.6257 6.53088 12.6257H7.46838C7.55172 12.6257 7.59338 12.5841 7.59338 12.5007V7.59448H12.25C12.3333 7.59448 12.375 7.55282 12.375 7.46948V6.53198C12.375 6.44865 12.3333 6.40698 12.25 6.40698H7.59338V1.50073C7.59338 1.4174 7.55172 1.37573 7.46838 1.37573Z" fill="#142E2B"/>
                             </svg>
                             <span>Upload</span>
                             </div>
+                            <input onChange={onFileChange} className='hidden' id='image-input' type='file' accept='image/*' />
                         </div>
+                        </label>
                      </div>
                         
                         
@@ -323,11 +393,11 @@ useEffect(() => {
       <button
         id="dropdownCheckboxButton"
         data-dropdown-toggle="dropdownDefaultCheckbox"
-        className="appearance-none font-face-r font-normal text-sm border  border-color20 border-1 rounded-md  py-2  text-secondary placeholder-color18 leading-tight focus:outline-none focus:shadow-outline  pl-3 w-400 h-10   inline-flex items-center "
+        className="appearance-none font-face-r font-normal text-sm border  border-color20 border-1 rounded-md  py-2 px-3 text-secondary placeholder-color18 leading-tight focus:outline-none focus:shadow-outline  pl-3 w-400 h-10   inline-flex items-center "
         type="button"
       >
-        Select employee department
-        <div className='ml-40 pl-2'>
+        <div className='flex justify-between w-full items-center'>
+                    <span className='font-face-r font-normal text-sm text-color18'>Select employee department</span>
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M8 11L3 6.00005L3.7 5.30005L8 9.60005L12.3 5.30005L13 6.00005L8 11Z" fill="#6C6D75"/>
         </svg>
@@ -345,7 +415,9 @@ useEffect(() => {
               <input
                 id="checkbox-item-1"
                 type="checkbox"
-                value=""
+                value="Management"
+                checked={selectedDepartmentOption === 'Management'}
+                onChange={handleDepartmentChange}
                 className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
               />
               <label htmlFor="checkbox-item-1" className="ml-2 text-sm font-normal text-color18 font-face-r">
@@ -356,10 +428,11 @@ useEffect(() => {
           <li>
             <div className="flex items-center">
               <input
-                checked
                 id="checkbox-item-2"
                 type="checkbox"
-                value=""
+                value="Administration"
+                checked={selectedDepartmentOption === 'Administration'}
+                onChange={handleDepartmentChange}
                 className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
               />
               <label htmlFor="checkbox-item-2" className="ml-2 text-sm font-normal text-color18 font-face-r">
@@ -372,7 +445,9 @@ useEffect(() => {
               <input
                 id="checkbox-item-3"
                 type="checkbox"
-                value=""
+                value="Design"
+                checked={selectedDepartmentOption === 'Design'}
+                onChange={handleDepartmentChange}
                 className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
               />
               <label htmlFor="checkbox-item-3" className="ml-2 text-sm font-normal text-color18 font-face-r">
@@ -385,7 +460,9 @@ useEffect(() => {
               <input
                 id="checkbox-item-3"
                 type="checkbox"
-                value=""
+                value="Development"
+                checked={selectedDepartmentOption === 'Development'}
+                onChange={handleDepartmentChange}
                 className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
               />
               <label htmlFor="checkbox-item-3" className="ml-2 text-sm font-normal text-color18 font-face-r">
@@ -396,8 +473,6 @@ useEffect(() => {
         </ul>
       </div>
     </div>
-
-
    
                       <div className='flex items-center'>
                         <div className="w-400 h-66">
@@ -406,10 +481,11 @@ useEffect(() => {
                           </label>
                             <input
                               className="appearance-none font-face-r font-normal text-sm w-308 h-10 border border-color20 border-1 rounded-md  py-2 px-3 text-secondary placeholder-color18 leading-tight focus:outline-none focus:shadow-outline"
-                              id="username"
-                              name="username"
+                              id="monthly_salary"
+                              name="monthly_salary"
                               type=""
                               placeholder="Enter the amount"
+                              onChange={editEmplyeeValue}
                             />
                         </div>
 
@@ -417,12 +493,12 @@ useEffect(() => {
                   <button
                     id="dropdownDefaultButton"
                     data-dropdown-toggle="dropdown"
-                    className="font-face-r font-normal text-sm px-4 mt-9 text-center text-color18 flex items-center border border-color20 h-10 w-84 rounded-md"
+                    className="font-face-r font-normal text-sm px-3 mt-9 text-center text-color18 flex items-center border border-color20 h-10 w-84 rounded-md"
                     type="button"
                     onClick={toggleDropdownValute} 
                   >
-                    {selectedValute}
-                    <div className='ml-2'>
+                   <div className='ml-1 flex justify-between w-full items-center'>
+                    <span className='font-face-r font-normal text-sm text-color18'>{selectedValute}</span>  
                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M8 11L3 6.00005L3.7 5.30005L8 9.60005L12.3 5.30005L13 6.00005L8 11Z" fill="#6C6D75"/>
                     </svg>
@@ -474,11 +550,11 @@ useEffect(() => {
       <button
         id="dropdownCheckboxButton"
         data-dropdown-toggle="dropdownDefaultCheckbox"
-        className="appearance-none font-face-r font-normal text-sm border border-color20 border-1 rounded-md  py-2  text-secondary placeholder-color18 leading-tight focus:outline-none focus:shadow-outline  pl-3 w-400 h-10   inline-flex items-center "
+        className="appearance-none font-face-r font-normal text-sm border border-color20 border-1 rounded-md  py-2 px-3 text-secondary placeholder-color18 leading-tight focus:outline-none focus:shadow-outline  pl-3 w-400 h-10   inline-flex items-center "
         type="button"
       >
-        Select stack
-        <div className='ml-64 pl-5'>
+       <div className='flex justify-between w-full items-center'>
+                    <span className='font-face-r font-normal text-sm text-color18'>Select stack</span>   
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M8 11L3 6.00005L3.7 5.30005L8 9.60005L12.3 5.30005L13 6.00005L8 11Z" fill="#6C6D75"/>
         </svg>
@@ -496,7 +572,9 @@ useEffect(() => {
               <input
                 id="checkbox-item-1"
                 type="checkbox"
-                value=""
+                value="Full Stack"
+                checked={selectedOption === 'Full Stack'}
+                onChange={handleOptionChange}
                 className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
               />
               <label htmlFor="checkbox-item-1" className="ml-2 text-sm font-normal text-color18 font-face-r">
@@ -507,10 +585,11 @@ useEffect(() => {
           <li>
             <div className="flex items-center">
               <input
-                checked
                 id="checkbox-item-2"
                 type="checkbox"
-                value=""
+                value="Front End"
+                checked={selectedOption === 'Front End'}
+                onChange={handleOptionChange}
                 className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
               />
               <label htmlFor="checkbox-item-2" className="ml-2 text-sm font-normal text-color18 font-face-r">
@@ -523,7 +602,9 @@ useEffect(() => {
               <input
                 id="checkbox-item-3"
                 type="checkbox"
-                value=""
+                value="Back End"
+                checked={selectedOption === 'Back End'}
+                onChange={handleOptionChange}
                 className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
               />
               <label htmlFor="checkbox-item-3" className="ml-2 text-sm font-normal text-color18 font-face-r">
@@ -536,7 +617,9 @@ useEffect(() => {
               <input
                 id="checkbox-item-3"
                 type="checkbox"
-                value=""
+                value="N/A"
+                checked={selectedOption === 'N/A'}
+                onChange={handleOptionChange}
                 className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
               />
               <label htmlFor="checkbox-item-3" className="ml-2 text-sm font-normal text-color18 font-face-r">
@@ -552,12 +635,12 @@ useEffect(() => {
                       
                       <div className='w-496 h-88 bg-white items-center justify-end flex space-x-4 pr-6'>
                         
-                      <button class="relative  items-center justify-center  w-85 h-10 border border-customColor overflow-hidden  rounded-md ">
+                      <button class="relative  items-center justify-center  w-85 h-10 border border-customColor overflow-hidden  rounded-md " onClick={closeModal}>
                       <span class="relative text-base font-link font-semibold  text-customColor  ">
                           Cancel
                       </span>
                     </button>
-                    <button type="button" class=" bg-customColor text-base font-link font-semibold h-10 w-141 text-white  rounded-md text-base ">Add Employee</button>
+                    <button type="button" class=" bg-customColor text-base font-link font-semibold h-10 w-141 text-white  rounded-md text-base " onClick={addEmployee}>Add Employee</button>
                     </div>
                       </div>
 
@@ -587,7 +670,7 @@ useEffect(() => {
 
               <div className={`flex items-center justify-center border-color11 py-5 lg:py-0 w-full border-t border-r border-b border-l  lg:rounded-none h-10 lg:w-82 cursor-pointer ' ${
                 selected === 2 ? 'bg-color14' : ''}`}
-                  onClick={() => handleItemClick(2)}
+                  onClick={() => {handleItemClick(2); fetchEmployees(); fetchAllEmployees()}}
                     >
                     <span className ={`text-sm font-normal text-center text-color12 font-link cursor-pointer ${
                         selected === 2 ? 'color' : ''}`}
@@ -597,7 +680,7 @@ useEffect(() => {
 
               <div className={`flex items-center justify-center border-color11 py-5 lg:py-0  w-full rounded-r-md lg:border-t border-y border-r  lg:rounded-r-md  h-10 lg:w-62 cursor-pointer' ${
                 selected === 4 ? 'bg-color14' : ''}`}
-                   onClick={() => handleItemClick(4)}
+                   onClick={() => {handleItemClick(4); fetchPastEmployees()}}
                     >
                       <span className={`text-sm font-normal text-color12 font-link cursor-pointer ${
                           selected === 4 ? 'color' : ''}`}
@@ -606,7 +689,6 @@ useEffect(() => {
               </div>
             </div>
           </div>
-           
           <div className='w-screen md:w-full overflow-x-auto md:overflow-x-auto lg:overflow-x-hidden '>
                <div className='border w-1050  h-72  flex  items-center justify-between rounded-t-md'>
                  <div className='ml-4 flex h-30 w-199 justify-between'>
@@ -651,7 +733,7 @@ useEffect(() => {
                      </div>
                      {/* Div s informacijama i popup-om */}
                    {employees.results?.map((employee,index)=>(
-                   <div className='flex flex-row h-60 border-x border-b items-center' onClick={()=>{handleClick(); addCurrentEmployee(employee.id)}}>
+                   <div key={index} className='flex flex-row h-60 border-x border-b items-center' onClick={()=>{handleClick(); addCurrentEmployee(employee.id); setIndex(employee.id)}}>
                         <div className='w-174.4 l h-10 py-1.5 pl-4'>
                           <span className='text-sm font-normal font-face-r text-color18'>{employee?.first_name}</span>
                         </div>
@@ -679,7 +761,7 @@ useEffect(() => {
                               </clipPath>
                               </defs>
                            </svg>
-                           <span className='font-normal font-face-r text-sm text-color18'>Edit</span>
+                           <span className='font-normal font-face-r text-sm text-color18' >Edit</span>
                            
                           </div>
                           <div className='h-3 w-0 border mr-1'></div>
@@ -691,9 +773,10 @@ useEffect(() => {
                           </div>
                         </div>
 
+                        </div> ))}
                         {showModal && (
                          
-                              <div className="fixed top-0 left-0 right-0 z-50 flex items-center h-full max-h-1440  overflow-y-auto  justify-end bg-black bg-opacity-10"  onClick={() => setShowModal(false)}>
+                              <div className="fixed top-0 left-0 right-0 z-50 flex items-center h-full max-h-1440  overflow-y-auto  justify-end bg-black bg-opacity-10" >
                   <div className="relative bg-color7 shadow-lg w-496 h-full overflow-y-auto overflow-x-hidden">
                      <div className='flex items-center mt-27 ml-29 mb-4'>
                       <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -704,7 +787,7 @@ useEffect(() => {
                      <div className='flex flex-col space-y-4 px-6 mb-20 '>
                       <div className='bg-white h-14 w-448 h-32 rounded-lg items-center'> 
                         <div className="flex m-6 ">
-                        <img src={Myimg} alt="My Image" className='h-20 w-20' />
+                        <img src={currentEmployee?.profile_photo} alt="My Image" className='h-20 w-20' />
                         <div className='m-4'>
                           <h1 className='font-face-b font-bold text-primary text-21'>{currentEmployee?.first_name} {currentEmployee?.last_name}</h1>
                           <span className='font-face-r font-normal text-base text-color18'>{currentEmployee?.department}</span>
@@ -732,36 +815,21 @@ useEffect(() => {
 
                       </div>
 
-                      <div className='bg-white h-52 w-448 rounded-lg justify-center  '>
+                      <div className='bg-white h-auto w-448 rounded-lg justify-center  '>
                       <div className='m-6'>
-                      <div className=" w-400 h-12">
+                      <div className="w-400 h-12">
                           <span className='block w-400 h-6 text-primary font-face-m font-medium text-base'>Assigned to projects</span>
                         </div>
                     
-                        <div className='flex w-400 h-10 justify-between items-center -mt-5  border-b'>
-                            <span className='text-sm font-normal text-color16 font-face-r'>Gutkowski LLC</span>
-                             <div className='w-68 h-4 bg-color8 rounded-xl text-center font-face-r font-normal text-xs text-white'>
-                              Full time
-                             </div>
+                        {currentEmployee?.projects && currentEmployee?.projects.map((project, index) => (
+                          <div key={index} className='flex w-400 h-10 justify-between items-center  border-b'>
+                            <span className='text-sm font-normal text-color16 font-face-r'>{project.project_name}</span>
+                            <div className='w-68 h-4 bg-color8 rounded-xl text-center font-face-r font-normal text-xs text-white'>
+                              {project.employment_type}
+                            </div>
+                          </div>
+                        ))}
                         </div>
-
-
-                        <div className='flex w-400 h-10  justify-between items-center border-b'>
-                            <span className='text-sm font-normal text-color16 font-face-r'>Gutkowski LLC</span>
-                             <div className='w-68 h-4 bg-color8 rounded-xl text-center font-face-r font-normal text-xs text-white'>
-                              Full time
-                             </div>
-                        </div>
-
-                        <div className='flex w-400 h-10  justify-between items-center -'>
-                            <span className='text-sm font-normal text-color16 font-face-r'>Gutkowski LLC</span>
-                             <div className='w-68 h-4 bg-color37 rounded-xl text-center font-face-r font-normal text-xs text-white'>
-                              Part time
-                             </div>
-                        </div>
-                        </div>
-                         
-
                       </div>
                       </div> 
                       
@@ -797,8 +865,8 @@ useEffect(() => {
             </div>
 
               <div className='space-y-1 '>
-              <h2 className="text-base font-bold font-face-b text-color35 w-336">Are you sure you want to delete Cale Barton?</h2>
-            <p className="text-color35 font-face-r font-normal text-sm">This will permanently delete Cale Barton and all associated data. You cannot undo this action.</p>
+              <h2 className="text-base font-bold font-face-b text-color35 w-336">Are you sure you want to delete {currentEmployee.first_name} {currentEmployee.last_name}?</h2>
+            <p className="text-color35 font-face-r font-normal text-sm">This will permanently delete {currentEmployee.first_name} {currentEmployee.last_name} and all associated data. You cannot undo this action.</p>
               </div>
             </div>
             
@@ -811,7 +879,7 @@ useEffect(() => {
               </button>
               <button
                 className="w-28 h-10 bg-color34 text-white rounded-md font-link font-semibold text-base"
-                onClick={()=>{closeModal(); handleDeleteEmployee()}}
+                onClick={()=>{closeModal(); handleDeleteEmployee(); setShowModal(false)}}
               >
                 Delete
               </button>
@@ -820,14 +888,349 @@ useEffect(() => {
         </div>
       )}
     </div>
-                      <button type="button" class=" bg-customColor text-base font-link font-semibold h-10 w-139 text-white  rounded-md text-base ">Edit Employee</button>
+                      <button type="button" class=" bg-customColor text-base font-link font-semibold h-10 w-139 text-white  rounded-md text-base " onClick={toggleModalEdit}>Edit Employee</button>
+
+                      <div>
+              {isOpenEdit && (
+                <div className="fixed top-0 left-0 right-0 z-50 flex items-center h-full max-h-1024  overflow-y-auto  justify-end ">
+                  <div className="relative bg-color7 shadow-lg w-496 h-full overflow-y-auto overflow-x-hidden">
+                     <div className='flex items-center mt-27 ml-29 mb-4'>
+                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M5 8L10 3L10.7 3.7L6.4 8L10.7 12.3L10 13L5 8Z" fill="#142E2B"/>
+                      </svg>
+                      <span className='text-base font-semibold font-link text-color30'>Back</span>
+                     </div>
+
+                     <div className='flex flex-col space-y-4 px-6 mb-20'>
+                      <div className='bg-white h-14 w-448 rounded-lg'> 
+                        <h1 className='my-3 mx-6 text-[21px] font-face-b font-bold text-primary'>Edit Employee</h1>
+                      </div>
+
+                      <div className='bg-white h-auto lg:w-448 rounded-lg justify-center p-6 space-y-6'>
+                      <div className="mb-4 w-400 h-66">
+                          <label className="block text-primary font-face-m font-medium text-base  mb-2" >
+                            First Name
+                          </label>
+                            <input
+                              className="appearance-none font-face-r font-normal text-sm w-400 h-10 border border-color20 border-1 rounded-md  py-2 px-3 text-secondary placeholder-color18 leading-tight focus:outline-none focus:shadow-outline"
+                              id="first_name"
+                              name="first_name"
+                              type=""
+                              value={currentEmployee.first_name}
+                              onChange={editCurrentEmplyeeValue}
+                            />
+                        </div>
+
+                        <div className="mb-4 w-400 h-66">
+                          <label className="block text-primary font-face-m font-medium text-base  mb-2">
+                            Last Name
+                          </label>
+                            <input
+                              className="appearance-none font-face-r font-normal text-sm w-400 h-10 border border-color20 border-1 rounded-md  py-2 px-3 text-secondary placeholder-color18 leading-tight focus:outline-none focus:shadow-outline"
+                              id="last_name"
+                              name="last_name"
+                              type=""
+                              value={currentEmployee.last_name}
+                              onChange={editCurrentEmplyeeValue}
+                            />
+                        </div>
+                     
+                      <div className="mb-4 w-400 h-130">
+                        <label htmlFor='edit-image' className="block text-primary font-face-m font-medium text-base w-400 h-22  mb-2">
+                          Profile Image
+                        <div className='w-104 h-104 bg-color36 border  border-color17 border-dotted rounded-md '>
+                            <div className='flex flex-col items-center space-y-2 h-full justify-center'>
+                            <img src={currentEmployee?.profile_photo} alt="My Image" className='w-104 h-104' />
+                            </div>
+                            <input id='edit-image' className='hidden' type='file' accept='image/*' onChange={onFileChange} />
+                        </div>
+                        </label>
+                     </div>
+                        
+                        
+    <div>
+    <label className="block text-primary font-face-m font-medium text-base  mb-2">
+                           Department
+                          </label>
+      {/* Dropdown button */}
+      <button
+        id="dropdownCheckboxButton"
+        data-dropdown-toggle="dropdownDefaultCheckbox"
+        className="appearance-none font-face-r font-normal text-sm border  border-color20 border-1 rounded-md  py-2 px-3 text-secondary placeholder-color18 leading-tight focus:outline-none focus:shadow-outline  pl-3 w-400 h-10   inline-flex items-center "
+        type="button"
+      >
+         <div className='flex justify-between w-full items-center'>
+        <span className='font-face-r font-normal text-sm text-color18'>{currentEmployee.department}</span>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M8 11L3 6.00005L3.7 5.30005L8 9.60005L12.3 5.30005L13 6.00005L8 11Z" fill="#6C6D75"/>
+        </svg>
+        </div>
+      </button>
+
+      {/* Dropdown menu */}
+      <div
+        id="dropdownDefaultCheckbox"
+        className="z-10 w-400 h-32 bg-white divide-y divide-gray-100 border border-color20 border-1 rounded-md shadow dark:bg-gray-700 dark:divide-gray-600"
+      >
+        <ul className="p-3 space-y-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownCheckboxButton">
+          <li>
+            <div className="flex items-center">
+            <input
+                name='department'
+                id="checkbox-item-1"
+                type="checkbox"
+                value="Management"
+                onChange={handleEditOptionChange}
+                checked={currentEmployee.department=="Management"}
+                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
+              />
+              <label htmlFor="checkbox-item-1" className="ml-2 text-sm font-normal text-color18 font-face-r">
+               Management
+              </label>
+            </div>
+          </li>
+          <li>
+          <div className="flex items-center">
+              <input
+                name='department'
+                id="checkbox-item-3"
+                type="checkbox"
+                value="Administration"
+                onChange={handleEditOptionChange}
+                checked={currentEmployee.department=="Administration"}
+                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
+              />
+              <label htmlFor="checkbox-item-3" className="ml-2 text-sm font-normal text-color18 font-face-r">
+                Administration
+              </label>
+            </div>
+            
+          </li>
+          <li>
+            <div className="flex items-center">
+              <input
+                name='department'
+                id="checkbox-item-2"
+                type="checkbox"
+                value="Design"
+                onChange={handleEditOptionChange}
+                checked={currentEmployee.department=="Design"}
+                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
+              />
+              <label htmlFor="checkbox-item-3" className="ml-2 text-sm font-normal text-color18 font-face-r">
+                Design
+              </label>
+            </div>
+          </li>
+          <li>
+          <div className="flex items-center">
+          <input
+                name='department'
+                id="checkbox-item-3"
+                type="checkbox"
+                value="Development"
+                onChange={handleEditOptionChange}
+                checked={currentEmployee.department=="Development"}
+                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
+              />
+              <label htmlFor="checkbox-item-2" className="ml-2 text-sm font-normal text-color18 font-face-r">
+                Development
+              </label>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+
+   
+                      <div className='flex items-center'>
+                        <div className="w-400 h-66">
+                          <label className="block text-primary font-face-m font-medium text-base  mb-2" >
+                            Monthly Salary
+                          </label>
+                            <input
+                              className="appearance-none font-face-r font-normal text-sm w-308 h-10 border border-color20 border-1 rounded-md  py-2 px-3 text-secondary placeholder-color18 leading-tight focus:outline-none focus:shadow-outline"
+                              id="monthly_salary"
+                              name="monthly_salary"
+                              type=""
+                              value={currentEmployee.monthly_salary}
+                              onChange={editCurrentEmplyeeValue}
+                            />
+                        </div>
+
+                        <div className='relative'>
+                          <button
+                            id="dropdownDefaultButton"
+                            data-dropdown-toggle="dropdown"
+                            className="font-face-r font-normal text-sm px-3 mt-9 text-center text-color18 flex items-center border border-color20 h-10 w-84 rounded-md"
+                            type="button"
+                            onClick={toggleDropdownValute} 
+                          >
+                            <div className='ml-1 flex justify-between w-full items-center'>
+                              <span className='font-face-r font-normal text-sm text-color18'>{selectedValute}</span>
+                              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M8 11L3 6.00005L3.7 5.30005L8 9.60005L12.3 5.30005L13 6.00005L8 11Z" fill="#6C6D75"/>
+                              </svg>
+                            </div>
+                          </button>
+
+                          {isDropdownOpenV && (
+                            <ul className="absolute left-0  w-24 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+                              {valutes.map((valute) => (
+                                <li
+                                  key={valute}
+                                  className={`${
+                                    valute === selectedValute ? 'bg-color7 font-face-r font-normal text-sm text-color9' : 'text-color9 font-face-r font-normal text-sm border-b border-color17'
+                                  } cursor-pointer select-none relative py-2 pl-3 pr-9`}
+                                  onClick={() => handleValuteChange(valute)}
+                                >
+                                  <span className="block truncate">{valute}</span>
+                                  {valute === selectedValute && (
+                                    <span className="absolute inset-y-0 right-0 flex items-center pr-4">
+                                      <svg
+                                        className="w-5 h-5"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 0 20 20"
+                                        fill="currentColor"
+                                        aria-hidden="true"
+                                      >
+                                        <path
+                                          fillRule="evenodd"
+                                          clipRule="evenodd"
+                                        />
+                                      </svg>
+                                    </span>
+                                  )}
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                        </div>
+                      </div>
+
+                       
+
+                        
+    <div>
+    <label className="block text-primary font-face-m font-medium text-base  mb-2">
+                           Tech Stack
+                          </label>
+      {/* Dropdown button */}
+      <button
+        id="dropdownCheckboxButton"
+        data-dropdown-toggle="dropdownDefaultCheckbox"
+        className="appearance-none font-face-r font-normal text-sm border border-color20 border-1 rounded-md  py-2 px-3 text-secondary placeholder-color18 leading-tight focus:outline-none focus:shadow-outline  pl-3 w-400 h-10   inline-flex items-center "
+        type="button"
+      >
+        <div className='flex justify-between w-full items-center'>
+          <span className='font-face-r font-normal text-sm text-color18'>{currentEmployee.tech_stack}</span>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M8 11L3 6.00005L3.7 5.30005L8 9.60005L12.3 5.30005L13 6.00005L8 11Z" fill="#6C6D75"/>
+          </svg>
+        </div>
+      </button>
+
+      {/* Dropdown menu */}
+      <div
+        id="dropdownDefaultCheckbox"
+        className="z-10 hidden w-400  h-32 bg-white divide-y divide-gray-100 border border-color20 border-1 rounded-md shadow dark:bg-gray-700 dark:divide-gray-600"
+      >
+        <ul className="p-3 space-y-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownCheckboxButton">
+          <li>
+            <div className="flex items-center">
+              <input
+                name='tech_stack'
+                id="checkbox-item-1"
+                type="checkbox"
+                value="Full Stack"
+                onChange={handleEditOptionChange}
+                checked={currentEmployee.tech_stack=="Full Stack"}
+                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
+              />
+              <label htmlFor="checkbox-item-1" className="ml-2 text-sm font-normal text-color18 font-face-r">
+               Full Stack
+              </label>
+            </div>
+          </li>
+          <li>
+            <div className="flex items-center">
+              <input
+                name='tech_stack'
+                id="checkbox-item-2"
+                type="checkbox"
+                value="Front End"
+                onChange={handleEditOptionChange}
+                checked={currentEmployee.tech_stack=="Front End"}
+                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
+              />
+              <label htmlFor="checkbox-item-2" className="ml-2 text-sm font-normal text-color18 font-face-r">
+                Front End
+              </label>
+            </div>
+          </li>
+          <li>
+            <div className="flex items-center">
+              <input
+                name='tech_stack'
+                id="checkbox-item-3"
+                type="checkbox"
+                value="Back End"
+                onChange={handleEditOptionChange}
+                checked={currentEmployee.tech_stack=="Back End"}
+                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
+              />
+              <label htmlFor="checkbox-item-3" className="ml-2 text-sm font-normal text-color18 font-face-r">
+                Back End
+              </label>
+            </div>
+          </li>
+          <li>
+            <div className="flex items-center">
+              <input
+                name='tech_stack'
+                id="checkbox-item-3"
+                type="checkbox"
+                value="N/A"
+                onChange={handleEditOptionChange}
+                checked={currentEmployee.tech_stack=="N/A"}
+                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
+              />
+              <label htmlFor="checkbox-item-3" className="ml-2 text-sm font-normal text-color18 font-face-r">
+                N/A
+              </label>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+                      </div>
+                      </div> 
+                      
+                      <div className='w-496 h-88 bg-white items-center justify-end flex space-x-4 pr-6'>
+                        
+                      <button class="relative  items-center justify-center  w-85 h-10 border border-customColor overflow-hidden  rounded-md " onClick={closetoggleModalEdit}>
+                      <span class="relative text-base font-link font-semibold  text-customColor  ">
+                          Cancel
+                      </span>
+                    </button>
+                    <button type="button" class=" bg-customColor text-base font-link font-semibold h-10 w-90 text-white  rounded-md text-base " onClick={()=>editEmployee(currentEmployee.id)}>
+                      Submit
+                    </button>
+                    </div>
+                      </div>
+
+                  </div>
+              
+              )}
+            </div>
                       </div>
                       </div>
 
                   </div>
                           
                         )}
-                      </div> ))}
+                      
                </div>
          </div>      
 
