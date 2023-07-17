@@ -974,8 +974,7 @@ const toggleModalCheckBox = () => {
                                     </span>
                                   </div>
                                 </div>
-                              </div> 
-                      
+                              </div>
                         <div className="w-400 h-12 mb-4">
                           <label className="block w-400 h-6 mt-4 text-primary font-face-m font-medium text-base" >
                             Hourly Rate (USD)

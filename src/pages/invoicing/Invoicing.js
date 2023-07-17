@@ -168,11 +168,9 @@ const getCurrentInvoice=(id)=>{
   const newInvoice=allInvoicing.find(invoice=>invoice.id===id);
   setCurrentInvoice(newInvoice);
 }
-  
 
    return(
    <div className='flex h-full'>
-    {console.log(currentInvoice)}
       <div className='basis-[12% h-984'>
         <Sidebar />
       </div>
