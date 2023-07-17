@@ -300,6 +300,10 @@ const handleOptionChange = (event) => {
     setShowModal(true);
   };
 
+  const handleEditClick = () => {
+    setShowModal(false);
+  };
+
   const openModal = () => {
     setIsOpen(true);
   };
@@ -923,58 +927,6 @@ const toggleModalCheckBox = () => {
                           {currentProject?.users.map(user=>(<span className='block w-400 h-6 text-color18 font-face-r font-normal text-base'>{`${user.first_name} ${user.last_name}`}</span>))}
                           </div>
                       </div>
-                              <div className='flex flex-col space-y-4 px-6 mb-20 '>
-                                <div className='bg-white h-14 w-448 rounded-lg'> 
-                                  <h1 className='my-3 mx-6 text-[21px] font-face-b font-bold text-primary'>HUB71</h1>
-                                </div>
-                                <div className='bg-white h-678 w-448 rounded-lg justify-center p-6 grid grid-cols-1 divide-y'>
-                                  <div className="mb-1 w-400 h-12">
-                                    <label className="block w-400 h-6 text-primary font-face-m font-medium text-base" >
-                                      Name
-                                    </label>
-                                    <span className='block w-400 h-6 text-color18 font-face-r font-normal text-base'>HUB71</span>
-                                  </div>
-                                  <div className="w-400 h-36  mb-4">
-                                    <label className="block w-400 h-6 mt-4 text-primary font-face-m font-medium text-base">
-                                      Description
-                                    </label>
-                                    <span className='block w-400 h-120 text-color18 font-face-r font-normal text-base'>Rerum amet maxime. Soluta molestiae ipsum quibusdam. In dolor sapiente ratione quidem vel nostrum perferendis repellendus. Sint eaque architecto ut ullam eius totam nihil vel aut. Quo nam possimus quibusdam corporis.</span>
-                                  </div>
-                                  <div className=" w-400 h-12  mb-4">
-                                    <label className="block w-400 h-6 mt-4 text-primary font-face-m font-medium text-base" >
-                                      Duration
-                                    </label>
-                                    <span className='block w-400 h-6 text-color18 font-face-r font-normal text-base'>January 2023 - December 2023</span>
-                                  </div>  
-                                  <div className=" w-400 h-12 mb-4">
-                                    <label className="block w-400 h-6 mt-4 text-primary font-face-m font-medium text-base">
-                                      Team members
-                                    </label>
-                                    <span className='block w-400 h-6 text-color18 font-face-r font-normal text-base'>Gustavo Hayes, Greg Jerde</span>
-                                  </div>
-                                  <div className="w-400 h-12 mb-4">
-                                    <label className="block w-400 h-6 mt-4 text-primary font-face-m font-medium text-base" >
-                                      Hourly Rate (USD)
-                                    </label>
-                                    <span className='block w-400 h-6 text-color18 font-face-r font-normal text-base'>234</span>
-                                  </div>
-                                  <div className="mb-4 w-400 h-12">
-                                    <label className="block w-400 h-6 mt-4 text-primary font-face-m font-medium text-base" >
-                                      Project Value (BAM) 
-                                    </label>
-                                    <span className='block w-400 h-6 text-color18 font-face-r font-normal text-base'>145,900,000.00 KM</span>
-                                  </div>                       
-                                  <div className="mb-4 w-400 h-12">
-                                    <label className="block w-400 h-6 mt-4 text-primary font-face-m font-medium text-base" >
-                                      Status
-                                    </label>
-                                    <span className="flex items-center block w-400 h-6 text-color18 font-face-r font-normal text-base">
-                                      <span className="flex h-1.5 w-1.5 bg-color22 rounded-full mr-1.5 flex-shrink-0"></span>
-                                        Active
-                                    </span>
-                                  </div>
-                                </div>
-                              </div>
                         <div className="w-400 h-12 mb-4">
                           <label className="block w-400 h-6 mt-4 text-primary font-face-m font-medium text-base" >
                             Hourly Rate (USD)
@@ -1012,7 +964,7 @@ const toggleModalCheckBox = () => {
                       <div>
       <button
         className="relative items-center justify-center w-139 h-10 border border-color34 overflow-hidden rounded-md"
-        onClick={()=>{deleteProject(); fetchProjects()}}
+        onClick={openModal}
       >
         <span className="relative text-base font-link font-semibold text-color34">
           Delete Project
@@ -1039,21 +991,21 @@ const toggleModalCheckBox = () => {
             </div>
 
               <div className='space-y-1 '>
-              <h2 className="text-base font-bold font-face-b text-color35">Are you sure you want to delete HUB71?</h2>
-            <p className="text-color35 font-face-r font-normal text-sm">This will permanently delete HUB71 and all associated data. You cannot undo this action.</p>
+              <h2 className="text-base font-bold font-face-b text-color35">Are you sure you want to delete {currentProject?.project_name}?</h2>
+            <p className="text-color35 font-face-r font-normal text-sm">This will permanently delete {currentProject?.project_name} and all associated data. You cannot undo this action.</p>
               </div>
             </div>
             
             <div className="flex justify-end">
               <button
                 className="mr-2 h-10 w-125 border border-customColor text-customColor font-link font-semibold text-base rounded-md"
-                onClick={handleDeleteProject}
+                onClick={closeModal}
               >
                 Don't Delete
               </button>
               <button
                 className="w-28 h-10 bg-color34 text-white rounded-md font-link font-semibold text-base"
-                onClick={closeModal}
+               onClick={()=>{deleteProject(); fetchProjects(); toggleModal(); handleEditClick()}}
               >
                 Delete
               </button>
