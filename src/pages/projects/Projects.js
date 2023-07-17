@@ -363,6 +363,12 @@ const toggleModalCheckBox = () => {
     .catch(err=>console.log(err));
   }
   
+  const [value, setValue] = useState('');
+
+  const handleChangee = (event) => {
+    setValue(event.target.value);
+  };
+
 
    return(
    <div className='flex h-full'>
@@ -391,7 +397,7 @@ const toggleModalCheckBox = () => {
                         <h1 className='my-3 mx-6 text-[21px] font-face-b font-bold text-primary'>Add New Project</h1>
                       </div>
 
-                      <div className='bg-white h-815 lg:w-448 rounded-lg justify-center p-6 space-y-5'>
+                      <div className='bg-white h-auto lg:w-448 rounded-lg justify-center p-6 space-y-5'>
                       <div className="mb-4 w-400 h-66">
                           <label className="block text-primary font-face-m font-medium text-base  mb-2" >
                             Name
@@ -419,6 +425,7 @@ const toggleModalCheckBox = () => {
                               onChange={handleNewProject}
                             />
                         </div>
+
                         <div>
                           <label className="block text-primary font-face-m font-medium text-base  mb-2" >
                             Duration
@@ -429,7 +436,7 @@ const toggleModalCheckBox = () => {
                                 selected={startDate}
                                 onChange={date => setStartDate(date)}
                                 name="start"
-                                className="bg-white border border-color20 border-1 px-3 text-color18 font-normal font-face-r text-sm rounded-lg focus:ring-blue-500  block w-179 h-38 "
+                                className="bg-white border border-color20 border-1 px-3 placeholder-color18 text-color18 font-normal font-face-r text-sm rounded-lg focus:ring-blue-500  block w-179 h-38 "
                                 placeholderText="Start date"
                               />
                               <div className="absolute inset-y-0 ml-36 flex items-center  pointer-events-none">
@@ -438,7 +445,7 @@ const toggleModalCheckBox = () => {
                                 </svg>
                               </div>
                             </div>
-                            <span className="mx-4 text-black font-normal font-face-r text-lg">to</span>
+                            <span className="mx-3 text-black font-normal font-face-r text-lg">to</span>
                             <div className="relative">
                               <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                               </div>
@@ -446,7 +453,7 @@ const toggleModalCheckBox = () => {
                                 selected={endDate}
                                 onChange={date => setEndDate(date)}
                                 name="end"
-                                className="bg-white border border-color20 border-1 px-3 text-color18 font-normal font-face-r text-sm rounded-lg focus:ring-blue-500  block w-179 h-38"
+                                className="bg-white border border-color20 border-1 px-3 placeholder-color18 text-color18 font-normal font-face-r text-sm rounded-lg focus:ring-blue-500  block w-179 h-38"
                                 placeholderText="End date"
                               />
                                 <div className="absolute inset-y-0 ml-36 flex items-center  pointer-events-none">
@@ -457,7 +464,7 @@ const toggleModalCheckBox = () => {
                             </div>
                           </div>
                         </div>               
-    <div>
+                        <div>
     <label className="block text-primary font-face-m font-medium text-base  mb-2">
                            Assign developers
                           </label>
@@ -467,16 +474,17 @@ const toggleModalCheckBox = () => {
         className="appearance-none font-face-r font-normal text-sm w-400 h-10 border border-color20 border-1 rounded-md  py-2 px-3 text-secondary placeholder-color18 leading-tight focus:outline-none focus:shadow-outline  pl-3 w-400 h-10  inline-flex items-center "
         type="button"
       >
-        Select team members working on this projest
-        <div className='ml-16'>
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M8 11L3 6.00005L3.7 5.30005L8 9.60005L12.3 5.30005L13 6.00005L8 11Z" fill="#6C6D75"/>
-        </svg>
-        </div>
+       
+        <div className='flex justify-between w-full items-center'>
+                        <span className='font-face-r font-normal text-sm text-color18'> Select team members working on this projest</span> 
+                          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M8 11L3 6.00005L3.7 5.30005L8 9.60005L12.3 5.30005L13 6.00005L8 11Z" fill="#6C6D75"/>
+                          </svg>
+                      </div>
       </button>
       <div
         id="dropdownDefaultCheckbox"
-        className="z-10 hidden w-400  h-32 bg-white divide-y divide-gray-100 border border-color20 border-1 rounded-md shadow dark:bg-gray-700 dark:divide-gray-600 overflow-y-scroll"
+        className="absolute z-10 hidden w-400  h-32 bg-white divide-y divide-gray-100 border border-color20 border-1 rounded-md shadow dark:bg-gray-700 dark:divide-gray-600 overflow-y-scroll"
       >
         <ul className="p-3 space-y-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownCheckboxButton">
           {employees?.length>0 && employees?.map((employee)=>(
@@ -499,25 +507,25 @@ const toggleModalCheckBox = () => {
     </div>
 
 
-    <div class=" w-400 h-154 grid  grid-cols-1 divide-y">
+    <div class=" w-400 h-154 grid grid-cols-1 divide-y">
       {selectedEmployees?.length>0 && selectedEmployees?.map((selectedEmployee)=>(
-        <div className='flex -mt-4 justify-between '>
+        <div className='flex justify-between '>
         <span className='p-4 text-sm font-normal text-color16 font-face-r'>{selectedEmployee?.first_name} {selectedEmployee?.last_name}</span>
         <div className='flex items-center pr-2 space-x-2'>
         <div className='relative'>
                   <button
                     id="dropdownDefaultButton"
                     data-dropdown-toggle="dropdown"
-                    className="text-xs px-2 font-normal text-color30 font-face-r   text-center  flex items-center border h-6 w-90 rounded-md"
+                    className="text-xs px-2 font-normal text-color30 font-face-r text-center  flex items-center border h-6 w-90 rounded-md"
                     type="button"
                     onClick={toggleDropdownTime} 
                     >
-                    {selectedTime}
-                    <div className='ml-1'>
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M8 11L3 6.00005L3.7 5.30005L8 9.60005L12.3 5.30005L13 6.00005L8 11Z" fill="#6C6D75"/>
-                    </svg>
-                    </div>
+                    <div className='flex w-full justify-between items-center'>
+                                                    <span className='text-color30 font-face-r font-normal text-xs'>{selectedTime}</span>
+                                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                      <path d="M8 11L3 6.00005L3.7 5.30005L8 9.60005L12.3 5.30005L13 6.00005L8 11Z" fill="#6C6D75"/>
+                                                    </svg>
+                                                  </div>
                   </button>
 
                   {isDropdownOpen && (
@@ -560,7 +568,8 @@ const toggleModalCheckBox = () => {
       </div> ))}
       
     </div>
-                      <div className='flex items-center'>
+
+                     <div className='flex items-center'>
                         <div className="w-400 h-66">
                           <label className="block text-primary font-face-m font-medium text-base  mb-2" >
                             Hourly Rate
@@ -579,16 +588,16 @@ const toggleModalCheckBox = () => {
                   <button
                     id="dropdownDefaultButton"
                     data-dropdown-toggle="dropdown"
-                    className="font-face-r font-normal text-sm px-4 mt-9 text-center text-color18 flex items-center border border-color20 h-10 w-84 rounded-md"
+                    className="font-face-r font-normal text-sm px-3 mt-9 text-center text-color18 flex items-center border border-color20 h-10 w-84 rounded-md"
                     type="button"
                     onClick={toggleDropdownValute} 
                   >
-                    {selectedValute}
-                    <div className='ml-2'>
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M8 11L3 6.00005L3.7 5.30005L8 9.60005L12.3 5.30005L13 6.00005L8 11Z" fill="#6C6D75"/>
-                    </svg>
-                    </div>
+                    <div className='flex w-full justify-between items-center'>
+                        <span className='text-color18'>{selectedValute}</span>
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M8 11L3 6.00005L3.7 5.30005L8 9.60005L12.3 5.30005L13 6.00005L8 11Z" fill="#6C6D75"/>
+                        </svg>
+                      </div>
                   </button>
 
                   {isDropdownOpen && (
@@ -641,8 +650,8 @@ const toggleModalCheckBox = () => {
                        
 
                         
-    <div>
-    <label className="block text-primary font-face-m font-medium text-base  mb-2" >
+                        <div>
+    <label className="block text-primary font-face-m font-medium text-base mb-2" >
                             Status
                           </label> 
       {/* Dropdown button */}
@@ -652,14 +661,13 @@ const toggleModalCheckBox = () => {
         className="appearance-none font-face-r font-normal text-sm w-400 h-10 border border-color20 border-1 rounded-md  py-2 px-3 text-secondary placeholder-color18 leading-tight focus:outline-none focus:shadow-outline  pl-3  w-400 h-10  inline-flex items-center "
         type="button"
       >
-        Select project status
-        <div className='ml-56'>
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M8 11L3 6.00005L3.7 5.30005L8 9.60005L12.3 5.30005L13 6.00005L8 11Z" fill="#6C6D75"/>
-        </svg>
-        </div>
-      </button> 
-
+       <div className='flex w-full justify-between items-center'>
+                      <span className='font-face-r font-normal text-sm text-color18'>Select project status</span>
+                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M8 11L3 6.00005L3.7 5.30005L8 9.60005L12.3 5.30005L13 6.00005L8 11Z" fill="#6C6D75"/>
+                      </svg>
+                    </div>
+      </button>
       {/* Dropdown menu */}
        <div
         id="dropdownDefaultRadioButton"
@@ -740,7 +748,7 @@ const toggleModalCheckBox = () => {
                       
                       <div className='w-496 h-88 bg-white items-center justify-end flex space-x-4 pr-6'>
                         
-                      <button class="relative  items-center justify-center  w-85 h-10 border border-customColor overflow-hidden  rounded-md ">
+                      <button class="relative  items-center justify-center  w-85 h-10 border border-customColor overflow-hidden  rounded-md " onClick={closeModal}>
                       <span class="relative text-base font-link font-semibold  text-customColor  ">
                           Cancel
                       </span>
@@ -876,54 +884,62 @@ const toggleModalCheckBox = () => {
                      </div>
                       )): <p className='flex justify-center items-center mt-10'>Not found</p>}
 
-                        {showModal && (
+{showModal && (
                          
-                              <div className="fixed top-0 left-0 right-0 z-50 flex items-center h-full max-h-1024  overflow-y-auto  justify-end bg-black bg-opacity-50"  >
-                  <div className="relative bg-color7 shadow-lg w-496 h-full overflow-y-auto overflow-x-hidden">
-                     <div className='flex items-center mt-27 ml-29 mb-4'>
-                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M5 8L10 3L10.7 3.7L6.4 8L10.7 12.3L10 13L5 8Z" fill="#142E2B"/>
-                      </svg>
-                      <span className='text-base font-semibold font-link text-color30'>Back</span>
-                     </div>
+                         <div className="fixed top-0 left-0 right-0 z-50 flex items-center h-full max-h-1024  overflow-y-auto  justify-end bg-black bg-opacity-50"  >
+             <div className="relative bg-color7 shadow-lg w-496 h-full overflow-y-auto overflow-x-hidden">
+                <div className='flex items-center mt-27 ml-29 mb-4'>
+                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                 <path d="M5 8L10 3L10.7 3.7L6.4 8L10.7 12.3L10 13L5 8Z" fill="#142E2B"/>
+                 </svg>
+                 <span className='text-base font-semibold font-link text-color30'>Back</span>
+                </div>
 
-                     <div className='flex flex-col space-y-4 px-6 mb-20 '>
-                      <div className='bg-white h-14 w-448 rounded-lg'> 
-                        <h1 className='my-3 mx-6 text-[21px] font-face-b font-bold text-primary'>{currentProject?.project_name}</h1>
-                      </div>
+                <div className='flex flex-col space-y-4 px-6 mb-20 '>
+                 <div className='bg-white h-14 w-448 rounded-lg'> 
+                   <h1 className='my-3 mx-6 text-[21px] font-face-b font-bold text-primary'>{currentProject?.project_name}</h1>
+                 </div>
 
-                      <div className='bg-white h-678 w-448 rounded-lg justify-center p-6 grid grid-cols-1 divide-y'>
-                      <div className="mb-1 w-400 h-12">
-                          <label className="block w-400 h-6 text-primary font-face-m font-medium text-base" >
-                            Name
-                          </label>
-                            <span className='block w-400 h-6 text-color18 font-face-r font-normal text-base'>{currentProject?.project_name}</span>
-                        </div>
+                 <div className='bg-white h-auto w-448 rounded-lg justify-center p-6 grid grid-cols-1 divide-y'>
+                 <div className="mb-3 w-400 h-12">
+                     <label className="block w-400 h-6 text-primary font-face-m font-medium text-base" >
+                       Name
+                     </label>
+                       <span className='block w-400 h-6 text-color18 font-face-r font-normal text-base'>{currentProject?.project_name}</span>
+                   </div>
 
-                        <div className="w-400 h-36  mb-4">
-                          <label className="block w-400 h-6 mt-4 text-primary font-face-m font-medium text-base">
-                            Description
-                          </label>
-                          <span className='block w-400 h-120 text-color18 font-face-r font-normal text-base'>{currentProject?.description}</span>
-                        </div>
-                        
-                        <div className=" w-400 h-12  mb-4">
-                          <label className="block w-400 h-6 mt-4 text-primary font-face-m font-medium text-base" >
-                            Duration
-                          </label>
-                          <span className='block w-400 h-6 text-color18 font-face-r font-normal text-base'>{currentProject?.start}-{currentProject?.end}</span>
-                        </div>
-                        
-                        
-                      <div className=" w-400 h-12 mb-4">
-                      <label className="block w-400 h-6 mt-4 text-primary font-face-m font-medium text-base">
-                          Team members
-                          </label>
-                          <div className='flex'>
-                          {currentProject?.users.map(user=>(<span className='block w-400 h-6 text-color18 font-face-r font-normal text-base'>{`${user.first_name} ${user.last_name}`}</span>))}
-                          </div>
-                      </div>
-                              <div className='flex flex-col space-y-4 px-6 mb-20 '>
+                   <div className="mb-3 w-400 h-auto">
+                   <label className="block w-400 h-6 mt-4 text-primary font-face-m font-medium text-base">
+                     Description
+                   </label>
+                   <span className="block w-400 h-auto text-color18 font-face-r font-normal text-base" style={{ wordWrap: 'break-word' }}>
+                     {currentProject?.description}
+                   </span>
+                 </div>
+
+                   <div className="w-400 h-12  mb-7">
+                     <label className="block w-400 h-6 mt-4 text-primary font-face-m font-medium text-base" >
+                       Duration
+                     </label>
+                     <span className='block w-400 h-6 text-color18 font-face-r font-normal text-base'>{currentProject?.start}-{currentProject?.end}</span>
+                   </div>
+                   
+                   
+                   <div className="mb-3 w-400 h-auto">
+                   <label className="block w-400 h-6 mt-4 text-primary font-face-m font-medium text-base">
+                     Team members
+                   </label>
+                   <div className="flex flex-wrap h-auto">
+                     {currentProject?.users.map(user => (
+                       <span className="block w-auto space-x-2 h-auto text-color18 font-face-r font-normal text-base">
+                         {`${user.first_name} ${user.last_name}, `}
+                       </span>
+                     ))}
+                   </div>
+                 </div>
+
+                      
+                              {/*<div className='flex flex-col space-y-4 px-6 mb-20 '>
                                 <div className='bg-white h-14 w-448 rounded-lg'> 
                                   <h1 className='my-3 mx-6 text-[21px] font-face-b font-bold text-primary'>HUB71</h1>
                                 </div>
@@ -974,8 +990,8 @@ const toggleModalCheckBox = () => {
                                     </span>
                                   </div>
                                 </div>
-                              </div>
-                        <div className="w-400 h-12 mb-4">
+                          </div>*/}
+                         <div className="w-400 h-12 mb-7">
                           <label className="block w-400 h-6 mt-4 text-primary font-face-m font-medium text-base" >
                             Hourly Rate (USD)
                           </label>
@@ -985,7 +1001,7 @@ const toggleModalCheckBox = () => {
                        
                       
 
-                        <div className="mb-4 w-400 h-12">
+                        <div className="mb-7 w-400 h-12">
                           <label className="block w-400 h-6 mt-4 text-primary font-face-m font-medium text-base" >
                           Project Value (BAM) 
                           </label>
@@ -1003,6 +1019,7 @@ const toggleModalCheckBox = () => {
                             {currentProject?.status}
                           </span>
                       </div>
+
 
 
                       </div>
@@ -1064,9 +1081,9 @@ const toggleModalCheckBox = () => {
     </div>
                       <button type="button" class=" bg-customColor text-base font-link font-semibold h-10 w-119 text-white  rounded-md text-base " onClick={openModalEdit}>Edit project</button>
                       <div>
-                          {isOpenEditModal && (
-                            <div className="fixed top-0 left-0 right-0 z-50 flex items-center h-full max-h-1024  overflow-y-auto  justify-end">
-                              <div className="relative bg-color7 shadow-lg w-496 h-full overflow-y-auto overflow-x-hidden">
+                      {isOpenEditModal && (
+                         <div className="fixed top-0 left-0 right-0 z-50 flex items-center h-full max-h-screen  overflow-y-auto  justify-end bg-black bg-opacity-50">
+                         <div className="relative bg-color7 shadow-lg w-496 h-full overflow-y-auto overflow-x-hidden">
                                 <div className='flex items-center mt-27 ml-29 mb-4'>
                                   <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M5 8L10 3L10.7 3.7L6.4 8L10.7 12.3L10 13L5 8Z" fill="#142E2B"/>
@@ -1079,7 +1096,7 @@ const toggleModalCheckBox = () => {
                                     <h1 className='my-3 mx-6 text-[21px] font-face-b font-bold text-primary'>Edit Project</h1>
                                   </div>
 
-                                  <div className='bg-white h-815 lg:w-448 rounded-lg justify-center p-6 space-y-5'>
+                                  <div className='bg-white h-auto lg:w-448 rounded-lg justify-center p-6 space-y-5'>
                                     <div className="mb-4 w-400 h-66">
                                       <label className="block text-primary font-face-m font-medium text-base  mb-2" >
                                         Name
@@ -1107,6 +1124,7 @@ const toggleModalCheckBox = () => {
                                         onChange={editProjectValue}
                                       />
                                     </div>
+                                    
 
                                     <div>
                                       <label className="block text-primary font-face-m font-medium text-base  mb-2" >
@@ -1118,7 +1136,7 @@ const toggleModalCheckBox = () => {
                                             selected={startDate}
                                             onChange={date => setStartDate(date)}
                                             name="start"
-                                            className="bg-white border border-color20 border-1 px-3 text-color18 font-normal font-face-r text-sm rounded-lg focus:ring-blue-500  block w-179 h-38 "
+                                            className="bg-white border border-color20 border-1 px-3 placeholder-color18 text-color18 font-normal font-face-r text-sm rounded-lg focus:ring-blue-500  block w-179 h-38 "
                                             value={currentProject.start}
                                           />
                                           <div className="absolute inset-y-0 ml-36 flex items-center  pointer-events-none">
@@ -1127,7 +1145,7 @@ const toggleModalCheckBox = () => {
                                             </svg>
                                           </div>
                                         </div>
-                                        <span className="mx-4 text-black font-normal font-face-r text-lg">to</span>
+                                        <span className="mx-3 text-black font-normal font-face-r text-lg">to</span>
                                         <div className="relative">
                                           <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                                           </div>
@@ -1135,7 +1153,7 @@ const toggleModalCheckBox = () => {
                                             selected={endDate}
                                             onChange={date => setEndDate(date)}
                                             name="end"
-                                            className="bg-white border border-color20 border-1 px-3 text-color18 font-normal font-face-r text-sm rounded-lg focus:ring-blue-500  block w-179 h-38"
+                                            className="bg-white border border-color20 border-1 px-3 placeholder-color18 text-color18 font-normal font-face-r text-sm rounded-lg focus:ring-blue-500  block w-179 h-38"
                                             value={currentProject.end}
                                           />
                                           <div className="absolute inset-y-0 ml-36 flex items-center  pointer-events-none">
@@ -1147,18 +1165,18 @@ const toggleModalCheckBox = () => {
                                       </div>
                                     
                                     </div>               
-                                    <div className="relative">
+                                    <div className="relative h-auto">
                                       <label className="block text-primary font-face-m font-medium text-base  mb-2">
                                         Assign developers
                                       </label>
                                       <button
                                         id="dropdownCheckboxButton"
                                         data-dropdown-toggle="dropdownDefaultCheckbox"
-                                        className="appearance-none font-face-r font-normal text-sm w-400 h-10 border border-color20 border-1 rounded-md  py-2 px-3 text-secondary placeholder-color18 leading-tight focus:outline-none focus:shadow-outline  pl-3 w-400 h-10  inline-flex items-center "
+                                        className="appearance-none font-face-r font-normal text-sm w-400 h-auto border border-color20 border-1 rounded-md  py-2 px-3 text-secondary placeholder-color18 leading-tight focus:outline-none focus:shadow-outline  pl-3 w-400 h-10  inline-flex items-center "
                                         type="button"
                                         onClick={toggleModalCheckBox}
                                       >
-                                      <div className='flex justify-between w-full items-center'>
+                                      <div className='flex justify-between w-full text-start items-center'>
                                         <span className='font-face-r font-normal text-sm text-color18'>{currentProject?.users.map(user=>(`${user.first_name} ${user.last_name}, ` ))}</span> 
                                           <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                                             <path d="M8 11L3 6.00005L3.7 5.30005L8 9.60005L12.3 5.30005L13 6.00005L8 11Z" fill="#6C6D75"/>
@@ -1234,10 +1252,11 @@ const toggleModalCheckBox = () => {
                                         </div>}
                                     </div>
 
+                                    <div class=" w-400 h-154 grid grid-cols-1 divide-y">
                                    {currentProject?.users.map(user=>(
-                                    <div class=" w-400 h-154 grid  grid-cols-1 divide-y">
-                                      <div className='flex -mt-4 justify-between '>
-                                        <span className='p-4 text-sm font-normal text-color16 font-face-r'>
+                                   
+                                      <div className='flex -mt-4 mb-4 justify-between '>
+                                        <span className='p-3 text-sm font-normal text-color16 font-face-r'>
                                               {user.first_name} {user.last_name}
                                         </span>
                                           <div className='flex items-center pr-2 space-x-2'>
@@ -1250,7 +1269,7 @@ const toggleModalCheckBox = () => {
                                                   onClick={toggleDropdownTime} 
                                                 >
                                                   <div className='flex w-full justify-between items-center'>
-                                                    <span>{selectedTime}</span>
+                                                    <span className='text-color30 font-face-r font-normal text-xs'>{selectedTime}</span>
                                                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                       <path d="M8 11L3 6.00005L3.7 5.30005L8 9.60005L12.3 5.30005L13 6.00005L8 11Z" fill="#6C6D75"/>
                                                     </svg>
@@ -1294,7 +1313,8 @@ const toggleModalCheckBox = () => {
                                             </svg>
                                           </div>
                                       </div>
-                                    </div>))}
+                                    ))}</div>
+                                   
                                     <div className='flex items-center'>
                                       <div className="w-400 h-66">
                                         <label className="block text-primary font-face-m font-medium text-base  mb-2" >
@@ -1314,12 +1334,12 @@ const toggleModalCheckBox = () => {
                                         <button
                                           id="dropdownDefaultButton"
                                           data-dropdown-toggle="dropdown"
-                                          className="font-face-r font-normal text-sm px-4 mt-9 text-center text-color18 flex items-center border border-color20 h-10 w-84 rounded-md"
+                                          className="font-face-r font-normal text-sm px-3 mt-9 text-center text-color18 flex items-center border border-color20 h-10 w-84 rounded-md"
                                           type="button"
                                           onClick={toggleDropdownValute} 
                                         >
                                         <div className='flex w-full justify-between items-center'>
-                                          <span>{selectedValute}</span>
+                                          <span className='text-color18'>{selectedValute}</span>
                                           <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                                             <path d="M8 11L3 6.00005L3.7 5.30005L8 9.60005L12.3 5.30005L13 6.00005L8 11Z" fill="#6C6D75"/>
                                           </svg>
@@ -1365,7 +1385,7 @@ const toggleModalCheckBox = () => {
                                         Project Value (BAM) 
                                       </label>
                                         <input
-                                          className="appearance-none font-face-r font-normal text-sm w-400 h-10 border border-color20 border-1 rounded-md  py-2 px-3 text-secondary placeholder-color18 leading-tight focus:outline-none focus:shadow-outline"
+                                          className="appearance-none font-face-r font-normal text-color18 text-sm w-400 h-10 border border-color20 border-1 rounded-md  py-2 px-3 text-secondary placeholder-color18 leading-tight focus:outline-none focus:shadow-outline"
                                           id="project_value"
                                           name="project_value"
                                           type=""
@@ -1479,8 +1499,9 @@ const toggleModalCheckBox = () => {
                                     Submit
                                   </button>
                                 </div>
+                                </div>
                               </div>
-                            </div>
+                           
                           )}
                         </div>
                       </div>
@@ -1494,9 +1515,9 @@ const toggleModalCheckBox = () => {
          </div>      
 
           <div className='h-47 lg:flex mt-4 lg:justify-between w-1050 md:flex md:justify-between items-center'>
-            <div className='lg:w-343  h-42 flex'>
+            <div className='lg:w-343 h-42 flex'>
                 <span className='text-sm text-color19 py-2 font-link-os'>Rows per page: </span>
-                <div className='px-3 py-1'>
+                <div className='px-2 py-1'>
                   <div className='relative'>
                     <button
                       id="dropdownDefaultButton"

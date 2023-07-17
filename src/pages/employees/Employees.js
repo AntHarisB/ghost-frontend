@@ -340,7 +340,7 @@ const onFileChange = async (e) => {
                         <h1 className='my-3 mx-6 text-[21px] font-face-b font-bold text-primary'>Add New Employee</h1>
                       </div>
 
-                      <div className='bg-white h-815 lg:w-448 rounded-lg justify-center p-6 space-y-5'>
+                      <div className='bg-white h-auto lg:w-448 rounded-lg justify-center p-6 space-y-5'>
                       <div className="mb-4 w-400 h-66">
                           <label className="block text-primary font-face-m font-medium text-base  mb-2" >
                             First Name
@@ -393,11 +393,11 @@ const onFileChange = async (e) => {
       <button
         id="dropdownCheckboxButton"
         data-dropdown-toggle="dropdownDefaultCheckbox"
-        className="appearance-none font-face-r font-normal text-sm border  border-color20 border-1 rounded-md  py-2  text-secondary placeholder-color18 leading-tight focus:outline-none focus:shadow-outline  pl-3 w-400 h-10   inline-flex items-center "
+        className="appearance-none font-face-r font-normal text-sm border  border-color20 border-1 rounded-md  py-2 px-3 text-secondary placeholder-color18 leading-tight focus:outline-none focus:shadow-outline  pl-3 w-400 h-10   inline-flex items-center "
         type="button"
       >
-        Select employee department
-        <div className='ml-40 pl-2'>
+        <div className='flex justify-between w-full items-center'>
+                    <span className='font-face-r font-normal text-sm text-color18'>Select employee department</span>
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M8 11L3 6.00005L3.7 5.30005L8 9.60005L12.3 5.30005L13 6.00005L8 11Z" fill="#6C6D75"/>
         </svg>
@@ -493,12 +493,12 @@ const onFileChange = async (e) => {
                   <button
                     id="dropdownDefaultButton"
                     data-dropdown-toggle="dropdown"
-                    className="font-face-r font-normal text-sm px-4 mt-9 text-center text-color18 flex items-center border border-color20 h-10 w-84 rounded-md"
+                    className="font-face-r font-normal text-sm px-3 mt-9 text-center text-color18 flex items-center border border-color20 h-10 w-84 rounded-md"
                     type="button"
                     onClick={toggleDropdownValute} 
                   >
-                    {selectedValute}
-                    <div className='ml-2'>
+                   <div className='ml-1 flex justify-between w-full items-center'>
+                    <span className='font-face-r font-normal text-sm text-color18'>{selectedValute}</span>  
                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M8 11L3 6.00005L3.7 5.30005L8 9.60005L12.3 5.30005L13 6.00005L8 11Z" fill="#6C6D75"/>
                     </svg>
@@ -550,11 +550,11 @@ const onFileChange = async (e) => {
       <button
         id="dropdownCheckboxButton"
         data-dropdown-toggle="dropdownDefaultCheckbox"
-        className="appearance-none font-face-r font-normal text-sm border border-color20 border-1 rounded-md  py-2  text-secondary placeholder-color18 leading-tight focus:outline-none focus:shadow-outline  pl-3 w-400 h-10   inline-flex items-center "
+        className="appearance-none font-face-r font-normal text-sm border border-color20 border-1 rounded-md  py-2 px-3 text-secondary placeholder-color18 leading-tight focus:outline-none focus:shadow-outline  pl-3 w-400 h-10   inline-flex items-center "
         type="button"
       >
-        Select stack
-        <div className='ml-64 pl-5'>
+       <div className='flex justify-between w-full items-center'>
+                    <span className='font-face-r font-normal text-sm text-color18'>Select stack</span>   
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M8 11L3 6.00005L3.7 5.30005L8 9.60005L12.3 5.30005L13 6.00005L8 11Z" fill="#6C6D75"/>
         </svg>
@@ -635,7 +635,7 @@ const onFileChange = async (e) => {
                       
                       <div className='w-496 h-88 bg-white items-center justify-end flex space-x-4 pr-6'>
                         
-                      <button class="relative  items-center justify-center  w-85 h-10 border border-customColor overflow-hidden  rounded-md ">
+                      <button class="relative  items-center justify-center  w-85 h-10 border border-customColor overflow-hidden  rounded-md " onClick={closeModal}>
                       <span class="relative text-base font-link font-semibold  text-customColor  ">
                           Cancel
                       </span>
@@ -815,14 +815,14 @@ const onFileChange = async (e) => {
 
                       </div>
 
-                      <div className='bg-white h-52 w-448 rounded-lg justify-center  '>
+                      <div className='bg-white h-auto w-448 rounded-lg justify-center  '>
                       <div className='m-6'>
-                      <div className=" w-400 h-12">
+                      <div className="w-400 h-12">
                           <span className='block w-400 h-6 text-primary font-face-m font-medium text-base'>Assigned to projects</span>
                         </div>
                     
                         {currentEmployee?.projects && currentEmployee?.projects.map((project, index) => (
-                          <div key={index} className='flex w-400 h-10 justify-between items-center -mt-5  border-b'>
+                          <div key={index} className='flex w-400 h-10 justify-between items-center  border-b'>
                             <span className='text-sm font-normal text-color16 font-face-r'>{project.project_name}</span>
                             <div className='w-68 h-4 bg-color8 rounded-xl text-center font-face-r font-normal text-xs text-white'>
                               {project.employment_type}
@@ -906,7 +906,7 @@ const onFileChange = async (e) => {
                         <h1 className='my-3 mx-6 text-[21px] font-face-b font-bold text-primary'>Edit Employee</h1>
                       </div>
 
-                      <div className='bg-white h-815 lg:w-448 rounded-lg justify-center p-6 space-y-6'>
+                      <div className='bg-white h-auto lg:w-448 rounded-lg justify-center p-6 space-y-6'>
                       <div className="mb-4 w-400 h-66">
                           <label className="block text-primary font-face-m font-medium text-base  mb-2" >
                             First Name
