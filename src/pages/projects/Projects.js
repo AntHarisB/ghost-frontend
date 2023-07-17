@@ -856,7 +856,7 @@ const toggleModalCheckBox = () => {
                           <span className='text-sm font-medium font-face-m text-color18'>{project?.project_name}</span>
                         </div>
                         <div className='w-158.17 h-10 py-1.5 pl-2 '>
-                          <span className='text-sm font-medium font-face-m text-color18'>{project?.description}</span>
+                          <span className='line-clamp-1 text-sm font-medium font-face-m text-color18'>{project?.description}</span>
                         </div>
                         <div className='w-158.17 h-10 py-1.5  '>
                           <span className='text-sm font-medium font-face-m text-color18'>{`${project?.start}-${project?.end}`}</span>
